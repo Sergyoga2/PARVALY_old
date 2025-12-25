@@ -148,8 +148,19 @@ const translations = {
     form_contact_label: "Контакт (WhatsApp/Viber)",
     form_submit: "Отправить заявку",
     form_note: "Заявка отправится на нашу почту. Ответим в течение 24–48 часов.",
-    footer_tagline: "Клиенты из Google Maps, поиска и рекламы — по всему миру.",
-    footer_location: "Работаем по всему миру. Сербия, Европа, СНГ."
+    page_title: "PARVALY — Маркетинговое агентство",
+    footer_legal_title: "Реквизиты",
+    footer_payments_title: "Оплата (B2B)",
+    footer_legal_entity_label: "Юр. лицо:",
+    footer_address_label: "Адрес:",
+    footer_tax_id_label: "ИНН:",
+    footer_email_label: "Email:",
+    footer_iban_label: "IBAN:",
+    footer_bank_label: "Банк:",
+    footer_bank_address_label: "Адрес банка:",
+    footer_swift_label: "SWIFT/BIC:",
+    footer_payment_reference_label: "Назначение платежа:",
+    footer_rights: "© PARVALY {year}. Все права защищены."
   },
   en: {
     nav_services: "Services",
@@ -296,8 +307,19 @@ const translations = {
     form_contact_label: "WhatsApp / Viber",
     form_submit: "Send inquiry",
     form_note: "We will send your request to our email and reply within 24–48 hours.",
-    footer_tagline: "Customers from Google Maps, Search and Ads — worldwide.",
-    footer_location: "We work worldwide. Serbia, Europe, CIS."
+    page_title: "PARVALY — Marketing agency",
+    footer_legal_title: "Company details",
+    footer_payments_title: "Payments (B2B)",
+    footer_legal_entity_label: "Legal entity:",
+    footer_address_label: "Address:",
+    footer_tax_id_label: "Tax ID:",
+    footer_email_label: "Email:",
+    footer_iban_label: "IBAN:",
+    footer_bank_label: "Bank:",
+    footer_bank_address_label: "Bank address:",
+    footer_swift_label: "SWIFT/BIC:",
+    footer_payment_reference_label: "Payment reference:",
+    footer_rights: "© PARVALY {year}. All rights reserved."
   }
 };
 
@@ -306,25 +328,40 @@ const emailRecipient = "hello@parvaly.com";
 const langButtons = document.querySelectorAll(".lang-button");
 const elementsToTranslate = document.querySelectorAll("[data-i18n]");
 
+const defaultLang = "ru";
+
+const getInitialLanguage = () => {
+  const htmlLang = document.documentElement.dataset.lang || document.documentElement.lang;
+  if (translations[htmlLang]) {
+    return htmlLang;
+  }
+  const path = window.location.pathname.toLowerCase();
+  if (/(^|\/)en(\/|$)/.test(path)) {
+    return "en";
+  }
+  return defaultLang;
+};
+
 const setLanguage = (lang) => {
+  if (!translations[lang]) {
+    return;
+  }
   document.documentElement.lang = lang;
   elementsToTranslate.forEach((el) => {
     const key = el.dataset.i18n;
     if (translations[lang][key]) {
-      el.textContent = translations[lang][key];
+      const value = translations[lang][key].replace("{year}", new Date().getFullYear());
+      el.textContent = value;
     }
   });
 
   langButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.lang === lang);
   });
+
 };
 
-langButtons.forEach((button) => {
-  button.addEventListener("click", () => setLanguage(button.dataset.lang));
-});
-
-setLanguage("ru");
+setLanguage(getInitialLanguage());
 
 const form = document.getElementById("audit-form");
 form.addEventListener("submit", (event) => {
