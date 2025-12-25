@@ -1,0 +1,10 @@
+{
+  "name": "parvaly-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PARVALY bilingual landing page",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  }
+}
