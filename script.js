@@ -331,18 +331,32 @@ const elementsToTranslate = document.querySelectorAll("[data-i18n]");
 const defaultLang = "ru";
 
 const getInitialLanguage = () => {
-  const htmlLang = document.documentElement.dataset.lang || document.documentElement.lang;
-  if (translations[htmlLang]) {
-    return htmlLang;
-  }
   const path = window.location.pathname.toLowerCase();
-  if (/(^|\/)en(\/|$)/.test(path)) {
+  if (path.startsWith("/en")) {
     return "en";
+const supportedLangs = Object.keys(translations);
+
+const updateLanguageUrl = (lang) => {
+  const url = new URL(window.location.href);
+  if (lang === defaultLang) {
+    url.searchParams.delete("lang");
+  } else {
+    url.searchParams.set("lang", lang);
+  }
+  window.history.replaceState({}, "", url);
+};
+
+const getInitialLanguage = () => {
+  const params = new URLSearchParams(window.location.search);
+  const langFromUrl = params.get("lang");
+  if (langFromUrl && supportedLangs.includes(langFromUrl)) {
+    return langFromUrl;
   }
   return defaultLang;
 };
 
 const setLanguage = (lang) => {
+const setLanguage = (lang, { syncUrl = true } = {}) => {
   if (!translations[lang]) {
     return;
   }
@@ -358,6 +372,11 @@ const setLanguage = (lang) => {
   langButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.lang === lang);
   });
+
+  if (syncUrl) {
+    updateLanguageUrl(lang);
+  }
+};
 
 };
 
