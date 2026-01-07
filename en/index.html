@@ -1,342 +1,237 @@
 <!DOCTYPE html>
-<html lang="en" data-lang="en">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title data-i18n="page_title">PARVALY — Marketing agency</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PARVALY — Marketing agency. Google Maps, Meta Ads, Instagram, SEO and website development for businesses in the USA. Get a free audit!">
+  <title>PARVALY — Marketing Agency | Google Maps, Meta Ads, SEO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="container header-content">
-      <div class="logo">PARVALY</div>
-      <nav class="nav">
-        <a href="#services" data-i18n="nav_services">Услуги</a>
-        <a href="#packages" data-i18n="nav_packages">Пакеты</a>
-        <a href="#process" data-i18n="nav_process">Процесс</a>
-        <a href="#faq" data-i18n="nav_faq">FAQ</a>
-        <a href="#contact" class="nav-cta" data-i18n="nav_cta">Получить аудит</a>
-      </nav>
-      <div class="lang-toggle">
-        <a class="lang-button" data-lang="ru" href="/">RU</a>
-        <a class="lang-button is-active" data-lang="en" href="/en/">EN</a>
+    <div class="container">
+      <div class="header-content">
+        <a href="/en/" class="logo"><img src="/assets/logo.svg" alt="PARVALY"></a>
+        <nav class="nav">
+          <a href="/en/#services">Services</a>
+          <a href="/en/about.html">About</a>
+          <a href="/en/cases.html">Cases</a>
+          <a href="/en/pricing.html">Pricing</a>
+          <a href="/en/contacts.html">Contact</a>
+        </nav>
+        <div class="header-actions">
+          <div class="lang-toggle">
+            <a href="/" class="lang-button">RU</a>
+            <a href="/en/" class="lang-button is-active">EN</a>
+          </div>
+          <a href="#audit" class="btn btn-primary btn-sm">Free Audit</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Menu"><span></span><span></span><span></span></button>
       </div>
     </div>
+    <nav class="mobile-nav">
+      <a href="/en/#services">Services</a>
+      <a href="/en/about.html">About</a>
+      <a href="/en/cases.html">Cases</a>
+      <a href="/en/pricing.html">Pricing</a>
+      <a href="/en/contacts.html">Contact</a>
+    </nav>
   </header>
 
   <main>
     <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-text">
-          <p class="eyebrow" data-i18n="tagline">Клиенты из Google Maps, поиска и рекламы — по всему миру</p>
-          <h1 data-i18n="hero_title">Получайте клиентов из Google Maps и поиска</h1>
-          <p class="lead" data-i18n="hero_subtitle">Создадим или прокачаем карточку Google Maps (Google Business Profile), подключим мессенджеры и усилим видимость. Для быстрых заявок — запускаем рекламу и делаем посадочные.</p>
-          <div class="cta-row">
-            <a href="#contact" class="btn primary" data-i18n="primary_cta">Получить бесплатный мини-аудит</a>
-            <a href="#contact" class="btn ghost" data-i18n="secondary_cta">Написать в WhatsApp / Viber</a>
-          </div>
-          <p class="note" data-i18n="hero_note">Работаем по всему миру. Общение — WhatsApp Business / Viber. Русский и сербский (латиница).</p>
-        </div>
-        <div class="hero-card">
-          <div class="card">
-            <h3 data-i18n="hero_card_title">Бесплатный мини-аудит</h3>
-            <p data-i18n="hero_card_text">Короткий список улучшений и приоритетов для роста в Google Maps.</p>
-            <ul>
-              <li data-i18n="hero_card_item1">Скорость: 24–48 часов</li>
-              <li data-i18n="hero_card_item2">Фокус на заявках и действиях</li>
-              <li data-i18n="hero_card_item3">Конкуренты + точки роста</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="trust" id="trust">
       <div class="container">
-        <h2 data-i18n="trust_title">Что отличает нашу работу</h2>
-        <div class="grid four">
-          <div class="card">
-            <h3 data-i18n="trust_item1_title">Без сказок</h3>
-            <p data-i18n="trust_item1_text">Не обещаем точное число клиентов заранее. Делаем план и растим измеримые метрики.</p>
+        <div class="hero-content">
+          <div class="hero-badge"><span>🚀</span> Marketing for US Businesses</div>
+          <h1>Get more customers through <span class="highlight">Google</span> and <span class="highlight">social media</span></h1>
+          <p class="hero-lead">We set up Google Maps, run targeted ads, manage Instagram, and build websites. Working with restaurants, salons, clinics, and cafes.</p>
+          <div class="hero-cta">
+            <a href="#audit" class="btn btn-primary btn-lg">Get Free Audit</a>
+            <a href="/en/#services" class="btn btn-outline btn-lg">Our Services</a>
           </div>
-          <div class="card">
-            <h3 data-i18n="trust_item2_title">Сильная база в картах</h3>
-            <p data-i18n="trust_item2_text">Исправляем категории, услуги, контент, отзывы и структуру.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="trust_item3_title">Быстрые ответы лидам</h3>
-            <p data-i18n="trust_item3_text">Подключаем мессенджеры, готовим шаблоны и логику обработки.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="trust_item4_title">Прозрачность</h3>
-            <p data-i18n="trust_item4_text">Чек-лист работ + отчёты: что сделали и что изменилось.</p>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-value">50+</div><div class="hero-stat-label">Happy Clients</div></div>
+            <div class="hero-stat"><div class="hero-stat-value">7 years</div><div class="hero-stat-label">Marketing Experience</div></div>
+            <div class="hero-stat"><div class="hero-stat-value">300%</div><div class="hero-stat-label">Average ROI</div></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="services" id="services">
+    <section id="services" class="bg-gray">
       <div class="container">
-        <h2 data-i18n="services_title">Услуги</h2>
-        <div class="grid three">
-          <article class="service-card">
-            <h3 data-i18n="service1_title">Создание карточки Google Maps под ключ</h3>
-            <p data-i18n="service1_lead">Создаём и настраиваем Google Business Profile так, чтобы карточка индексировалась и была готова к росту.</p>
-            <ul>
-              <li data-i18n="service1_item1">Создание карточки и выбор типа бизнеса (с адресом/без адреса)</li>
-              <li data-i18n="service1_item2">Категории, услуги/прайс, контакты, график, атрибуты</li>
-              <li data-i18n="service1_item3">Фото/обложки, подготовка к подтверждению</li>
-              <li data-i18n="service1_item4">Передача прав и добавление менеджеров</li>
-            </ul>
-            <p class="result" data-i18n="service1_result">Результат: корректная карточка, готовая к продвижению.</p>
-            <p class="needs" data-i18n="service1_needs">Нужно: название, контакты, адрес/зоны, 10–20 фото, список услуг и цен.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service2_title">Бесплатный мини-аудит Google Maps</h3>
-            <p data-i18n="service2_lead">Находим 5–15 проблем, которые мешают росту, и даём приоритеты.</p>
-            <ul>
-              <li data-i18n="service2_item1">Проверка заполненности, категорий, услуг, отзывов, фото</li>
-              <li data-i18n="service2_item2">Сравнение с 3–5 конкурентами</li>
-              <li data-i18n="service2_item3">План: что исправить сегодня/на неделе/за месяц</li>
-            </ul>
-            <p class="result" data-i18n="service2_result">Результат: понимание, что даст рост и с чего начать.</p>
-            <p class="needs" data-i18n="service2_needs">Нужно: ссылка на карточку.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service3_title">Полный аудит + стратегия роста (Google Maps SEO)</h3>
-            <p data-i18n="service3_lead">Системный разбор и план на 4–8 недель.</p>
-            <ul>
-              <li data-i18n="service3_item1">Анализ факторов ранжирования</li>
-              <li data-i18n="service3_item2">Категории и услуги до максимума релевантных</li>
-              <li data-i18n="service3_item3">Контент и отзывы: стратегия и шаблоны</li>
-              <li data-i18n="service3_item4">Проверка дублей, доступов, ошибок</li>
-              <li data-i18n="service3_item5">План работ + KPI</li>
-            </ul>
-            <p class="result" data-i18n="service3_result">Результат: пошаговый план улучшений и логика роста.</p>
-            <p class="needs" data-i18n="service3_needs">Нужно: ссылка на карточку, список услуг, география клиентов.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service4_title">Оптимизация карточки (разовая)</h3>
-            <p data-i18n="service4_lead">Приводим карточку в порядок и повышаем конверсию действий.</p>
-            <ul>
-              <li data-i18n="service4_item1">Категории, описание, атрибуты, контакты</li>
-              <li data-i18n="service4_item2">Услуги/прайс: структура и формулировки</li>
-              <li data-i18n="service4_item3">Фото-пакет + стартовые посты</li>
-              <li data-i18n="service4_item4">Q&A и кнопки связи</li>
-            </ul>
-            <p class="result" data-i18n="service4_result">Результат: больше целевых действий: звонки/маршрут/сообщения.</p>
-            <p class="needs" data-i18n="service4_needs">Нужно: доступ к карточке, материалы (фото/логотип/цены).</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service5_title">Ежемесячное ведение и рост</h3>
-            <p data-i18n="service5_lead">Регулярная работа над видимостью, репутацией и контентом.</p>
-            <ul>
-              <li data-i18n="service5_item1">Контент-план и публикации</li>
-              <li data-i18n="service5_item2">Отзывы и репутация</li>
-              <li data-i18n="service5_item3">Обновление фото/видео</li>
-              <li data-i18n="service5_item4">Мониторинг видимости и тест гипотез</li>
-              <li data-i18n="service5_item5">Ежемесячный отчёт</li>
-            </ul>
-            <p class="result" data-i18n="service5_result">Результат: стабильный рост видимости и обращений.</p>
-            <p class="needs" data-i18n="service5_needs">Нужно: доступ к карточке, согласование правил по отзывам.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service6_title">Таргетированная реклама (Meta)</h3>
-            <p data-i18n="service6_lead">Запускаем лиды через Instagram/Facebook: сообщения, лид-формы, сайт.</p>
-            <ul>
-              <li data-i18n="service6_item1">Стратегия воронки (холодная/тёплая/ретаргет)</li>
-              <li data-i18n="service6_item2">Креативы: статик/видео</li>
-              <li data-i18n="service6_item3">Лид-формы или трафик на сайт</li>
-              <li data-i18n="service6_item4">Пиксель и события (если есть сайт)</li>
-              <li data-i18n="service6_item5">Оптимизация по цене и качеству лида</li>
-            </ul>
-            <p class="result" data-i18n="service6_result">Результат: управляемые заявки по понятной цене.</p>
-            <p class="needs" data-i18n="service6_needs">Нужно: доступ к рекламному кабинету, оффер/цены, гео.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service7_title">Контекстная реклама (Google Ads)</h3>
-            <p data-i18n="service7_lead">Забираем горячий спрос из поиска.</p>
-            <ul>
-              <li data-i18n="service7_item1">Ключи, минус-слова, объявления, расширения</li>
-              <li data-i18n="service7_item2">Конверсии (заявка/звонок/сообщение)</li>
-              <li data-i18n="service7_item3">Оптимизация по реальным запросам</li>
-            </ul>
-            <p class="result" data-i18n="service7_result">Результат: лиды из поиска с понятной экономикой.</p>
-            <p class="needs" data-i18n="service7_needs">Нужно: сайт/лендинг или лид-механика, доступ к Google Ads.</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service8_title">Сайты и лендинги</h3>
-            <p data-i18n="service8_lead">Делаем страницы, которые продают и не тормозят.</p>
-            <ul>
-              <li data-i18n="service8_item1">Структура продаж и UX</li>
-              <li data-i18n="service8_item2">Мобильная скорость</li>
-              <li data-i18n="service8_item3">GA4/пиксель + события</li>
-              <li data-i18n="service8_item4">Кнопки WhatsApp/звонок/форма</li>
-            </ul>
-            <p class="result" data-i18n="service8_result">Результат: готовая посадочная под рекламу или сайт под SEO.</p>
-            <p class="needs" data-i18n="service8_needs">Нужно: тексты/УТП, фото/кейсы, домен (если есть).</p>
-          </article>
-          <article class="service-card">
-            <h3 data-i18n="service9_title">SEO-оптимизация</h3>
-            <p data-i18n="service9_lead">Строим органику: структура, семантика, контент и техничка.</p>
-            <ul>
-              <li data-i18n="service9_item1">SEO-аудит</li>
-              <li data-i18n="service9_item2">Семантика и страницы услуг</li>
-              <li data-i18n="service9_item3">Контент-план</li>
-              <li data-i18n="service9_item4">Улучшение конверсии страниц</li>
-            </ul>
-            <p class="result" data-i18n="service9_result">Результат: рост поискового трафика и заявок.</p>
-            <p class="needs" data-i18n="service9_needs">Нужно: доступ к сайту/аналитике.</p>
-          </article>
+        <div class="section-header">
+          <div class="section-badge">Services</div>
+          <h2 class="section-title">Everything for your business growth</h2>
+          <p class="section-desc">Comprehensive marketing for local businesses: from Google Maps to website development</p>
+        </div>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">📍</div>
+            <h3>Google Maps / GBP</h3>
+            <p>Setup, audit, and promotion of Google Business Profile. Increase visibility, calls, and leads from local customers.</p>
+            <div class="service-price">from $290/mo</div>
+            <a href="/en/services/google-maps.html" class="btn btn-outline">Learn More</a>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">📱</div>
+            <h3>Meta Ads</h3>
+            <p>Targeted advertising on Instagram and Facebook. Strategy, setup, creatives, and monthly campaign management.</p>
+            <div class="service-price">from $490/mo</div>
+            <a href="/en/services/meta-ads.html" class="btn btn-outline">Learn More</a>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">📸</div>
+            <h3>Instagram</h3>
+            <p>Profile setup and management: design, content strategy, visual style, and posting schedule for audience growth.</p>
+            <div class="service-price">from $390/mo</div>
+            <a href="/en/services/instagram.html" class="btn btn-outline">Learn More</a>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🔍</div>
+            <h3>Google Ads</h3>
+            <p>PPC advertising in Google: search and local campaigns. Optimized for leads and calls.</p>
+            <div class="service-price">from $490/mo</div>
+            <a href="/en/services/google-ads.html" class="btn btn-outline">Learn More</a>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">📈</div>
+            <h3>SEO</h3>
+            <p>Technical audit, keyword research, content planning, and link building. Get your site to the top of Google.</p>
+            <div class="service-price">from $690/mo</div>
+            <a href="/en/services/seo.html" class="btn btn-outline">Learn More</a>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">💻</div>
+            <h3>Website Development</h3>
+            <p>Landing pages and service websites with built-in SEO and analytics. Fast launch with Website + SEO packages.</p>
+            <div class="service-price">from $420</div>
+            <a href="/en/services/websites.html" class="btn btn-outline">Learn More</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="packages" id="packages">
+    <section id="audit" class="form-section">
       <div class="container">
-        <h2 data-i18n="packages_title">Пакеты</h2>
-        <div class="grid four">
-          <div class="card">
-            <h3 data-i18n="package1_title">Старт</h3>
-            <ul>
-              <li data-i18n="package1_item1">Карточка под ключ или приведение в порядок</li>
-              <li data-i18n="package1_item2">Базовая оптимизация</li>
-              <li data-i18n="package1_item3">Инструкция по отзывам и обработке</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3 data-i18n="package2_title">Рост</h3>
-            <ul>
-              <li data-i18n="package2_item1">Полный аудит + оптимизация</li>
-              <li data-i18n="package2_item2">Ведение 1–2 месяца</li>
-              <li data-i18n="package2_item3">Отчёты и план дальше</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3 data-i18n="package3_title">Лиды</h3>
-            <ul>
-              <li data-i18n="package3_item1">Таргет или Google Ads</li>
-              <li data-i18n="package3_item2">Лендинг/формы/WhatsApp-воронка</li>
-              <li data-i18n="package3_item3">Еженедельная оптимизация</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3 data-i18n="package4_title">Под ключ</h3>
-            <ul>
-              <li data-i18n="package4_item1">Карты + сайт + реклама + аналитика</li>
-              <li data-i18n="package4_item2">Ежемесячное ведение</li>
-              <li data-i18n="package4_item3">Масштабирование</li>
-            </ul>
-          </div>
+        <div class="form-container">
+          <h2>Get a Free Audit</h2>
+          <p class="form-desc">We'll analyze your project and provide improvement recommendations. We'll contact you via messenger, clarify details, and prepare the audit.</p>
+          <form id="audit-form">
+            <div class="form-group">
+              <label>How should we contact you?</label>
+              <div class="contact-type-toggle">
+                <button type="button" class="contact-type-btn is-active" data-type="phone">📞 Phone</button>
+                <button type="button" class="contact-type-btn" data-type="telegram">✈️ Telegram</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contact-input">Your contact</label>
+              <input type="text" id="contact-input" class="form-input" placeholder="+1 (234) 567-8900" required>
+            </div>
+            <button type="submit" class="btn btn-primary form-submit">Submit Request</button>
+            <p class="form-note">By clicking the button, you agree to our data processing policy</p>
+          </form>
+          <div id="form-success" class="form-success hidden">✅ Request sent! We'll contact you shortly.</div>
         </div>
       </div>
     </section>
 
-    <section class="process" id="process">
+    <section id="why-us">
       <div class="container">
-        <h2 data-i18n="process_title">Как мы работаем</h2>
-        <ol class="steps">
-          <li data-i18n="process_step1">Вы присылаете ссылку на карточку/сайт/соцсети</li>
-          <li data-i18n="process_step2">Мы делаем мини-аудит и выделяем приоритеты</li>
-          <li data-i18n="process_step3">Согласуем план и объём работ</li>
-          <li data-i18n="process_step4">Получаем доступы (карточка/кабинеты/сайт)</li>
-          <li data-i18n="process_step5">Выполняем работы по чек-листу</li>
-          <li data-i18n="process_step6">Отчёт + следующий шаг</li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="faq" id="faq">
-      <div class="container">
-        <h2 data-i18n="faq_title">Вопросы и ответы</h2>
-        <div class="faq-list">
-          <details>
-            <summary data-i18n="faq_q1">Можно ли обещать точное количество клиентов?</summary>
-            <p data-i18n="faq_a1">Нет. Google и реклама зависят от конкуренции, сезона, региона и качества обработки заявок. Мы фиксируем измеримые метрики и показываем динамику.</p>
-          </details>
-          <details>
-            <summary data-i18n="faq_q2">Можно ли продвигаться без адреса (service area)?</summary>
-            <p data-i18n="faq_a2">Да, но стратегия отличается. Не всегда получится конкурировать с карточками, у которых подтверждён адрес в нужной точке — это обсуждаем на аудите.</p>
-          </details>
-          <details>
-            <summary data-i18n="faq_q3">Нужен ли сайт, если есть карточка?</summary>
-            <p data-i18n="faq_a3">Иногда достаточно карточки. Но сайт усиливает доверие, помогает SEO и делает рекламу эффективнее.</p>
-          </details>
-          <details>
-            <summary data-i18n="faq_q4">Где общаемся?</summary>
-            <p data-i18n="faq_a4">WhatsApp Business / Viber. Быстро отвечаем, используем шаблоны и понятную логику обработки.</p>
-          </details>
+        <div class="section-header">
+          <div class="section-badge">Advantages</div>
+          <h2 class="section-title">Why choose us</h2>
+          <p class="section-desc">We don't just set up ads — we help businesses grow</p>
         </div>
-      </div>
-    </section>
-
-    <section class="contact" id="contact">
-      <div class="container contact-grid">
-        <div>
-          <h2 data-i18n="contact_title">Получите бесплатный мини-аудит вашей карточки</h2>
-          <p class="lead" data-i18n="contact_subtitle">Пришлите ссылку на Google Maps — вернёмся с коротким списком улучшений и приоритетов.</p>
-          <div class="contact-info">
-            <p><strong data-i18n="contact_whatsapp">WhatsApp / Viber:</strong> <a href="https://wa.me/" target="_blank" rel="noreferrer">@parvaly</a></p>
-            <p><strong data-i18n="contact_email">Email:</strong> <a href="mailto:hello@parvaly.com">hello@parvaly.com</a></p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Experience with big brands</h3>
+            <p>We've worked with Litres, CarPrice, Ozon. Now we apply this experience to local US businesses.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Fast lead handling</h3>
+            <p>We set up systems so you receive leads instantly and never lose a customer.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Transparent reporting</h3>
+            <p>Weekly reports with clear metrics. You always know what you're paying for and what results you're getting.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>No empty promises</h3>
+            <p>We're honest about timelines and results. If something doesn't work — we'll suggest an alternative.</p>
           </div>
         </div>
-        <form class="form" id="audit-form">
-          <label>
-            <span data-i18n="form_maps_label">Ссылка на карточку Google Maps</span>
-            <input type="url" name="maps_link" required placeholder="https://maps.google.com/..." />
-          </label>
-          <label>
-            <span data-i18n="form_niche_label">Ниша/услуга</span>
-            <input type="text" name="niche" required />
-          </label>
-          <label>
-            <span data-i18n="form_geo_label">Город/район</span>
-            <input type="text" name="geo" required />
-          </label>
-          <label>
-            <span data-i18n="form_contact_label">Контакт (WhatsApp/Viber)</span>
-            <input type="text" name="contact" required />
-          </label>
-          <button type="submit" class="btn primary" data-i18n="form_submit">Отправить заявку</button>
-          <p class="form-note" data-i18n="form_note">Заявка отправится на нашу почту. Ответим в течение 24–48 часов.</p>
-        </form>
+      </div>
+    </section>
+
+    <section id="testimonials" class="bg-gray">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-badge">Testimonials</div>
+          <h2 class="section-title">What our clients say</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"In 3 months, our Google Maps calls increased 4x. These guys really understand what local businesses need."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">MK</div>
+              <div class="testimonial-info"><h4>Michael K.</h4><p>Restaurant Owner, New York</p></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Finally found an agency that understands the specifics of working with Russian-speaking audience in the US. Instagram now brings clients!"</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">AS</div>
+              <div class="testimonial-info"><h4>Anna S.</h4><p>Beauty Salon, Miami</p></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Launched Meta ads — 380% ROI in the first month. Very professional approach and excellent communication."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">DV</div>
+              <div class="testimonial-info"><h4>Dmitry V.</h4><p>Dental Clinic, Los Angeles</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="container">
+        <h2>Ready to get started?</h2>
+        <p>Get a free audit of your project and learn how to increase your customer flow</p>
+        <a href="#audit" class="btn btn-white btn-lg">Get Free Audit</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">PARVALY</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand"><div class="logo-text">PARVALY</div><p>Marketing agency for US businesses. Google Maps, Meta Ads, Instagram, SEO, and website development.</p></div>
+        <div class="footer-col"><h4>Services</h4><ul><li><a href="/en/services/google-maps.html">Google Maps</a></li><li><a href="/en/services/meta-ads.html">Meta Ads</a></li><li><a href="/en/services/instagram.html">Instagram</a></li><li><a href="/en/services/google-ads.html">Google Ads</a></li><li><a href="/en/services/seo.html">SEO</a></li><li><a href="/en/services/websites.html">Websites</a></li></ul></div>
+        <div class="footer-col"><h4>Company</h4><ul><li><a href="/en/about.html">About</a></li><li><a href="/en/cases.html">Cases</a></li><li><a href="/en/pricing.html">Pricing</a></li><li><a href="/en/contacts.html">Contact</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="https://wa.me/+381638063930">WhatsApp</a></li><li><a href="https://t.me/m/6jro8x-QNmQy">Telegram</a></li></ul></div>
       </div>
-      <div class="footer-block">
-        <h3 data-i18n="footer_legal_title">Реквизиты</h3>
-        <ul class="footer-list">
-          <li><span data-i18n="footer_legal_entity_label">Юр. лицо:</span> SERGEI KALASHNIKOV PR ZLATIBOR</li>
-          <li><span data-i18n="footer_address_label">Адрес:</span> Jovanke Jeftanovića 36, 31315 Zlatibor, Serbia</li>
-          <li><span data-i18n="footer_tax_id_label">ИНН:</span> 115393936</li>
-          <li><span data-i18n="footer_email_label">Email:</span> a1040798s@gmail.com</li>
-        </ul>
-      </div>
-      <div class="footer-block">
-        <h3 data-i18n="footer_payments_title">Оплата (B2B)</h3>
-        <ul class="footer-list">
-          <li><span data-i18n="footer_iban_label">IBAN:</span> RS35190007100005831369</li>
-          <li><span data-i18n="footer_bank_label">Банк:</span> ALTA BANKA AD BEOGRAD</li>
-          <li><span data-i18n="footer_bank_address_label">Адрес банка:</span> Bulevar Zorana Đinđića 121, 11070 Belgrade, Serbia</li>
-          <li><span data-i18n="footer_swift_label">SWIFT/BIC:</span> JMBNRSBG</li>
-          <li><span data-i18n="footer_payment_reference_label">Назначение платежа:</span> Invoice № INV-2 dated 25.12.2025</li>
-        </ul>
-      </div>
-    </div>
-    <div class="container footer-bottom">
-      <p data-i18n="footer_rights">© PARVALY 2025. Все права защищены.</p>
+      <div class="footer-bottom"><p>&copy; 2025 PARVALY. All rights reserved.</p></div>
     </div>
   </footer>
 
+  <div class="floating-buttons">
+    <a href="https://wa.me/+381638063930" class="floating-btn whatsapp" target="_blank">💬</a>
+    <a href="https://t.me/m/6jro8x-QNmQy" class="floating-btn telegram" target="_blank">✈️</a>
+  </div>
   <script src="/script.js"></script>
 </body>
 </html>
