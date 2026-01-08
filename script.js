@@ -20,18 +20,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Contact type toggle (Phone / Telegram)
+  // Contact type toggle (Phone / Telegram) - legacy support
   const contactTypeButtons = document.querySelectorAll('.contact-type-btn');
   const contactInput = document.getElementById('contact-input');
 
   contactTypeButtons.forEach(button => {
     button.addEventListener('click', function() {
-      // Remove active class from all buttons
       contactTypeButtons.forEach(btn => btn.classList.remove('is-active'));
-      // Add active class to clicked button
       this.classList.add('is-active');
 
-      // Update placeholder based on selected type
       const type = this.dataset.type;
       if (contactInput) {
         if (type === 'telegram') {
@@ -45,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Form submission
+  // Legacy audit form submission
   const auditForms = document.querySelectorAll('#audit-form, #contact-form');
 
   auditForms.forEach(form => {
@@ -56,38 +53,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const contactInput = form.querySelector('#contact-input, #contact-value');
         const contactValue = contactInput ? contactInput.value.trim() : '';
 
-        // Get contact type
         const activeTypeBtn = form.querySelector('.contact-type-btn.is-active');
         const contactType = activeTypeBtn ? activeTypeBtn.dataset.type : 'phone';
 
         if (!contactValue) {
-          alert('Пожалуйста, укажите контакт для связи');
+          alert('Please provide contact information');
           return;
         }
 
-        // Prepare data for webhook (Make.com / AmoCRM integration)
         const formData = {
           contact: contactValue,
           contactType: contactType,
           page: window.location.pathname,
           timestamp: new Date().toISOString(),
-          language: document.documentElement.lang || 'ru'
+          language: document.documentElement.lang || 'en'
         };
 
-        // Send to webhook (placeholder URL - replace with actual Make.com webhook)
         const webhookUrl = 'YOUR_MAKE_WEBHOOK_URL';
 
-        // For now, show success message and open messenger
         console.log('Form data:', formData);
 
-        // Hide form and show success message
         form.style.display = 'none';
         const successMessage = document.getElementById('form-success');
         if (successMessage) {
           successMessage.classList.remove('hidden');
         }
 
-        // Optional: Send to webhook if URL is configured
         if (webhookUrl !== 'YOUR_MAKE_WEBHOOK_URL') {
           fetch(webhookUrl, {
             method: 'POST',
@@ -100,6 +91,118 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });
+
+  // Checklist form submission
+  const checklistForm = document.getElementById('checklist-form');
+  if (checklistForm) {
+    checklistForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = {
+        firstName: checklistForm.querySelector('#first-name').value.trim(),
+        email: checklistForm.querySelector('#email').value.trim(),
+        businessName: checklistForm.querySelector('#business-name').value.trim(),
+        cityState: checklistForm.querySelector('#city-state').value.trim(),
+        website: checklistForm.querySelector('#website').value.trim(),
+        gmapsLink: checklistForm.querySelector('#gmaps-link').value.trim(),
+        page: window.location.pathname,
+        timestamp: new Date().toISOString(),
+        formType: 'checklist'
+      };
+
+      console.log('Checklist form data:', formData);
+
+      // TODO: Replace with actual webhook URL
+      const webhookUrl = 'YOUR_MAKE_WEBHOOK_URL';
+
+      if (webhookUrl !== 'YOUR_MAKE_WEBHOOK_URL') {
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        }).catch(err => console.log('Webhook error:', err));
+      }
+
+      // Redirect to confirmation page
+      window.location.href = '/en/checklist-sent.html';
+    });
+  }
+
+  // Intake form submission (Thank You page)
+  const intakeForm = document.getElementById('intake-form');
+  if (intakeForm) {
+    // Show/hide access method field based on ads checkboxes
+    const googleAdsRadios = intakeForm.querySelectorAll('input[name="googleAds"]');
+    const metaAdsRadios = intakeForm.querySelectorAll('input[name="metaAds"]');
+    const accessMethodGroup = document.getElementById('access-method-group');
+
+    function updateAccessMethodVisibility() {
+      const googleAdsYes = intakeForm.querySelector('input[name="googleAds"][value="yes"]:checked');
+      const metaAdsYes = intakeForm.querySelector('input[name="metaAds"][value="yes"]:checked');
+
+      if (accessMethodGroup) {
+        if (googleAdsYes || metaAdsYes) {
+          accessMethodGroup.style.display = 'block';
+        } else {
+          accessMethodGroup.style.display = 'none';
+        }
+      }
+    }
+
+    googleAdsRadios.forEach(radio => {
+      radio.addEventListener('change', updateAccessMethodVisibility);
+    });
+
+    metaAdsRadios.forEach(radio => {
+      radio.addEventListener('change', updateAccessMethodVisibility);
+    });
+
+    intakeForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = {
+        fullName: intakeForm.querySelector('#full-name').value.trim(),
+        email: intakeForm.querySelector('#intake-email').value.trim(),
+        businessName: intakeForm.querySelector('#intake-business').value.trim(),
+        cityState: intakeForm.querySelector('#intake-city').value.trim(),
+        mainChannel: intakeForm.querySelector('#main-channel').value,
+        website: intakeForm.querySelector('#intake-website').value.trim(),
+        gmapsLink: intakeForm.querySelector('#intake-gmaps').value.trim(),
+        instagramLink: intakeForm.querySelector('#intake-instagram').value.trim(),
+        googleAds: intakeForm.querySelector('input[name="googleAds"]:checked')?.value || 'no',
+        metaAds: intakeForm.querySelector('input[name="metaAds"]:checked')?.value || 'no',
+        accessMethod: intakeForm.querySelector('#access-method')?.value.trim() || '',
+        notesGoals: intakeForm.querySelector('#notes-goals').value.trim(),
+        page: window.location.pathname,
+        timestamp: new Date().toISOString(),
+        formType: 'intake'
+      };
+
+      console.log('Intake form data:', formData);
+
+      // TODO: Replace with actual webhook URL
+      const webhookUrl = 'YOUR_MAKE_WEBHOOK_URL';
+
+      if (webhookUrl !== 'YOUR_MAKE_WEBHOOK_URL') {
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        }).catch(err => console.log('Webhook error:', err));
+      }
+
+      // Hide form and show success message
+      intakeForm.style.display = 'none';
+      const successMessage = document.getElementById('intake-success');
+      if (successMessage) {
+        successMessage.classList.remove('hidden');
+      }
+    });
+  }
 
   // Smooth scroll for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -118,8 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Header scroll effect (optional)
-  let lastScrollY = window.scrollY;
+  // Header scroll effect
   const header = document.querySelector('.site-header');
 
   window.addEventListener('scroll', () => {
@@ -130,16 +232,64 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // FAQ accordion (if exists)
+  // FAQ accordion
   const faqItems = document.querySelectorAll('.faq-item');
   faqItems.forEach(item => {
     const question = item.querySelector('.faq-question');
     if (question) {
       question.addEventListener('click', () => {
+        // Close other items
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('is-open');
+          }
+        });
+        // Toggle current item
         item.classList.toggle('is-open');
       });
     }
   });
+
+  // Payment buttons (placeholder - integrate with Stripe/PayPal)
+  const stripeButton = document.getElementById('pay-stripe');
+  const paypalButton = document.getElementById('pay-paypal');
+
+  if (stripeButton) {
+    stripeButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Get selected channel
+      const selectedChannel = document.querySelector('input[name="channel"]:checked')?.value || 'gbp';
+
+      // TODO: Replace with actual Stripe checkout URL
+      // For now, redirect to thank you page for demo
+      console.log('Stripe checkout - Channel:', selectedChannel);
+      alert('Stripe integration coming soon! For now, redirecting to intake form.');
+      window.location.href = '/en/thank-you.html?channel=' + selectedChannel;
+    });
+  }
+
+  if (paypalButton) {
+    paypalButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Get selected channel
+      const selectedChannel = document.querySelector('input[name="channel"]:checked')?.value || 'gbp';
+
+      // TODO: Replace with actual PayPal checkout URL
+      console.log('PayPal checkout - Channel:', selectedChannel);
+      alert('PayPal integration coming soon! For now, redirecting to intake form.');
+      window.location.href = '/en/thank-you.html?channel=' + selectedChannel;
+    });
+  }
+
+  // Pre-fill channel from URL parameter on thank you page
+  const urlParams = new URLSearchParams(window.location.search);
+  const channelParam = urlParams.get('channel');
+  if (channelParam) {
+    const mainChannelSelect = document.getElementById('main-channel');
+    if (mainChannelSelect) {
+      mainChannelSelect.value = channelParam;
+    }
+  }
 });
 
 // Utility function to get current language from URL
