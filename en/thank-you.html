@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Thank you for your purchase. Submit your business information to start your audit.">
+  <title>Thank You — PARVALY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="/en/" class="logo"><img src="/assets/logo.svg" alt="PARVALY"></a>
+        <nav class="nav">
+          <a href="/en/pricing.html">Pricing</a>
+          <a href="/en/video-audit.html">$49 Video Audit</a>
+          <a href="/en/free-checklist.html">Free Checklist</a>
+          <a href="/en/pricing.html#faq">FAQ</a>
+        </nav>
+        <div class="header-actions">
+          <a href="/en/free-checklist.html" class="header-link">Download Free Checklist</a>
+          <a href="/en/video-audit.html" class="btn btn-primary btn-sm">Get $49 Video Audit</a>
+        </div>
+        <button class="mobile-menu-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <nav class="mobile-nav">
+      <a href="/en/pricing.html">Pricing</a>
+      <a href="/en/video-audit.html">$49 Video Audit</a>
+      <a href="/en/free-checklist.html">Free Checklist</a>
+      <a href="/en/pricing.html#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero thank-you-hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="thank-you-check">✓</div>
+          <h1>Thank you — your audit is in progress</h1>
+          <p class="hero-lead">Please submit the information below so we can start immediately.</p>
+          <p class="hero-note">Delivery in 24–48 hours. Chat-only support (no calls).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intake Form -->
+    <section class="bg-gray">
+      <div class="container">
+        <div class="intake-form-container">
+          <h2>Business Information</h2>
+          <form id="intake-form" class="intake-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="full-name">Full name *</label>
+                <input type="text" id="full-name" name="fullName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="intake-email">Email *</label>
+                <input type="email" id="intake-email" name="email" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="intake-business">Business name *</label>
+                <input type="text" id="intake-business" name="businessName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="intake-city">City / State *</label>
+                <input type="text" id="intake-city" name="cityState" class="form-input" placeholder="e.g., Miami, FL" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="main-channel">Main channel selected *</label>
+              <select id="main-channel" name="mainChannel" class="form-input" required>
+                <option value="">Select channel...</option>
+                <option value="gbp">Google Maps (GBP)</option>
+                <option value="google-ads">Google Ads</option>
+                <option value="meta-ads">Meta Ads</option>
+                <option value="instagram">Instagram</option>
+                <option value="seo">SEO</option>
+                <option value="website">Website (WordPress)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="intake-website">Website URL (optional but recommended)</label>
+              <input type="url" id="intake-website" name="website" class="form-input" placeholder="https://...">
+            </div>
+
+            <div class="form-group">
+              <label for="intake-gmaps">Google Maps (GBP) link (if relevant)</label>
+              <input type="url" id="intake-gmaps" name="gmapsLink" class="form-input" placeholder="https://maps.google.com/...">
+            </div>
+
+            <div class="form-group">
+              <label for="intake-instagram">Instagram link (if relevant)</label>
+              <input type="url" id="intake-instagram" name="instagramLink" class="form-input" placeholder="https://instagram.com/...">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Do you run Google Ads?</label>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="googleAds" value="yes">
+                    <span>Yes</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="googleAds" value="no" checked>
+                    <span>No</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Do you run Meta Ads?</label>
+                <div class="radio-group">
+                  <label class="radio-option">
+                    <input type="radio" name="metaAds" value="yes">
+                    <span>Yes</span>
+                  </label>
+                  <label class="radio-option">
+                    <input type="radio" name="metaAds" value="no" checked>
+                    <span>No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="access-method-group" style="display: none;">
+              <label for="access-method">Share access method</label>
+              <textarea id="access-method" name="accessMethod" class="form-input form-textarea" placeholder="Describe how you'll share access to your ads accounts..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="notes-goals">Notes / Goals</label>
+              <textarea id="notes-goals" name="notesGoals" class="form-input form-textarea" placeholder="e.g., More calls, more bookings, improve online visibility..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg form-submit">Submit & Start My Audit</button>
+          </form>
+
+          <div id="intake-success" class="form-success hidden">
+            Perfect — we've received your details. You'll get your PDF + video in 24–48 hours.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo-text">PARVALY</div>
+          <p>Full-service marketing for local businesses. Chat-only. Month-to-month.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/en/pricing.html">Pricing</a></li>
+            <li><a href="/en/video-audit.html">$49 Video Audit</a></li>
+            <li><a href="/en/free-checklist.html">Free Checklist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/en/terms.html">Terms</a></li>
+            <li><a href="/en/privacy.html">Privacy</a></li>
+            <li><a href="/en/refunds.html">Refunds</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="https://wa.me/+381638063930">WhatsApp</a></li>
+            <li><a href="mailto:hello@parvaly.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 PARVALY. All rights reserved.</p>
+        <p class="footer-disclaimer">Ad spend is paid directly to Google/Meta and is not included in our fees.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>
