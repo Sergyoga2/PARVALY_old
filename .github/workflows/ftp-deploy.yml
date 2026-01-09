@@ -24,7 +24,7 @@ jobs:
           protocol: ftp
           port: 21
           local-dir: ./
-          server-dir: /public_html/
+          server-dir: /domains/parvaly.com/public_html/
           log-level: verbose
           exclude: |
             **/.git*
