@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="About PARVALY. Full-service marketing for local businesses. Chat-only, no calls.">
-  <title>About — PARVALY</title>
+  <meta name="description" content="Free Google Business Profile Audit. Get personalized recommendations for your Google Maps listing.">
+  <title>Free Audit — PARVALY</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,76 +37,74 @@
   </header>
 
   <main>
-    <section class="about-hero">
+    <!-- Hero -->
+    <section class="hero">
       <div class="container">
-        <div class="about-content">
-          <div class="about-text">
-            <h1>About PARVALY</h1>
-            <p>We're a marketing team focused on local businesses in the US: clinics, cafés, beauty salons, repair shops, and local services.</p>
-            <p>Our approach is simple: chat-only communication (no calls), clear deliverables, and month-to-month billing with no long-term contracts.</p>
-            <p>We focus on measurable improvements and transparent reporting — not vanity metrics or empty promises.</p>
-          </div>
-          <div class="about-image">💬</div>
+        <div class="hero-content">
+          <h1>Free Google Maps Audit <span class="highlight">(Quick Analysis)</span></h1>
+          <p class="hero-lead">Get a free initial review of your Google Business Profile. We'll contact you via WhatsApp or email with key observations and quick wins.</p>
         </div>
       </div>
     </section>
 
+    <!-- Form Section -->
     <section class="bg-gray">
       <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">How We Work</h2>
-        </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">💬</div>
-            <h3>Chat-Only</h3>
-            <p>All communication via WhatsApp/Email. No calls required. Everything documented.</p>
+        <div class="checklist-grid">
+          <div class="checklist-form-container">
+            <h2>Request Your Free Audit</h2>
+            <form id="audit-form" class="checklist-form">
+              <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" id="name" name="name" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone (optional)</label>
+                <input type="tel" id="phone" name="phone" class="form-input" placeholder="+1 (234) 567-8900">
+              </div>
+              <div class="form-group">
+                <label for="gmaps-link">Google Maps / GBP link (optional)</label>
+                <input type="url" id="gmaps-link" name="gmapsLink" class="form-input" placeholder="https://maps.google.com/...">
+              </div>
+              <div class="form-group">
+                <label for="city-state">City / State (optional)</label>
+                <input type="text" id="city-state" name="cityState" class="form-input" placeholder="e.g., Miami, FL">
+              </div>
+              <div class="form-group">
+                <label for="message">Message (optional)</label>
+                <textarea id="message" name="message" class="form-input" rows="3" placeholder="Tell us about your business or specific concerns..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="consent" name="consent" required>
+                  <span>I agree to the <a href="/terms.html">Terms of Service</a> and acknowledge the <a href="/privacy.html">Privacy Policy</a>. *</span>
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg form-submit">Submit Request</button>
+            </form>
+            <div id="audit-success" class="form-success hidden">
+              <p>✅ Thanks! We received your request. We'll contact you via email or WhatsApp soon.</p>
+            </div>
           </div>
-          <div class="feature-card">
-            <div class="feature-icon">📅</div>
-            <h3>Month-to-Month</h3>
-            <p>No long-term contracts. Cancel anytime. Your marketing, your terms.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Transparent Reporting</h3>
-            <p>Clear monthly reports with actions, results, and next steps. No jargon.</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Clear Deliverables</h3>
-            <p>You know exactly what you're getting each month. No surprises.</p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section>
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">What We Do</h2>
-        </div>
-        <div class="about-services">
-          <p>We manage the full marketing stack for local businesses:</p>
-          <ul>
-            <li><strong>Google Maps (GBP)</strong> — Visibility, posts, photos, Q&A</li>
-            <li><strong>Reviews & Reputation</strong> — Response strategy, review growth</li>
-            <li><strong>Local SEO</strong> — Keywords, pages, citations</li>
-            <li><strong>Instagram + Facebook</strong> — Content system, posts, reels</li>
-            <li><strong>Google Ads + Meta Ads</strong> — Lead generation campaigns</li>
-            <li><strong>WordPress</strong> — Maintenance, edits, landing pages</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-section">
-      <div class="container">
-        <h2>Ready to start?</h2>
-        <p>Get a $49 Video Audit or download our free checklist.</p>
-        <div class="cta-buttons">
-          <a href="/video-audit.html" class="btn btn-white btn-lg">Get $49 Video Audit</a>
-          <a href="/free-checklist.html" class="btn btn-outline-white btn-lg">Download Free Checklist</a>
+          <div class="checklist-info">
+            <h3>What You'll Get</h3>
+            <ul class="checklist-contents">
+              <li>Quick review of your Google Business Profile</li>
+              <li>3-5 key observations and quick wins</li>
+              <li>Contact via WhatsApp or email within 24-48 hours</li>
+              <li>No obligation — completely free</li>
+            </ul>
+            <div class="checklist-next-step">
+              <h3>Want a deeper analysis?</h3>
+              <p>For a comprehensive PDF report + video walkthrough, consider our $49 Video Audit.</p>
+              <a href="/video-audit.html" class="btn btn-outline">Get $49 Video Audit</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
