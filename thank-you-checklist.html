@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Free Local Marketing Checklist PDF. Quick wins for Google Maps, reviews, website, and ads. Built for clinics, cafés, local services.">
-  <title>Free Checklist — PARVALY</title>
+  <meta name="description" content="Thank you for downloading our free local marketing checklist. Your PDF is ready.">
+  <title>Thank You — PARVALY</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -108,67 +108,46 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- Thank You Section -->
     <section class="hero">
       <div class="container">
-        <div class="hero-content">
-          <h1>Free Checklist (PDF): <span class="highlight">Local Marketing Quick Wins (2026)</span></h1>
-          <p class="hero-lead">A practical checklist for Google Maps, reviews, website basics, and ads — built for clinics, cafés, local services, and offline businesses.</p>
+        <div class="hero-content" style="text-align: center; max-width: 600px; margin: 0 auto;">
+          <h1>Thanks! <span class="highlight">Your checklist is ready.</span></h1>
+          <p class="hero-lead" style="margin: 2rem 0;">Click the button below to download your free Local Marketing Quick Wins checklist.</p>
+
+          <div style="margin: 3rem 0;">
+            <a href="/assets/parvaly-checklist.pdf" class="btn btn-primary btn-lg" data-auto-download download>Download PDF</a>
+          </div>
+
+          <p style="font-size: 0.875rem; color: #666; margin-top: 1.5rem;">
+            If download didn't start automatically, click the button above.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- Form Section -->
+    <!-- Next Steps Section -->
     <section class="bg-gray">
       <div class="container">
-        <div class="checklist-grid">
-          <div class="checklist-form-container">
-            <h2>Get Your Free PDF</h2>
-            <form id="checklist-form" class="checklist-form" data-checklist-form>
-              <div class="form-group">
-                <label for="name">Name (optional)</label>
-                <input type="text" id="name" name="name" class="form-input">
-              </div>
-              <div class="form-group">
-                <label for="email">Email *</label>
-                <input type="email" id="email" name="email" class="form-input" required>
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone *</label>
-                <input type="tel" id="phone" name="phone" class="form-input" placeholder="+1 (234) 567-8900" required>
-              </div>
-              <div class="form-group">
-                <label for="telegram">Telegram username (@username) *</label>
-                <input type="text" id="telegram" name="telegram" class="form-input" placeholder="@username" required>
-              </div>
-              <div class="form-group">
-                <label class="checkbox-label">
-                  <input type="checkbox" id="consent" name="consent" required>
-                  <span>I agree to the <a href="/terms.html">Terms of Service</a> and acknowledge the <a href="/privacy.html">Privacy Policy</a>. *</span>
-                </label>
-              </div>
-              <button type="submit" class="btn btn-primary btn-lg form-submit">Send me the PDF</button>
-            </form>
-            <div id="checklist-success" class="form-success hidden">
-              <p>✅ Thanks! We received your request. We'll send details soon.</p>
-            </div>
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+          <h2>What's Next?</h2>
+          <p style="margin: 1.5rem 0 2rem;">Now that you have the checklist, consider getting a personalized plan for your business.</p>
+
+          <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">Get a $49 Video Audit</h3>
+            <ul style="text-align: left; margin: 1.5rem 0; padding-left: 1.5rem;">
+              <li>PDF report (7–12 pages)</li>
+              <li>5–8 min screen-recorded walkthrough</li>
+              <li>One main channel + quick wins from 2–3 related areas</li>
+              <li>30-day action plan</li>
+              <li>Delivered in 24–48 hours</li>
+            </ul>
+            <a href="/video-audit.html" class="btn btn-primary">Get $49 Video Audit</a>
           </div>
 
-          <div class="checklist-info">
-            <h3>What's Inside</h3>
-            <ul class="checklist-contents">
-              <li>Google Maps quick wins checklist</li>
-              <li>Reviews & reputation checklist</li>
-              <li>Website conversion basics</li>
-              <li>Ads starter checklist (common mistakes to avoid)</li>
-              <li>7-day plan + 30-day plan</li>
-            </ul>
-            <div class="checklist-next-step">
-              <h3>Want a personalized plan?</h3>
-              <p>After you download the checklist, consider getting a $49 Video Audit for your specific business.</p>
-              <a href="/video-audit.html" class="btn btn-outline">Get $49 Video Audit</a>
-            </div>
-          </div>
+          <p style="color: #666;">
+            Or <a href="/pricing.html" style="color: #2563eb; text-decoration: underline;">explore our monthly packages</a> for full-service marketing support.
+          </p>
         </div>
       </div>
     </section>
@@ -225,26 +204,38 @@
   <script src="/script.js"></script>
   <script src="/assets/js/cookie-consent.js"></script>
 
-  <!-- Free Checklist Form Handler -->
+  <!-- Meta Pixel Lead Event Tracking -->
   <script>
 (function(){
-  function genEventId() {
-    return 'eid_' + Math.random().toString(16).slice(2) + '_' + Date.now();
+  // Защита от дублей - проверяем sessionStorage
+  if (sessionStorage.getItem('lead_fired_checklist') === '1') return;
+  sessionStorage.setItem('lead_fired_checklist', '1');
+
+  // Отправляем событие Lead в Meta Pixel
+  // Даем время на загрузку fbq из cookie-consent.js
+  setTimeout(function() {
+    try {
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', {
+          content_name: 'Free Checklist',
+          lead_type: 'pdf'
+        });
+        console.log('Meta Pixel Lead event fired');
+      } else {
+        console.warn('fbq not available - user may have rejected marketing cookies');
+      }
+    } catch(e) {
+      console.error('Error firing Lead event:', e);
+    }
+  }, 1500);
+
+  // Авто-скачивание PDF (опционально, через 1.2 секунды)
+  const autoDownloadBtn = document.querySelector('[data-auto-download]');
+  if (autoDownloadBtn) {
+    setTimeout(function(){
+      autoDownloadBtn.click();
+    }, 1200);
   }
-
-  const form = document.querySelector('[data-checklist-form]');
-  if (!form) return;
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-
-    const eventId = genEventId();
-    sessionStorage.setItem('checklist_eid', eventId);
-    // Сбрасываем флаг Lead, чтобы на thank-you точно отстрелилось один раз
-    sessionStorage.removeItem('lead_fired_checklist');
-
-    window.location.href = '/thank-you-checklist.html?eid=' + encodeURIComponent(eventId);
-  });
 })();
 </script>
 </body>
