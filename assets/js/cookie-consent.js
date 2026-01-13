@@ -10,8 +10,8 @@
   const CONFIG = {
     STORAGE_KEY: 'parvaly_cookie_consent',
     CONSENT_DURATION: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months in milliseconds
-    GA_MEASUREMENT_ID: 'G-XXXXXXXXXX', // Replace with actual GA4 Measurement ID
-    META_PIXEL_ID: '000000000000000', // Replace with actual Meta Pixel ID
+    GA_MEASUREMENT_ID: 'G-2RFHJL3ZRL', // Google Analytics 4 Measurement ID
+    META_PIXEL_ID: '907304938344368', // Meta Pixel ID
   };
 
   // Translations
