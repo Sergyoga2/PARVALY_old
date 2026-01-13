@@ -9,8 +9,79 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css?v=20260109">
+  <link rel="stylesheet" href="/assets/css/cookie-consent.css">
 </head>
 <body>
+
+<!-- Cookie Consent Banner (English) -->
+<div id="cookie-consent-banner" role="dialog" aria-labelledby="cookie-banner-title" aria-describedby="cookie-banner-description">
+  <div class="cookie-banner-content">
+    <p id="cookie-banner-description" class="cookie-banner-text">
+      We use cookies to run this site and to improve marketing and analytics. You can accept all, reject non-essential, or choose settings.
+      <a href="/cookies.html" class="cookie-banner-link">Cookie Notice</a>
+    </p>
+  </div>
+  <div class="cookie-banner-actions">
+    <button id="cookie-accept-all" class="cookie-btn cookie-btn-primary">Accept all</button>
+    <button id="cookie-reject" class="cookie-btn cookie-btn-secondary">Reject</button>
+    <button id="cookie-settings-btn" class="cookie-btn cookie-btn-link">Cookie settings</button>
+  </div>
+</div>
+
+<!-- Cookie Settings Modal (English) -->
+<div id="cookie-settings-modal" role="dialog" aria-labelledby="cookie-modal-title" aria-modal="true">
+  <div class="cookie-modal-content">
+    <div class="cookie-modal-header">
+      <h2 id="cookie-modal-title" class="cookie-modal-title">Cookie Settings</h2>
+      <p class="cookie-modal-description">We use cookies to provide a better experience. Choose which types of cookies you want to allow.</p>
+    </div>
+
+    <div class="cookie-modal-body">
+      <!-- Necessary Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3 class="cookie-category-title">Necessary (always on)</h3>
+          <span class="cookie-always-enabled">Always Enabled</span>
+        </div>
+        <p class="cookie-category-description">Essential cookies required for the site to function properly.</p>
+      </div>
+
+      <!-- Analytics Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3 class="cookie-category-title">Analytics (Google Analytics)</h3>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="analytics-toggle" checked>
+            <span class="cookie-toggle-slider"></span>
+            <span class="sr-only">Enable Analytics cookies</span>
+          </label>
+        </div>
+        <p class="cookie-category-description">Help us understand how visitors use our site.</p>
+      </div>
+
+      <!-- Marketing Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <h3 class="cookie-category-title">Marketing (Meta Pixel)</h3>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="marketing-toggle" checked>
+            <span class="cookie-toggle-slider"></span>
+            <span class="sr-only">Enable Marketing cookies</span>
+          </label>
+        </div>
+        <p class="cookie-category-description">Used to track conversions and deliver personalized ads.</p>
+      </div>
+    </div>
+
+    <div class="cookie-modal-footer">
+      <p class="cookie-footer-note">Changes apply going forward.</p>
+      <button id="cookie-save-preferences" class="cookie-btn cookie-btn-primary">Save preferences</button>
+      <button id="cookie-cancel" class="cookie-btn cookie-btn-secondary">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
   <header class="site-header">
     <div class="container">
       <div class="header-content">
@@ -308,6 +379,8 @@
             <li><a href="/refunds.html">Refund</a></li>
             <li><a href="/cookies.html">Cookies</a></li>
             <li><a href="/contacts.html">Contact</a></li>
+            <li><a href="#" id="footer-cookie-settings" class="footer-cookie-link">Cookie settings</a></li>
+
           </ul>
         </div>
         <div class="footer-col">
@@ -330,5 +403,6 @@
     <a href="https://wa.me/+381621483993" class="floating-btn whatsapp" target="_blank" title="WhatsApp">💬</a>
   </div>
   <script src="/script.js"></script>
+  <script src="/assets/js/cookie-consent.js"></script>
 </body>
 </html>
