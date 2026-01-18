@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // Redirect to confirmation page
-      window.location.href = '/en/checklist-sent.html';
+      window.location.href = '/checklist-sent.html';
     });
   }
 
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // For now, redirect to thank you page for demo
       console.log('Stripe checkout - Channel:', selectedChannel);
       alert('Stripe integration coming soon! For now, redirecting to intake form.');
-      window.location.href = '/en/thank-you.html?channel=' + selectedChannel;
+      window.location.href = '/thank-you.html?channel=' + selectedChannel;
     });
   }
 
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // TODO: Replace with actual PayPal checkout URL
       console.log('PayPal checkout - Channel:', selectedChannel);
       alert('PayPal integration coming soon! For now, redirecting to intake form.');
-      window.location.href = '/en/thank-you.html?channel=' + selectedChannel;
+      window.location.href = '/thank-you.html?channel=' + selectedChannel;
     });
   }
 
@@ -295,8 +295,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Utility function to get current language from URL
 function getCurrentLanguage() {
   const path = window.location.pathname;
-  if (path.startsWith('/en/') || path === '/en') {
-    return 'en';
+  if (path.startsWith('/ru/') || path === '/ru') {
+    return 'ru';
   }
-  return 'ru';
+  return 'en';
 }
