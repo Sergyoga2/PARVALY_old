@@ -237,19 +237,23 @@ document.addEventListener('DOMContentLoaded', function() {
   const consultationForm = document.getElementById('consultation-form');
 
   if (floatingConsultationBtn && consultationForm) {
-    window.addEventListener('scroll', () => {
+    const checkButtonVisibility = () => {
       const formRect = consultationForm.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
       // Hide button if consultation form is in viewport
       if (formRect.top < windowHeight && formRect.bottom > 0) {
-        floatingConsultationBtn.style.opacity = '0';
-        floatingConsultationBtn.style.pointerEvents = 'none';
+        floatingConsultationBtn.classList.add('hidden');
       } else {
-        floatingConsultationBtn.style.opacity = '1';
-        floatingConsultationBtn.style.pointerEvents = 'auto';
+        floatingConsultationBtn.classList.remove('hidden');
       }
-    });
+    };
+
+    // Check on scroll
+    window.addEventListener('scroll', checkButtonVisibility);
+
+    // Check on page load
+    checkButtonVisibility();
   }
 
   // Ads channel selection functionality

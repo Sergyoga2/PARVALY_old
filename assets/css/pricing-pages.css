@@ -830,7 +830,7 @@ section {
   box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
   z-index: 999;
   cursor: pointer;
-  transition: all 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
   border: none;
   text-decoration: none;
   display: flex;
@@ -838,6 +838,14 @@ section {
   gap: 8px;
   animation: pulse 2s infinite;
   white-space: nowrap;
+  opacity: 1;
+  visibility: visible;
+}
+
+.floating-consultation-btn.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .floating-consultation-btn:hover {
@@ -869,18 +877,25 @@ section {
 }
 
 /* Not Included with links styling */
+.scope-list.not-included li {
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
 .scope-list.not-included li .available-in {
   display: inline;
-  margin-left: 12px;
+  margin-left: 8px;
   font-size: 0.9rem;
   color: var(--accent);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .scope-list.not-included li .available-in a {
   color: var(--accent);
   text-decoration: underline;
   transition: opacity 0.2s;
+  white-space: normal;
 }
 
 .scope-list.not-included li .available-in a:hover {
