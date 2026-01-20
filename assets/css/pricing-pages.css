@@ -582,11 +582,12 @@ section {
 /* Floating Consultation Button */
 .floating-consultation-btn {
   position: fixed;
-  bottom: 100px;
-  right: 20px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--accent);
   color: white;
-  padding: 16px 24px;
+  padding: 16px 32px;
   border-radius: 50px;
   font-size: 1rem;
   font-weight: 700;
@@ -600,11 +601,12 @@ section {
   align-items: center;
   gap: 8px;
   animation: pulse 2s infinite;
+  white-space: nowrap;
 }
 
 .floating-consultation-btn:hover {
   background: var(--accent-hover);
-  transform: translateY(-4px);
+  transform: translateX(-50%) translateY(-4px);
   box-shadow: 0 8px 30px rgba(37, 99, 235, 0.5);
 }
 
@@ -624,9 +626,8 @@ section {
 
 @media (max-width: 768px) {
   .floating-consultation-btn {
-    bottom: 80px;
-    right: 15px;
-    padding: 14px 20px;
+    bottom: 15px;
+    padding: 14px 24px;
     font-size: 0.9rem;
   }
 }
