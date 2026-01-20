@@ -232,6 +232,78 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // Hide floating consultation button when consultation form is visible
+  const floatingConsultationBtn = document.querySelector('.floating-consultation-btn');
+  const consultationForm = document.getElementById('consultation-form');
+
+  if (floatingConsultationBtn && consultationForm) {
+    window.addEventListener('scroll', () => {
+      const formRect = consultationForm.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Hide button if consultation form is in viewport
+      if (formRect.top < windowHeight && formRect.bottom > 0) {
+        floatingConsultationBtn.style.opacity = '0';
+        floatingConsultationBtn.style.pointerEvents = 'none';
+      } else {
+        floatingConsultationBtn.style.opacity = '1';
+        floatingConsultationBtn.style.pointerEvents = 'auto';
+      }
+    });
+  }
+
+  // Ads channel selection functionality
+  const adsOptions = document.querySelectorAll('.ads-option.selectable');
+  const adsRadios = document.querySelectorAll('.ads-radio');
+
+  adsOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      // Remove selected class from all options
+      adsOptions.forEach(opt => opt.classList.remove('selected'));
+
+      // Add selected class to clicked option
+      this.classList.add('selected');
+
+      // Check the radio button inside this option
+      const radio = this.querySelector('.ads-radio');
+      if (radio) {
+        radio.checked = true;
+      }
+    });
+  });
+
+  // Also handle direct radio button clicks
+  adsRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      adsOptions.forEach(opt => opt.classList.remove('selected'));
+      const parentOption = this.closest('.ads-option.selectable');
+      if (parentOption) {
+        parentOption.classList.add('selected');
+      }
+    });
+  });
+
+  // Package spoiler toggle functionality
+  const spoilerToggles = document.querySelectorAll('.spoiler-toggle');
+
+  spoilerToggles.forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+
+      // Toggle active class on button
+      this.classList.toggle('active');
+
+      // Get the spoiler content ID from data attribute
+      const spoilerId = this.getAttribute('data-spoiler');
+      const spoilerContent = document.getElementById(spoilerId);
+
+      if (spoilerContent) {
+        // Toggle expanded class
+        spoilerContent.classList.toggle('expanded');
+      }
+    });
+  });
+
   // FAQ accordion
   const faqItems = document.querySelectorAll('.faq-item');
   faqItems.forEach(item => {

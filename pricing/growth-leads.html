@@ -120,7 +120,6 @@
         <p class="hero-note-small">Ad spend not included</p>
         <div class="hero-badges">
           
-          <span class="badge">Month-to-month</span>
           
         </div>
       </div>
@@ -136,14 +135,50 @@
             <span class="price-period">/month</span>
           </div>
           <ul class="package-highlights">
-            <li>Everything in Starter Presence package</li>
-            <li>Enhanced Google Business Profile management</li>
-            <li>Review growth kit with QR templates</li>
-            <li>Advanced Local SEO with landing pages</li>
-            <li>Instagram + Facebook (cross-posting)</li>
-            <li>Choose Google Ads OR Meta Ads management</li>
-            <li>Weekly updates + monthly reports</li>
-            <li>Month-to-month, cancel anytime</li>
+            <li class="package-spoiler">
+              <button class="spoiler-toggle" type="button" data-spoiler="starter-highlights">
+                <span class="spoiler-icon">▶</span>
+                Everything in Starter Presence package (click to view)
+              </button>
+              <div class="spoiler-content" id="starter-highlights">
+                <ul class="nested-highlights">
+                  <li>Complete Google Business Profile management (1 location)</li>
+                  <li>Review monitoring & responses (up to 30/month)</li>
+                  <li>Local SEO foundation with citation building</li>
+                  <li>Instagram + Facebook Basic (cross-posting)</li>
+                  <li>Website maintenance & edits (up to 2/month)</li>
+                  <li>Monthly reporting with action plan</li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              Enhanced Google Business Profile management
+              <span class="highlight-tooltip" data-tooltip="More posts (8/month), photos (40/month), services (30 items), Q&A entries (20), and continuous optimization to dominate local search.">ℹ️</span>
+            </li>
+            <li>
+              Review growth kit with QR templates
+              <span class="highlight-tooltip" data-tooltip="Get up to 60 review responses per month plus custom QR codes, templates, and escalation rules to systematically grow your 5-star ratings.">ℹ️</span>
+            </li>
+            <li>
+              Advanced Local SEO with landing pages
+              <span class="highlight-tooltip" data-tooltip="Track 30 keywords, create/improve 4 pages per month, and build 30 citations monthly to establish strong local search authority.">ℹ️</span>
+            </li>
+            <li>
+              Instagram + Facebook (cross-posting)
+              <span class="highlight-tooltip" data-tooltip="Up to 12 posts and 4 Reels per month, cross-posted to both platforms to maintain consistent social presence with minimal effort.">ℹ️</span>
+            </li>
+            <li>
+              Choose Google Ads OR Meta Ads management
+              <span class="highlight-tooltip" data-tooltip="Professional management of either Google Ads or Facebook/Instagram Ads (your choice) with up to 2 campaigns, 10 ad groups/sets, and ongoing optimization.">ℹ️</span>
+            </li>
+            <li>
+              Weekly updates + monthly reports
+              <span class="highlight-tooltip" data-tooltip="Brief weekly chat updates to keep you in the loop, plus comprehensive monthly PDF reports with performance data and action plans.">ℹ️</span>
+            </li>
+            <li>
+              Month-to-month, cancel anytime
+              <span class="highlight-tooltip" data-tooltip="Flexible monthly service with no long-term contracts. Cancel anytime with 30 days notice if you're not satisfied.">ℹ️</span>
+            </li>
           </ul>
         </div>
       </div>
@@ -153,11 +188,36 @@
     <section class="bg-gray">
       <div class="container">
         <h2 class="section-title">What's Included</h2>
-        <p class="section-note">Everything in Starter, plus:</p>
+        <div class="package-inclusion-note">
+          <button class="spoiler-toggle section-level" type="button" data-spoiler="starter-full-details">
+            <span class="spoiler-icon">▶</span>
+            Everything in Starter Presence package (click to view details)
+          </button>
+          <div class="spoiler-content" id="starter-full-details">
+            <div class="included-packages-grid">
+              <div class="included-package-item">
+                <strong>Google Business Profile:</strong> Posts (4/month), Photos (20/month), Services (15 items), Q&A (10 entries)
+              </div>
+              <div class="included-package-item">
+                <strong>Reviews:</strong> Response management (30/month), Basic review request template
+              </div>
+              <div class="included-package-item">
+                <strong>Local SEO:</strong> Keyword tracking (15 keywords), Citations (15/month), Basic on-page optimization
+              </div>
+              <div class="included-package-item">
+                <strong>Social Media:</strong> Instagram + Facebook cross-posting (8 posts/month)
+              </div>
+              <div class="included-package-item">
+                <strong>Website:</strong> Maintenance, backups, security checks, edits (2/month)
+              </div>
+            </div>
+          </div>
+          <p class="section-note" style="margin-top: 16px;"><strong>PLUS everything below:</strong></p>
+        </div>
 
-        <!-- GBP -->
+        <!-- Google Business Profile -->
         <div class="scope-block">
-          <h3>GBP (1 location)</h3>
+          <h3>Google Business Profile (1 location)</h3>
           <ul class="scope-list">
             <li><strong>Google Posts:</strong> up to 6/month</li>
             <li><strong>Photos:</strong> up to 30/month</li>
@@ -199,27 +259,34 @@
         <!-- Ads -->
         <div class="scope-block">
           <h3>Ads Management (choose ONE)</h3>
+          <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 0.95rem;">Select your preferred advertising channel. You can only choose one platform with this package.</p>
           <div class="ads-options">
-            <div class="ads-option">
-              <h4>Option A: Google Ads</h4>
-              <ul class="scope-list">
-                <li>Campaigns: up to 2</li>
-                <li>Ad groups: up to 10 total</li>
-                <li>Creatives: up to 6/month (copy + basic banners)</li>
-                <li>Weekly optimization loop</li>
-                <li>Tracking baseline checks</li>
-              </ul>
-            </div>
-            <div class="ads-option">
-              <h4>Option B: Meta Ads</h4>
-              <ul class="scope-list">
-                <li>Campaigns: up to 2</li>
-                <li>Ad sets: up to 10 total</li>
-                <li>Creatives: up to 6/month (copy + basic banners)</li>
-                <li>Weekly optimization loop</li>
-                <li>Tracking baseline checks</li>
-              </ul>
-            </div>
+            <label class="ads-option selectable" data-option="google">
+              <input type="radio" name="ads-channel" value="google" class="ads-radio">
+              <div class="ads-option-content">
+                <h4>Option A: Google Ads</h4>
+                <ul class="scope-list">
+                  <li>Campaigns: up to 2</li>
+                  <li>Ad groups: up to 10 total</li>
+                  <li>Creatives: up to 6/month (copy + basic banners)</li>
+                  <li>Weekly optimization loop</li>
+                  <li>Tracking baseline checks</li>
+                </ul>
+              </div>
+            </label>
+            <label class="ads-option selectable" data-option="meta">
+              <input type="radio" name="ads-channel" value="meta" class="ads-radio">
+              <div class="ads-option-content">
+                <h4>Option B: Meta Ads</h4>
+                <ul class="scope-list">
+                  <li>Campaigns: up to 2</li>
+                  <li>Ad sets: up to 10 total</li>
+                  <li>Creatives: up to 6/month (copy + basic banners)</li>
+                  <li>Weekly optimization loop</li>
+                  <li>Tracking baseline checks</li>
+                </ul>
+              </div>
+            </label>
           </div>
           <p class="setup-included">Setup included for the selected ad channel (normally $449)</p>
         </div>
@@ -227,8 +294,12 @@
         <!-- Website Support -->
         <div class="scope-block">
           <h3>Website Support</h3>
+          <p style="margin-bottom: 16px; color: var(--text-secondary);">We keep your website up-to-date with content changes, image updates, and minor adjustments to ensure your site stays fresh and effective.</p>
           <ul class="scope-list">
-            <li><strong>Edits:</strong> up to 4/month</li>
+            <li><strong>Edits:</strong> up to 4/month (text updates, image replacements, button/link changes, contact info updates)</li>
+            <li>Basic updates and backups</li>
+            <li>Security monitoring and patches</li>
+            <li>Performance optimization checks</li>
           </ul>
         </div>
       </div>
@@ -309,7 +380,7 @@
             <button type="submit" class="form-submit">Request Consultation</button>
 
             <p class="form-note">
-              By submitting this form, you agree to be contacted by PARVALY about your consultation request. No payment required.
+              By submitting this form, you agree to be contacted by PARVALY about your consultation request.<br>No payment required.
             </p>
           </form>
         </div>
@@ -361,7 +432,6 @@
         <div class="footer-col">
           <h4>Contact</h4>
           <ul>
-            <li>Phone: <a href="tel:+381621483993">+381621483993</a></li>
             <li>Email: <a href="mailto:support@parvaly.com">support@parvaly.com</a></li>
             <li><a href="https://wa.me/+381621483993">WhatsApp</a></li>
           </ul>
