@@ -1178,10 +1178,9 @@ section {
 
 /* ===== FOOTER ===== */
 .site-footer {
-  background: var(--text);
+  background: #0f276b;
   color: white;
   padding: 60px 0 30px;
-  margin-top: 80px;
 }
 
 .footer-grid {
