@@ -237,23 +237,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const consultationForm = document.getElementById('consultation-form');
 
   if (floatingConsultationBtn && consultationForm) {
-    const checkButtonVisibility = () => {
-      const formRect = consultationForm.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+    // Use Intersection Observer for better performance
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // Hide button when form is intersecting viewport
+        if (entry.isIntersecting) {
+          floatingConsultationBtn.classList.add('hidden');
+        } else {
+          floatingConsultationBtn.classList.remove('hidden');
+        }
+      });
+    }, {
+      // Trigger when any part of the form enters the viewport
+      threshold: 0,
+      rootMargin: '0px'
+    });
 
-      // Hide button if consultation form is in viewport
-      if (formRect.top < windowHeight && formRect.bottom > 0) {
-        floatingConsultationBtn.classList.add('hidden');
-      } else {
-        floatingConsultationBtn.classList.remove('hidden');
-      }
-    };
-
-    // Check on scroll
-    window.addEventListener('scroll', checkButtonVisibility);
-
-    // Check on page load
-    checkButtonVisibility();
+    // Start observing the consultation form
+    observer.observe(consultationForm);
   }
 
   // Ads channel selection functionality
