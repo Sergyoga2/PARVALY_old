@@ -734,7 +734,7 @@ section {
 .pricing-features {
   list-style: none;
   text-align: left;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   flex-grow: 1;
 }
 
@@ -1671,6 +1671,7 @@ section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
+  align-items: stretch;
 }
 
 .pricing-card-full {
@@ -1680,6 +1681,9 @@ section {
   padding: 40px 32px;
   text-align: center;
   transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .pricing-card-full:hover {
