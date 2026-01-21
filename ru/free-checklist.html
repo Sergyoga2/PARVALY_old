@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css?v=20260121">
   <link rel="alternate" hreflang="en" href="https://parvaly.com/free-checklist.html">
-  <link rel="alternate" hreflang="ru" href="https://parvaly.com/ru/free-pdf.html">
+  <link rel="alternate" hreflang="ru" href="https://parvaly.com/ru/free-checklist.html">
   <link rel="stylesheet" href="/assets/css/cookie-consent.css">
 </head>
 <body>
@@ -90,19 +90,22 @@
         <a href="/ru/" class="logo"><img src="/assets/logo.svg" alt="PARVALY"></a>
         <nav class="nav">
           <a href="/ru/pricing.html">Цены</a>
-          <a href="/ru/free-audit.html">Бесплатный аудит</a>
-          <a href="/ru/free-pdf.html">Бесплатный PDF</a>
+          <a href="/ru/video-audit.html">$49 Видео Аудит</a>
+          <a href="/ru/free-checklist.html">Бесплатный Чеклист</a>
+          <a href="/ru/pricing.html#faq">FAQ</a>
         </nav>
         <div class="header-actions">
-          <a href="/ru/free-pdf.html" class="btn btn-primary btn-sm">Скачать PDF</a>
+          <a href="/ru/free-checklist.html" class="header-link">Скачать Бесплатный Чеклист</a>
+          <a href="/ru/video-audit.html" class="btn btn-primary btn-sm">Получить $49 Видео Аудит</a>
         </div>
         <button class="mobile-menu-btn" aria-label="Menu"><span></span><span></span><span></span></button>
       </div>
     </div>
     <nav class="mobile-nav">
       <a href="/ru/pricing.html">Цены</a>
-      <a href="/ru/free-audit.html">Бесплатный аудит</a>
-      <a href="/ru/free-pdf.html">Бесплатный PDF</a>
+      <a href="/ru/video-audit.html">$49 Видео Аудит</a>
+      <a href="/ru/free-checklist.html">Бесплатный Чеклист</a>
+      <a href="/ru/pricing.html#faq">FAQ</a>
     </nav>
   </header>
 
@@ -123,7 +126,7 @@
         <div class="checklist-grid">
           <div class="checklist-form-container">
             <h2>Получи свой бесплатный PDF</h2>
-            <form id="checklist-form" class="checklist-form">
+            <form id="checklist-form" class="checklist-form" data-checklist-form>
               <div class="form-group">
                 <label for="name">Имя (необязательно)</label>
                 <input type="text" id="name" name="name" class="form-input">
@@ -164,8 +167,8 @@
             </ul>
             <div class="checklist-next-step">
               <h3>Хочешь персонализированный план?</h3>
-              <p>После скачивания чеклиста, рассмотри возможность получить персональный аудит для твоего конкретного бизнеса.</p>
-              <a href="/ru/free-audit.html" class="btn btn-outline">Получить бесплатный аудит</a>
+              <p>После скачивания чеклиста, рассмотри возможность получить $49 Видео Аудит для твоего конкретного бизнеса.</p>
+              <a href="/ru/video-audit.html" class="btn btn-outline">Получить $49 Видео Аудит</a>
             </div>
           </div>
         </div>
@@ -185,8 +188,9 @@
           <h4>Быстрые ссылки</h4>
           <ul>
             <li><a href="/ru/pricing.html">Цены</a></li>
-            <li><a href="/ru/free-audit.html">Бесплатный аудит</a></li>
-            <li><a href="/ru/free-pdf.html">Бесплатный PDF</a></li>
+            <li><a href="/ru/video-audit.html">$49 Видео Аудит</a></li>
+            <li><a href="/ru/free-checklist.html">Бесплатный Чеклист</a></li>
+            <li><a href="/ru/free-audit.html">Бесплатный Аудит</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -194,9 +198,9 @@
           <ul>
             <li><a href="/ru/privacy.html">Privacy</a></li>
             <li><a href="/ru/terms.html">Terms</a></li>
-            <li><a href="/ru/refund.html">Refund</a></li>
+            <li><a href="/ru/refunds.html">Refund</a></li>
             <li><a href="/ru/cookies.html">Cookies</a></li>
-            <li><a href="/ru/contact.html">Contact</a></li>
+            <li><a href="/ru/contacts.html">Contact</a></li>
             <li><a href="#" id="footer-cookie-settings" class="footer-cookie-link">Настройки cookies</a></li>
 
           </ul>
@@ -204,7 +208,6 @@
         <div class="footer-col">
           <h4>Контакты</h4>
           <ul>
-            <li>Телефон: <a href="tel:+381621483993">+381621483993</a></li>
             <li>Email: <a href="mailto:support@parvaly.com">support@parvaly.com</a></li>
             <li><a href="https://wa.me/+381621483993">WhatsApp</a></li>
           </ul>
@@ -222,5 +225,28 @@
   </div>
   <script src="/script.js"></script>
   <script src="/assets/js/cookie-consent.js"></script>
+
+  <!-- Free Checklist Form Handler -->
+  <script>
+(function(){
+  function genEventId() {
+    return 'eid_' + Math.random().toString(16).slice(2) + '_' + Date.now();
+  }
+
+  const form = document.querySelector('[data-checklist-form]');
+  if (!form) return;
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const eventId = genEventId();
+    sessionStorage.setItem('checklist_eid', eventId);
+    // Сбрасываем флаг Lead, чтобы на thank-you точно отстрелилось один раз
+    sessionStorage.removeItem('lead_fired_checklist');
+
+    window.location.href = '/ru/thank-you-checklist.html?eid=' + encodeURIComponent(eventId);
+  });
+})();
+</script>
 </body>
 </html>
