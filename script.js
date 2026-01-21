@@ -237,6 +237,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const consultationForm = document.getElementById('consultation-form');
 
   if (floatingConsultationBtn && consultationForm) {
+    // Smooth scroll to consultation form on button click
+    floatingConsultationBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      consultationForm.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+
     // Use Intersection Observer for better performance
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
