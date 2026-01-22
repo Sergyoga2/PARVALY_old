@@ -349,8 +349,16 @@ document.addEventListener('DOMContentLoaded', function() {
       // TODO: Replace with actual Stripe checkout URL
       // For now, redirect to thank you page for demo
       console.log('Stripe checkout - Channel:', selectedChannel);
-      alert('Stripe integration coming soon! For now, redirecting to intake form.');
-      window.location.href = '/thank-you.html?channel=' + selectedChannel;
+
+      // Detect language and redirect to appropriate thank you page
+      const isRussian = window.location.pathname.startsWith('/ru/');
+      const thankYouUrl = isRussian ? '/ru/thank-you.html' : '/thank-you.html';
+      const alertMessage = isRussian
+        ? 'Интеграция со Stripe скоро появится! Сейчас перенаправляем на форму.'
+        : 'Stripe integration coming soon! For now, redirecting to intake form.';
+
+      alert(alertMessage);
+      window.location.href = thankYouUrl + '?channel=' + selectedChannel;
     });
   }
 
@@ -362,8 +370,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // TODO: Replace with actual PayPal checkout URL
       console.log('PayPal checkout - Channel:', selectedChannel);
-      alert('PayPal integration coming soon! For now, redirecting to intake form.');
-      window.location.href = '/thank-you.html?channel=' + selectedChannel;
+
+      // Detect language and redirect to appropriate thank you page
+      const isRussian = window.location.pathname.startsWith('/ru/');
+      const thankYouUrl = isRussian ? '/ru/thank-you.html' : '/thank-you.html';
+      const alertMessage = isRussian
+        ? 'Интеграция с PayPal скоро появится! Сейчас перенаправляем на форму.'
+        : 'PayPal integration coming soon! For now, redirecting to intake form.';
+
+      alert(alertMessage);
+      window.location.href = thankYouUrl + '?channel=' + selectedChannel;
     });
   }
 
