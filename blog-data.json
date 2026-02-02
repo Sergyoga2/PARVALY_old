@@ -1,0 +1,32 @@
+{
+  "articles": {
+    "en": [
+      {
+        "id": "example-article",
+        "title": "How to Improve Your Local SEO in 2026",
+        "slug": "improve-local-seo-2026",
+        "description": "Learn the essential strategies to boost your local business visibility in search results and attract more customers.",
+        "author": "PARVALY Team",
+        "date": "2026-02-02",
+        "category": "SEO",
+        "tags": ["SEO", "Local Business", "Google Maps", "Marketing"],
+        "image": "/assets/blog/improve-local-seo-2026.jpg",
+        "published": true
+      }
+    ],
+    "ru": [
+      {
+        "id": "example-article-ru",
+        "title": "Как улучшить локальное SEO в 2026 году",
+        "slug": "uluchshit-lokalnoe-seo-2026",
+        "description": "Узнайте основные стратегии для повышения видимости вашего локального бизнеса в поисковых результатах и привлечения большего числа клиентов.",
+        "author": "Команда PARVALY",
+        "date": "2026-02-02",
+        "category": "SEO",
+        "tags": ["SEO", "Локальный бизнес", "Google Maps", "Маркетинг"],
+        "image": "/assets/blog/improve-local-seo-2026.jpg",
+        "published": true
+      }
+    ]
+  }
+}
