@@ -5,10 +5,12 @@
   "description": "PARVALY bilingual landing page with production blog CMS",
   "scripts": {
     "dev": "node server.js",
+    "prestart": "node api/scripts/ensure-env.js",
     "start": "node api/server.js",
     "migrate": "node api/scripts/migrate-data.js",
     "create-admin": "node api/scripts/create-admin.js",
-    "backup": "node api/scripts/backup.js"
+    "backup": "node api/scripts/backup.js",
+    "check-env": "node api/scripts/ensure-env.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

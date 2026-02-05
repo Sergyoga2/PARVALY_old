@@ -9,6 +9,12 @@
 4. В результате API_BASE снова становится `''` вместо `'https://api.parvaly.com'`
 5. Админка перестает работать (404 ошибки)
 
+### Дополнительная проблема: .env файл
+
+`.env` файл защищен `.gitignore`, но если его нет на сервере, приложение не запустится.
+
+**Решение:** См. [HOSTINGER_ENV_SETUP.md](./HOSTINGER_ENV_SETUP.md) для настройки Environment Variables через Hostinger панель - не нужно создавать `.env` вручную!
+
 ### Корневая причина
 Файлы админки (`admin/login.html`, `assets/js/admin-*.js`) находятся в **обеих ветках** (`main` и `node-js`), но:
 - В `main` - исправленные версии (API_BASE = `https://api.parvaly.com`)
