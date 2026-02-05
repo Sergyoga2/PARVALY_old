@@ -1,6 +1,9 @@
 // PARVALY Admin Dashboard - Production Version with API
 
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+const API_BASE =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'
+    : 'https://api.parvaly.com';
 const API_URL = `${API_BASE}/api`;
 
 // Global state

@@ -1,5 +1,20 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+const fs = require('fs');
+
+// Load environment variables
+// Priority: 1. Hostinger Environment Variables (already in process.env)
+//          2. .env file (loaded by dotenv)
+const envPath = path.join(__dirname, '../.env');
+const hasEnvFile = fs.existsSync(envPath);
+
+require('dotenv').config({ path: envPath });
+
+// Log environment source (helpful for debugging)
+if (process.env.NODE_ENV !== 'test') {
+  const envSource = hasEnvFile ? '.env file' : 'system environment variables';
+  console.log(`📝 Environment loaded from: ${envSource}`);
+}
+
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
