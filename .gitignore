@@ -39,3 +39,6 @@ ecosystem.config.js
 # Temporary files
 tmp/
 temp/
+
+# FTP Deploy state
+.ftp-deploy-sync-state.json

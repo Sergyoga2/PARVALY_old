@@ -26,6 +26,11 @@ jobs:
           local-dir: ./
           server-dir: ./
           log-level: verbose
+          # Only upload changed files, don't delete anything on server
+          dangerous-clean-slate: false
+          # State file to track what has been deployed
+          state-name: .ftp-deploy-sync-state.json
+          # Exclude server-side files and data from deployment
           exclude: |
             **/.git*
             **/.git*/**
@@ -35,3 +40,11 @@ jobs:
             **/package*.json
             **/server.js
             **/.DS_Store
+            **/.env
+            **/.env.*
+            **/api/**
+            **/uploads/**
+            **/logs/**
+            **/blog-data.json
+            **/*.log
+            **/.htaccess
