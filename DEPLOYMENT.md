@@ -1,13 +1,39 @@
-# Deployment Guide - Hostinger Auto-Deploy
+# Deployment Guide - Dual Branch Strategy
 
-## How Auto-Deploy Works
+## Branch Structure
 
-This project uses **Hostinger Node.js App Auto-Deploy**:
+This project uses **separate branches** for frontend and backend:
 
-1. When you merge to `main` branch
-2. Hostinger automatically runs `git pull`
-3. Restarts the Node.js application
-4. Frontend files are updated automatically
+### 🌐 `main` Branch - Static HTML Website
+- **What**: Public website (HTML, CSS, JS)
+- **Deploy**: Manual via Hostinger File Manager or FTP
+- **Contains**: Landing pages, services, pricing, blog pages
+- **Auto-deploy**: ❌ Disabled (manual updates only)
+
+### ⚙️ `node-js` Branch - Node.js API & Admin
+- **What**: Backend API + Admin Panel
+- **Deploy**: Auto-deploy via Hostinger Node.js App
+- **Contains**: `/api/`, `/admin/`, Express server
+- **Auto-deploy**: ✅ Enabled on push to `node-js`
+
+## Workflow
+
+```
+Feature branch → PR → Merge to appropriate branch
+                      ↓
+        main → Manual FTP deploy (HTML site)
+        node-js → Auto-deploy (Node.js app)
+```
+
+## How Auto-Deploy Works (node-js branch only)
+
+When you push to **`node-js`** branch:
+
+1. Hostinger detects the push
+2. Automatically runs `git pull`
+3. Runs `npm install` if package.json changed
+4. Restarts the Node.js application
+5. API and admin panel are updated
 
 ## Protected Files & Folders
 
@@ -37,19 +63,35 @@ The following files/folders are **protected** via `.gitignore` and will **NOT be
 
 ## Deployment Checklist
 
-Before merging to `main`:
+### For Frontend Changes (main branch):
 
+Before merging to `main`:
 1. ✅ Test changes locally
-2. ✅ Ensure `.env` variables are set on Hostinger
-3. ✅ Verify database migrations (if any)
-4. ✅ Check that no sensitive files are committed
-5. ✅ Merge PR to `main`
+2. ✅ Check responsive design
+3. ✅ Verify all links work
+4. ✅ Merge PR to `main`
+5. ✅ Manually upload changed files via Hostinger File Manager
 
 After deployment:
+1. ✅ Clear browser cache
+2. ✅ Verify site: https://your-domain.com
+3. ✅ Test all updated pages
 
-1. ✅ Check application logs on Hostinger
-2. ✅ Verify site is running: https://your-domain.com
-3. ✅ Test admin panel: https://your-domain.com/admin
+### For Backend Changes (node-js branch):
+
+Before merging to `node-js`:
+1. ✅ Test API endpoints locally
+2. ✅ Test admin panel functionality
+3. ✅ Ensure `.env` variables are set on Hostinger
+4. ✅ Verify database migrations (if any)
+5. ✅ Check that no sensitive files are committed
+6. ✅ Merge PR to `node-js` (auto-deploys!)
+
+After deployment:
+1. ✅ Wait for auto-deploy to complete (~1-2 min)
+2. ✅ Check application logs on Hostinger
+3. ✅ Test API: https://your-domain.com/api/articles
+4. ✅ Test admin panel: https://your-domain.com/admin
 
 ## What Gets Updated
 
@@ -82,7 +124,31 @@ FTP deploy workflow is disabled in favor of Hostinger auto-deploy.
 - To manually trigger FTP deploy, use "Actions" → "Deploy to FTP" → "Run workflow"
 - Not recommended while auto-deploy is active
 
+## Hostinger Configuration
+
+### Setting up Node.js App Auto-Deploy
+
+1. Go to Hostinger control panel
+2. Navigate to **Node.js App** settings
+3. In "Settings and redeploy" section:
+   - **Branch**: Change from `main` to `node-js` ⚠️ IMPORTANT
+   - **Entry file**: `api/server.js`
+   - **Node version**: 18.x or higher
+4. Click "Save and redeploy"
+
+This ensures only backend changes trigger auto-deploy, not frontend changes.
+
 ## Support
 
 - Hostinger Docs: https://support.hostinger.com/
 - Node.js App Guide: https://support.hostinger.com/en/articles/5894714-how-to-set-up-a-node-js-application
+
+## Quick Reference
+
+| Task | Branch | Deploy Method |
+|------|--------|---------------|
+| Update landing page | `main` | Manual FTP |
+| Update blog posts (HTML) | `main` | Manual FTP |
+| Update API endpoints | `node-js` | Auto-deploy |
+| Update admin panel | `node-js` | Auto-deploy |
+| Fix admin dashboard bug | `node-js` | Auto-deploy |
