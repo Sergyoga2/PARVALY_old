@@ -1,6 +1,6 @@
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const { testConnection, initDatabase } = require('../config/database');
 const Article = require('../models/Article');
 const User = require('../models/User');

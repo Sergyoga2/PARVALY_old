@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 const readline = require('readline');
 const { testConnection, initDatabase } = require('../config/database');
 const User = require('../models/User');
