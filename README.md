@@ -25,13 +25,17 @@ npm install
 
 ### 2. Configure Environment
 
-Create `.env` file from template:
+**Option A: Automated Setup (Recommended)**
+```bash
+bash setup-env.sh
+```
+Interactive script that creates `.env` with all required settings.
 
+**Option B: Manual Setup**
 ```bash
 cp .env.example .env
 nano .env
 ```
-
 Update with your database credentials and secrets.
 
 ### 3. Create Admin User
@@ -93,12 +97,19 @@ PARVALY_old/
 
 ## 🛠️ Available Scripts
 
+**NPM Scripts:**
 ```bash
 npm start             # Start API server
 npm run dev           # Start frontend server
 npm run create-admin  # Create admin user
 npm run migrate       # Import blog-data.json to MySQL
 npm run backup        # Backup database
+```
+
+**Deployment Scripts:**
+```bash
+bash setup-env.sh     # Create .env file (interactive)
+bash deploy-safe.sh   # Safe deployment (preserves .env)
 ```
 
 ## 📦 Tech Stack
@@ -122,9 +133,15 @@ npm run backup        # Backup database
 
 ## 🌐 Production Deployment
 
+### ⚠️ CRITICAL: .env File Protection
+
+**The `.env` file is NOT in Git and will be deleted during git pull!**
+
+Always use the safe deployment script or manually backup `.env` before pulling code.
+
 ### Hostinger Deployment (Quick Guide)
 
-After pushing code to GitHub and deploying to Hostinger:
+**Initial Setup (First Time):**
 
 ```bash
 # 1. SSH to Hostinger
@@ -136,7 +153,8 @@ cd ~/domains/api.parvaly.com/public_html/
 # 3. Install dependencies
 npm install
 
-# 4. Ensure .env file is configured with production settings
+# 4. Create .env file
+bash setup-env.sh
 
 # 5. Create admin user
 npm run create-admin
@@ -144,6 +162,28 @@ npm run create-admin
 # 6. Setup Node.js app in Hostinger control panel:
 # - Entry point: api/server.js
 # - Node.js version: 18.x or higher
+```
+
+**Updating Code (Safe Deployment):**
+
+```bash
+# Option A: Use safe deployment script (RECOMMENDED)
+bash deploy-safe.sh
+
+# Option B: Manual deployment
+# 1. Backup .env
+cp .env .env.backup
+
+# 2. Pull latest code
+git pull origin main
+
+# 3. Restore .env
+cp .env.backup .env
+
+# 4. Update dependencies if needed
+npm install
+
+# 5. Restart app from Hostinger control panel
 ```
 
 See **[PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md)** for complete instructions:
@@ -179,7 +219,9 @@ No manual file uploads needed! 🎉
 
 ## ⚠️ Important Notes
 
-- `.env` file is not committed (contains secrets)
+- **`.env` file is NOT in Git** - it will be deleted during `git pull`!
+- **Always backup `.env` before deployment** - use `bash deploy-safe.sh`
+- `.env` contains secrets (passwords, JWT keys) - never commit to Git
 - Default dev credentials: admin / parvaly2026
 - Change all secrets before production deployment
 - MySQL must be running before starting API
