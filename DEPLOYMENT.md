@@ -1,5 +1,17 @@
 # Deployment Guide - Dual Branch Strategy
 
+## ⚠️ CRITICAL: Admin Panel File Overwrite Issue
+
+**Problem:** Admin panel files (`admin/`, `assets/js/admin-*.js`) exist in BOTH `main` and `node-js` branches. When Hostinger auto-deploys the `node-js` branch, it overwrites admin files, causing API routing errors (404s).
+
+**Solution:** See [ANTI_REDEPLOY_SOLUTION.md](./ANTI_REDEPLOY_SOLUTION.md) for detailed fix options.
+
+**Quick Fix Applied:** API_BASE in admin files now points to `https://api.parvaly.com` instead of empty string.
+
+**Long-term Solution:** Remove admin files from `node-js` branch - admin panel should only live on `parvaly.com` (main branch).
+
+---
+
 ## Branch Structure
 
 This project uses **separate branches** for frontend and backend:
