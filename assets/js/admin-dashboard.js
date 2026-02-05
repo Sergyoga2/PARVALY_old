@@ -39,22 +39,108 @@ async function checkAuth() {
   }
 }
 
-// Logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  try {
-    await fetch(`${API_URL}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
+// Initialize event listeners
+function initializeEventListeners() {
+  // Logout
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      } catch (error) {
+        console.error('Logout error:', error);
+      } finally {
+        window.location.href = '/admin/login.html';
       }
     });
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    window.location.href = '/admin/login.html';
   }
-});
+
+  // Cancel delete
+  const cancelDeleteBtn = document.getElementById('cancel-delete');
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener('click', () => {
+      deleteArticleId = null;
+      document.getElementById('delete-modal').style.display = 'none';
+    });
+  }
+
+  // Confirm delete action
+  const confirmDeleteBtn = document.getElementById('confirm-delete');
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', async () => {
+      if (!deleteArticleId) return;
+
+      try {
+        const response = await fetch(`${API_URL}/articles/${deleteArticleId}`, {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete article');
+        }
+
+        showMessage('Article deleted successfully!', 'success');
+        document.getElementById('delete-modal').style.display = 'none';
+        deleteArticleId = null;
+
+        // Reload articles
+        await loadBlogData();
+      } catch (error) {
+        console.error('Error deleting article:', error);
+        showMessage('Failed to delete article', 'error');
+      }
+    });
+  }
+
+  // Export data (for backup) - updated selector from 'export-data' to 'export-json-btn'
+  const exportBtn = document.getElementById('export-json-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      try {
+        const dataStr = JSON.stringify(blogData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `parvaly-blog-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showMessage('Data exported successfully!', 'success');
+      } catch (error) {
+        console.error('Export error:', error);
+        showMessage('Failed to export data', 'error');
+      }
+    });
+  }
+
+  // Language toggle - updated selector from '.lang-toggle' to '.lang-tab'
+  document.querySelectorAll('.lang-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      renderArticles(btn.dataset.lang);
+    });
+  });
+
+  // New article button
+  const newArticleBtn = document.getElementById('new-article-btn');
+  if (newArticleBtn) {
+    newArticleBtn.addEventListener('click', () => {
+      window.location.href = `editor.html?lang=${currentLang}`;
+    });
+  }
+}
 
 // Load blog data from API
 async function loadBlogData() {
@@ -128,8 +214,8 @@ function renderArticles(lang) {
   const container = document.getElementById('articles-container');
   const articles = blogData.articles[lang] || [];
 
-  // Update language toggle buttons
-  document.querySelectorAll('.lang-toggle').forEach(btn => {
+  // Update language toggle buttons - updated selector from '.lang-toggle' to '.lang-tab'
+  document.querySelectorAll('.lang-tab').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 
@@ -238,74 +324,6 @@ function confirmDelete(articleId, title) {
   document.getElementById('delete-modal').style.display = 'flex';
 }
 
-// Cancel delete
-document.getElementById('cancel-delete').addEventListener('click', () => {
-  deleteArticleId = null;
-  document.getElementById('delete-modal').style.display = 'none';
-});
-
-// Confirm delete action
-document.getElementById('confirm-delete').addEventListener('click', async () => {
-  if (!deleteArticleId) return;
-
-  try {
-    const response = await fetch(`${API_URL}/articles/${deleteArticleId}`, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete article');
-    }
-
-    showMessage('Article deleted successfully!', 'success');
-    document.getElementById('delete-modal').style.display = 'none';
-    deleteArticleId = null;
-
-    // Reload articles
-    await loadBlogData();
-  } catch (error) {
-    console.error('Error deleting article:', error);
-    showMessage('Failed to delete article', 'error');
-  }
-});
-
-// Export data (for backup)
-document.getElementById('export-data').addEventListener('click', async () => {
-  try {
-    const dataStr = JSON.stringify(blogData, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `parvaly-blog-backup-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    showMessage('Data exported successfully!', 'success');
-  } catch (error) {
-    console.error('Export error:', error);
-    showMessage('Failed to export data', 'error');
-  }
-});
-
-// Language toggle
-document.querySelectorAll('.lang-toggle').forEach(btn => {
-  btn.addEventListener('click', () => {
-    renderArticles(btn.dataset.lang);
-  });
-});
-
-// New article button
-document.getElementById('new-article-btn').addEventListener('click', () => {
-  window.location.href = `editor.html?lang=${currentLang}`;
-});
-
 // Helper functions
 function findArticleById(id) {
   const allArticles = [...blogData.articles.en, ...blogData.articles.ru];
@@ -340,4 +358,7 @@ function showMessage(message, type = 'info') {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', checkAuth);
+document.addEventListener('DOMContentLoaded', () => {
+  initializeEventListeners();
+  checkAuth();
+});

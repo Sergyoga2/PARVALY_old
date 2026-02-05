@@ -1,10 +1,16 @@
-name: Deploy to FTP
+name: Deploy to FTP (DISABLED - Using Hostinger Auto-Deploy)
+
+# Workflow disabled because Hostinger Node.js App auto-deploy is used
+# To re-enable, uncomment the 'on:' section below
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only
 
 jobs:
   deploy:
@@ -26,6 +32,11 @@ jobs:
           local-dir: ./
           server-dir: ./
           log-level: verbose
+          # Only upload changed files, don't delete anything on server
+          dangerous-clean-slate: false
+          # State file to track what has been deployed
+          state-name: .ftp-deploy-sync-state.json
+          # Exclude server-side files and data from deployment
           exclude: |
             **/.git*
             **/.git*/**
@@ -35,3 +46,11 @@ jobs:
             **/package*.json
             **/server.js
             **/.DS_Store
+            **/.env
+            **/.env.*
+            **/api/**
+            **/uploads/**
+            **/logs/**
+            **/blog-data.json
+            **/*.log
+            **/.htaccess
