@@ -18,7 +18,12 @@ api/database/*.db-journal
 # Backups
 backups/
 
-# Uploaded files (optional - comment out if you want to track them)
+# Uploaded files - protect user uploads from git
+uploads/
+assets/uploads/
+api/uploads/
+
+# Static blog images (optional - uncomment to exclude from git)
 # assets/blog/images/*
 # !assets/blog/images/.gitkeep
 
@@ -42,3 +47,8 @@ temp/
 
 # FTP Deploy state
 .ftp-deploy-sync-state.json
+
+# Server configuration (Hostinger specific)
+.htaccess
+.user.ini
+php.ini
