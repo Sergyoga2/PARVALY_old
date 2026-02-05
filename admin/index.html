@@ -79,51 +79,13 @@
         </div>
       </div>
 
-      <!-- Articles Table - English -->
-      <div id="articles-en" class="articles-section">
-        <div class="section-header">
-          <h3>English Articles</h3>
-        </div>
-        <div class="articles-table-container">
-          <table class="articles-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="articles-tbody-en">
-              <!-- Articles will be loaded here -->
-            </tbody>
-          </table>
-        </div>
+      <!-- Articles Container -->
+      <div id="articles-container">
+        <!-- Articles will be loaded here -->
       </div>
 
-      <!-- Articles Table - Russian -->
-      <div id="articles-ru" class="articles-section" style="display: none;">
-        <div class="section-header">
-          <h3>Russian Articles</h3>
-        </div>
-        <div class="articles-table-container">
-          <table class="articles-table">
-            <thead>
-              <tr>
-                <th>Заголовок</th>
-                <th>Категория</th>
-                <th>Дата</th>
-                <th>Статус</th>
-                <th>Действия</th>
-              </tr>
-            </thead>
-            <tbody id="articles-tbody-ru">
-              <!-- Articles will be loaded here -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <!-- Message Display -->
+      <div id="message" class="message" style="display: none;"></div>
 
     </div>
   </main>
@@ -133,7 +95,8 @@
     <div class="modal-overlay"></div>
     <div class="modal-content">
       <h3>Delete Article?</h3>
-      <p>Are you sure you want to delete this article? This action cannot be undone.</p>
+      <p>Are you sure you want to delete "<strong id="delete-article-title"></strong>"?</p>
+      <p>This action cannot be undone.</p>
       <div class="modal-actions">
         <button id="cancel-delete" class="btn btn-outline">Cancel</button>
         <button id="confirm-delete" class="btn btn-danger">Delete</button>
