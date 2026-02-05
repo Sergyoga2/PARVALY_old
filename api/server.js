@@ -1,8 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const path = require('path');
 const { testConnection, initDatabase } = require('./config/database');
 const { helmetConfig, errorHandler } = require('./middleware/security');
 const logger = require('./utils/logger');

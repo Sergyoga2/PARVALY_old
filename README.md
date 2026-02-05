@@ -23,9 +23,16 @@ Professional blog content management system with full backend API, MySQL databas
 npm install
 ```
 
-### 2. Configure Database
+### 2. Configure Environment
 
-Create MySQL database and update `.env` with your credentials.
+Create `.env` file from template:
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Update with your database credentials and secrets.
 
 ### 3. Create Admin User
 
@@ -115,7 +122,31 @@ npm run backup        # Backup database
 
 ## 🌐 Production Deployment
 
-See **[PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md)** for:
+### Hostinger Deployment (Quick Guide)
+
+After pushing code to GitHub and deploying to Hostinger:
+
+```bash
+# 1. SSH to Hostinger
+ssh u707052196@de-fra-web2072.hosting24.eu
+
+# 2. Navigate to your project
+cd ~/domains/api.parvaly.com/public_html/
+
+# 3. Install dependencies
+npm install
+
+# 4. Ensure .env file is configured with production settings
+
+# 5. Create admin user
+npm run create-admin
+
+# 6. Setup Node.js app in Hostinger control panel:
+# - Entry point: api/server.js
+# - Node.js version: 18.x or higher
+```
+
+See **[PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md)** for complete instructions:
 - MySQL setup
 - Environment configuration
 - PM2 process management
