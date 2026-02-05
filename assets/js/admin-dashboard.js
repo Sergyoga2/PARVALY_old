@@ -1,110 +1,324 @@
-// PARVALY Admin Dashboard
+// PARVALY Admin Dashboard - Production Version with API
 
-// Check authentication
-if (localStorage.getItem('blog_admin_auth') !== 'true') {
-  window.location.href = '/admin/login.html';
-}
-
-// Display username
-document.getElementById('admin-username').textContent =
-  localStorage.getItem('blog_admin_user') || 'Admin';
-
-// Logout
-document.getElementById('logout-btn').addEventListener('click', () => {
-  localStorage.removeItem('blog_admin_auth');
-  localStorage.removeItem('blog_admin_user');
-  window.location.href = '/admin/login.html';
-});
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+const API_URL = `${API_BASE}/api`;
 
 // Global state
 let blogData = { articles: { en: [], ru: [] } };
 let currentLang = 'en';
 let deleteArticleId = null;
+let currentUser = null;
 
-// Load blog data
+// Check authentication on page load
+async function checkAuth() {
+  try {
+    const response = await fetch(`${API_URL}/auth/check`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      window.location.href = '/admin/login.html';
+      return;
+    }
+
+    const data = await response.json();
+    currentUser = data.user;
+
+    // Display username
+    document.getElementById('admin-username').textContent = currentUser.username || 'Admin';
+
+    // Load blog data
+    await loadBlogData();
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    window.location.href = '/admin/login.html';
+  }
+}
+
+// Logout
+document.getElementById('logout-btn').addEventListener('click', async () => {
+  try {
+    await fetch(`${API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+  } finally {
+    window.location.href = '/admin/login.html';
+  }
+});
+
+// Load blog data from API
 async function loadBlogData() {
   try {
-    const response = await fetch('/blog-data.json');
-    const data = await response.json();
-    blogData = data;
-    updateStats();
+    showLoadingState(true);
+
+    // Load English articles
+    const responseEn = await fetch(`${API_URL}/articles?language=en`, {
+      credentials: 'include'
+    });
+    const dataEn = await responseEn.json();
+
+    // Load Russian articles
+    const responseRu = await fetch(`${API_URL}/articles?language=ru`, {
+      credentials: 'include'
+    });
+    const dataRu = await responseRu.json();
+
+    // Load stats
+    const statsResponse = await fetch(`${API_URL}/articles/stats/summary`, {
+      credentials: 'include'
+    });
+    const statsData = await statsResponse.json();
+
+    blogData.articles.en = dataEn.articles || [];
+    blogData.articles.ru = dataRu.articles || [];
+
+    updateStats(statsData.stats);
     renderArticles(currentLang);
   } catch (error) {
     console.error('Error loading blog data:', error);
     showMessage('Error loading blog data', 'error');
+  } finally {
+    showLoadingState(false);
   }
 }
 
 // Update statistics
-function updateStats() {
-  const enArticles = blogData.articles.en || [];
-  const ruArticles = blogData.articles.ru || [];
-  const allArticles = [...enArticles, ...ruArticles];
+function updateStats(stats) {
+  if (stats) {
+    document.getElementById('total-articles-en').textContent = stats.total_en || 0;
+    document.getElementById('total-articles-ru').textContent = stats.total_ru || 0;
+    document.getElementById('published-articles').textContent = stats.published || 0;
+    document.getElementById('draft-articles').textContent = stats.drafts || 0;
+  } else {
+    // Fallback to client-side calculation
+    const enArticles = blogData.articles.en || [];
+    const ruArticles = blogData.articles.ru || [];
+    const allArticles = [...enArticles, ...ruArticles];
 
-  document.getElementById('total-articles-en').textContent = enArticles.length;
-  document.getElementById('total-articles-ru').textContent = ruArticles.length;
-  document.getElementById('published-articles').textContent =
-    allArticles.filter(a => a.published).length;
-  document.getElementById('draft-articles').textContent =
-    allArticles.filter(a => !a.published).length;
+    document.getElementById('total-articles-en').textContent = enArticles.length;
+    document.getElementById('total-articles-ru').textContent = ruArticles.length;
+    document.getElementById('published-articles').textContent =
+      allArticles.filter(a => a.published).length;
+    document.getElementById('draft-articles').textContent =
+      allArticles.filter(a => !a.published).length;
+  }
 }
 
-// Render articles table
+// Show/hide loading state
+function showLoadingState(isLoading) {
+  const container = document.getElementById('articles-container');
+  if (isLoading) {
+    container.innerHTML = '<div class="loading">Loading articles...</div>';
+  }
+}
+
+// Render articles list
 function renderArticles(lang) {
+  currentLang = lang;
+  const container = document.getElementById('articles-container');
   const articles = blogData.articles[lang] || [];
-  const tbody = document.getElementById(`articles-tbody-${lang}`);
+
+  // Update language toggle buttons
+  document.querySelectorAll('.lang-toggle').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
 
   if (articles.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-          No articles yet. Click "New Article" to create one.
-        </td>
-      </tr>
+    container.innerHTML = `
+      <div class="empty-state">
+        <p>No ${lang.toUpperCase()} articles yet</p>
+        <button onclick="window.location.href='editor.html?lang=${lang}'" class="btn btn-primary">
+          Create First Article
+        </button>
+      </div>
     `;
     return;
   }
 
-  // Sort by date (newest first)
-  const sortedArticles = [...articles].sort((a, b) =>
-    new Date(b.date) - new Date(a.date)
-  );
+  // Sort articles by date (newest first)
+  articles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  tbody.innerHTML = sortedArticles.map(article => `
-    <tr>
-      <td>
-        <div class="article-title-cell">${article.title}</div>
-        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">
-          /${lang}/blog/${article.slug}.html
-        </div>
-      </td>
-      <td>
-        <span class="article-category-badge">${article.category}</span>
-      </td>
-      <td>${formatDate(article.date)}</td>
-      <td>
-        <span class="article-status ${article.published ? 'status-published' : 'status-draft'}">
-          ${article.published ? '✅ Published' : '📝 Draft'}
-        </span>
-      </td>
-      <td>
-        <div class="article-actions">
-          <button class="btn-icon" onclick="editArticle('${article.id}', '${lang}')" title="Edit">
-            ✏️ Edit
-          </button>
-          <button class="btn-icon" onclick="duplicateArticle('${article.id}', '${lang}')" title="Duplicate">
-            📋 Duplicate
-          </button>
-          <button class="btn-icon btn-delete" onclick="confirmDelete('${article.id}', '${lang}')" title="Delete">
-            🗑️ Delete
-          </button>
-        </div>
-      </td>
-    </tr>
+  container.innerHTML = articles.map(article => `
+    <div class="article-card ${!article.published ? 'draft' : ''}">
+      <div class="article-card-header">
+        <h3>${escapeHtml(article.title)}</h3>
+        <span class="article-status">${article.published ? '✓ Published' : '✎ Draft'}</span>
+      </div>
+      <p class="article-description">${escapeHtml(article.description || '')}</p>
+      <div class="article-meta">
+        <span class="article-category">${escapeHtml(article.category || 'Blog')}</span>
+        <span class="article-date">${formatDate(article.created_at)}</span>
+        <span class="article-author">${escapeHtml(article.author || 'Unknown')}</span>
+      </div>
+      <div class="article-actions">
+        <button onclick="editArticle(${article.id})" class="btn btn-sm btn-secondary">
+          ✏️ Edit
+        </button>
+        <button onclick="duplicateArticle(${article.id})" class="btn btn-sm btn-secondary">
+          📋 Duplicate
+        </button>
+        <button onclick="confirmDelete(${article.id}, '${escapeHtml(article.title)}')" class="btn btn-sm btn-danger">
+          🗑️ Delete
+        </button>
+        ${article.published ? `
+          <a href="/${lang === 'ru' ? 'ru/' : ''}blog/${article.slug}.html"
+             target="_blank" class="btn btn-sm btn-secondary">
+            👁️ View
+          </a>
+        ` : ''}
+      </div>
+    </div>
   `).join('');
 }
 
-// Format date
+// Edit article
+function editArticle(articleId) {
+  window.location.href = `editor.html?id=${articleId}`;
+}
+
+// Duplicate article
+async function duplicateArticle(articleId) {
+  try {
+    const article = findArticleById(articleId);
+    if (!article) return;
+
+    const confirmed = confirm(`Duplicate article "${article.title}"?`);
+    if (!confirmed) return;
+
+    // Create new article with copied data
+    const newArticle = {
+      ...article,
+      title: `${article.title} (Copy)`,
+      slug: `${article.slug}-copy-${Date.now()}`,
+      published: false
+    };
+
+    delete newArticle.id;
+    delete newArticle.created_at;
+    delete newArticle.updated_at;
+
+    const response = await fetch(`${API_URL}/articles`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newArticle)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to duplicate article');
+    }
+
+    const data = await response.json();
+    showMessage('Article duplicated successfully!', 'success');
+
+    // Redirect to edit the new article
+    window.location.href = `editor.html?id=${data.article.id}`;
+  } catch (error) {
+    console.error('Error duplicating article:', error);
+    showMessage('Failed to duplicate article', 'error');
+  }
+}
+
+// Confirm delete
+function confirmDelete(articleId, title) {
+  deleteArticleId = articleId;
+  document.getElementById('delete-article-title').textContent = title;
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+
+// Cancel delete
+document.getElementById('cancel-delete').addEventListener('click', () => {
+  deleteArticleId = null;
+  document.getElementById('delete-modal').style.display = 'none';
+});
+
+// Confirm delete action
+document.getElementById('confirm-delete').addEventListener('click', async () => {
+  if (!deleteArticleId) return;
+
+  try {
+    const response = await fetch(`${API_URL}/articles/${deleteArticleId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete article');
+    }
+
+    showMessage('Article deleted successfully!', 'success');
+    document.getElementById('delete-modal').style.display = 'none';
+    deleteArticleId = null;
+
+    // Reload articles
+    await loadBlogData();
+  } catch (error) {
+    console.error('Error deleting article:', error);
+    showMessage('Failed to delete article', 'error');
+  }
+});
+
+// Export data (for backup)
+document.getElementById('export-data').addEventListener('click', async () => {
+  try {
+    const dataStr = JSON.stringify(blogData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `parvaly-blog-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showMessage('Data exported successfully!', 'success');
+  } catch (error) {
+    console.error('Export error:', error);
+    showMessage('Failed to export data', 'error');
+  }
+});
+
+// Language toggle
+document.querySelectorAll('.lang-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    renderArticles(btn.dataset.lang);
+  });
+});
+
+// New article button
+document.getElementById('new-article-btn').addEventListener('click', () => {
+  window.location.href = `editor.html?lang=${currentLang}`;
+});
+
+// Helper functions
+function findArticleById(id) {
+  const allArticles = [...blogData.articles.en, ...blogData.articles.ru];
+  return allArticles.find(a => a.id === id);
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
@@ -114,145 +328,16 @@ function formatDate(dateString) {
   });
 }
 
-// Language tab switching
-document.querySelectorAll('.lang-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    const lang = tab.dataset.lang;
-    currentLang = lang;
-
-    // Update active tab
-    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    // Show/hide article sections
-    document.getElementById('articles-en').style.display = lang === 'en' ? 'block' : 'none';
-    document.getElementById('articles-ru').style.display = lang === 'ru' ? 'block' : 'none';
-  });
-});
-
-// Edit article
-window.editArticle = function(articleId, lang) {
-  window.location.href = `/admin/editor.html?id=${articleId}&lang=${lang}`;
-};
-
-// Duplicate article
-window.duplicateArticle = function(articleId, lang) {
-  const article = blogData.articles[lang].find(a => a.id === articleId);
-  if (!article) return;
-
-  const newArticle = {
-    ...article,
-    id: `${article.slug}-copy-${Date.now()}`,
-    slug: `${article.slug}-copy`,
-    title: `${article.title} (Copy)`,
-    published: false,
-    date: new Date().toISOString().split('T')[0]
-  };
-
-  blogData.articles[lang].push(newArticle);
-  saveBlogData();
-  showMessage('Article duplicated successfully!', 'success');
-  renderArticles(lang);
-  updateStats();
-};
-
-// Confirm delete
-window.confirmDelete = function(articleId, lang) {
-  deleteArticleId = { id: articleId, lang: lang };
-  document.getElementById('delete-modal').style.display = 'block';
-};
-
-// Cancel delete
-document.getElementById('cancel-delete').addEventListener('click', () => {
-  document.getElementById('delete-modal').style.display = 'none';
-  deleteArticleId = null;
-});
-
-// Confirm delete action
-document.getElementById('confirm-delete').addEventListener('click', () => {
-  if (deleteArticleId) {
-    const { id, lang } = deleteArticleId;
-    blogData.articles[lang] = blogData.articles[lang].filter(a => a.id !== id);
-    saveBlogData();
-    showMessage('Article deleted successfully!', 'success');
-    renderArticles(lang);
-    updateStats();
-    document.getElementById('delete-modal').style.display = 'none';
-    deleteArticleId = null;
-  }
-});
-
-// New article
-document.getElementById('new-article-btn').addEventListener('click', () => {
-  window.location.href = `/admin/editor.html?lang=${currentLang}`;
-});
-
-// Export JSON
-document.getElementById('export-json-btn').addEventListener('click', () => {
-  const dataStr = JSON.stringify(blogData, null, 2);
-  const dataBlob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(dataBlob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `blog-data-${new Date().toISOString().split('T')[0]}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
-  showMessage('Blog data exported successfully!', 'success');
-});
-
-// Save blog data to localStorage (in production, this would be a backend API)
-function saveBlogData() {
-  localStorage.setItem('blog_data', JSON.stringify(blogData));
-}
-
-// Load blog data from localStorage
-function loadBlogDataFromStorage() {
-  const savedData = localStorage.getItem('blog_data');
-  if (savedData) {
-    try {
-      blogData = JSON.parse(savedData);
-    } catch (error) {
-      console.error('Error parsing saved blog data:', error);
-    }
-  }
-}
-
-// Show message
-function showMessage(message, type) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message-banner ${type}`;
-  messageDiv.textContent = message;
-  messageDiv.style.cssText = `
-    position: fixed;
-    top: 5rem;
-    right: 2rem;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius);
-    font-weight: 500;
-    z-index: 3000;
-    box-shadow: var(--shadow-lg);
-    animation: slideIn 0.3s ease;
-  `;
-
-  if (type === 'success') {
-    messageDiv.style.background = '#d1fae5';
-    messageDiv.style.color = '#065f46';
-    messageDiv.style.border = '1px solid #6ee7b7';
-  } else {
-    messageDiv.style.background = '#fee2e2';
-    messageDiv.style.color = '#991b1b';
-    messageDiv.style.border = '1px solid #fca5a5';
-  }
-
-  document.body.appendChild(messageDiv);
+function showMessage(message, type = 'info') {
+  const messageEl = document.getElementById('message');
+  messageEl.textContent = message;
+  messageEl.className = `message message-${type}`;
+  messageEl.style.display = 'block';
 
   setTimeout(() => {
-    messageDiv.remove();
-  }, 3000);
+    messageEl.style.display = 'none';
+  }, 5000);
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  loadBlogDataFromStorage();
-  loadBlogData();
-});
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', checkAuth);
