@@ -23,25 +23,16 @@ Professional blog content management system with full backend API, MySQL databas
 npm install
 ```
 
-### 2. Setup Environment
+### 2. Configure Environment
 
-**Option A: Automated (Recommended)**
-```bash
-bash setup-env.sh
-```
-This interactive script will:
-- Create `.env` file from template
-- Prompt for database credentials
-- Generate secure JWT/Session secrets
-- Configure admin user
-- Set production settings
+Create `.env` file from template:
 
-**Option B: Manual**
 ```bash
 cp .env.example .env
-# Edit .env with your settings
 nano .env
 ```
+
+Update with your database credentials and secrets.
 
 ### 3. Create Admin User
 
@@ -63,7 +54,7 @@ npm run dev
 
 Open: http://localhost:8000/admin/
 
-Login with credentials from step 2/3.
+Login with credentials from step 3.
 
 ## 📖 Full Documentation
 
@@ -145,8 +136,7 @@ cd ~/domains/api.parvaly.com/public_html/
 # 3. Install dependencies
 npm install
 
-# 4. Setup environment (interactive)
-bash setup-env.sh
+# 4. Ensure .env file is configured with production settings
 
 # 5. Create admin user
 npm run create-admin
