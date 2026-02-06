@@ -31,15 +31,33 @@ const uploadRoutes = require('./routes/upload');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Database readiness flag
+let dbReady = false;
+
 // Trust proxy (for rate limiting and IP detection)
 app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmetConfig);
+
+// CORS configuration - allow all required origins
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [
+      process.env.SITE_URL || 'https://parvaly.com',
+      'https://www.parvaly.com',
+      'https://api.parvaly.com'
+    ]
+  : ['http://localhost:8000', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
-    ? [process.env.SITE_URL || 'https://parvaly.com']
-    : ['http://localhost:8000', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -52,14 +70,44 @@ app.use(logger.requestLogger);
 // Serve static files (for testing, in production use nginx)
 app.use(express.static(path.join(__dirname, '..')));
 
-// Health check endpoint
+// Health check endpoint (always available, even if DB is down)
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
     message: 'API is running',
+    database: dbReady ? 'connected' : 'unavailable',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
+});
+
+// Database readiness check middleware for API routes
+app.use('/api/auth', (req, res, next) => {
+  if (!dbReady) {
+    return res.status(503).json({
+      success: false,
+      message: 'Service temporarily unavailable. Database is not connected.'
+    });
+  }
+  next();
+});
+app.use('/api/articles', (req, res, next) => {
+  if (!dbReady) {
+    return res.status(503).json({
+      success: false,
+      message: 'Service temporarily unavailable. Database is not connected.'
+    });
+  }
+  next();
+});
+app.use('/api/upload', (req, res, next) => {
+  if (!dbReady) {
+    return res.status(503).json({
+      success: false,
+      message: 'Service temporarily unavailable. Database is not connected.'
+    });
+  }
+  next();
 });
 
 // API Routes
@@ -78,26 +126,49 @@ app.use('/api/*', (req, res) => {
 // Error handler (must be last)
 app.use(errorHandler);
 
+// Attempt to connect to database (can be retried)
+async function connectDatabase() {
+  try {
+    const connected = await testConnection();
+    if (connected) {
+      await initDatabase();
+      dbReady = true;
+      logger.info('✅ Database connected and tables initialized');
+    } else {
+      logger.error('❌ Failed to connect to database. API will return 503 for DB-dependent routes.');
+      logger.error('💡 Check DB_HOST, DB_USER, DB_PASSWORD, DB_NAME environment variables.');
+    }
+  } catch (error) {
+    logger.error('❌ Database initialization error:', error.message);
+    logger.error('💡 Server will continue running. DB-dependent routes will return 503.');
+  }
+}
+
 // Start server
 async function startServer() {
   try {
-    // Test database connection
-    const dbConnected = await testConnection();
+    // Attempt database connection (non-fatal if fails)
+    await connectDatabase();
 
-    if (!dbConnected) {
-      logger.error('Failed to connect to database. Please check your configuration.');
-      process.exit(1);
+    // Retry DB connection every 30 seconds if not connected
+    if (!dbReady) {
+      const retryInterval = setInterval(async () => {
+        logger.info('🔄 Retrying database connection...');
+        await connectDatabase();
+        if (dbReady) {
+          clearInterval(retryInterval);
+          logger.info('✅ Database reconnected successfully');
+        }
+      }, 30000);
     }
 
-    // Initialize database tables
-    await initDatabase();
-
-    // Start listening
+    // Start listening regardless of DB status
     app.listen(PORT, () => {
       logger.info(`🚀 API Server running on port ${PORT}`);
       logger.info(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`🔗 Health check: http://localhost:${PORT}/api/health`);
-      logger.info('✅ Ready to accept requests');
+      logger.info(`🗄️  Database: ${dbReady ? 'connected' : 'unavailable (retrying every 30s)'}`);
+      logger.info('✅ Server ready to accept requests');
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
@@ -111,10 +182,9 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-// Handle unhandled promise rejections
+// Handle unhandled promise rejections (log but don't crash)
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
 });
 
 // Graceful shutdown

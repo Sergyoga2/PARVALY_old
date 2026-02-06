@@ -43,11 +43,11 @@ const helmetConfig = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com", "https://fonts.googleapis.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      fontSrc: ["'self'", "data:", "https://cdn.quilljs.com"],
-      connectSrc: ["'self'"]
+      fontSrc: ["'self'", "data:", "https://cdn.quilljs.com", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://api.parvaly.com", "https://parvaly.com"]
     }
   },
   hsts: {
