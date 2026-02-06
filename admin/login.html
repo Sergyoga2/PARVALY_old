@@ -107,6 +107,16 @@
           body: JSON.stringify({ username, password })
         });
 
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error(
+            response.status === 503
+              ? 'Server is temporarily unavailable. Please try again in a few minutes.'
+              : `Server returned unexpected response (${response.status}). API may not be running.`
+          );
+        }
+
         const data = await response.json();
 
         if (response.ok && data.success) {
@@ -124,7 +134,7 @@
         }
       } catch (error) {
         console.error('Login error:', error);
-        errorDiv.textContent = 'Connection error. Please check if the API server is running.';
+        errorDiv.textContent = error.message || 'Connection error. Please check if the API server is running.';
         errorDiv.style.display = 'block';
       } finally {
         // Re-enable form
