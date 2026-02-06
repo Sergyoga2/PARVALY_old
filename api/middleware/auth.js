@@ -1,11 +1,45 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const jwtConfig = require('../config/jwt');
 const User = require('../models/User');
 
-// Verify JWT token middleware
+// Verify API Key (for external integrations like Make.com)
+const authenticateApiKey = (req) => {
+  const apiKey = req.headers['x-api-key'];
+  const configuredKey = process.env.API_KEY;
+
+  if (!apiKey || !configuredKey) {
+    return false;
+  }
+
+  // Constant-time comparison to prevent timing attacks
+  return crypto.timingSafeEqual(
+    Buffer.from(apiKey),
+    Buffer.from(configuredKey)
+  );
+};
+
+// Verify JWT token middleware (also accepts API Key)
 const authenticateToken = async (req, res, next) => {
   try {
-    // Get token from cookie or Authorization header
+    // First, check for API Key authentication (for Make.com / external integrations)
+    if (req.headers['x-api-key']) {
+      if (authenticateApiKey(req)) {
+        req.user = {
+          id: 0,
+          username: 'api',
+          email: 'api@parvaly.com',
+          role: 'admin'
+        };
+        return next();
+      }
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid API key.'
+      });
+    }
+
+    // Fall back to JWT token authentication
     const token = req.cookies[jwtConfig.cookieName] ||
                   (req.headers.authorization && req.headers.authorization.split(' ')[1]);
 
