@@ -11,7 +11,7 @@ Google Sheets (content plan) → ChatGPT generates article → Make.com posts to
 
 ```
 📊 Google Sheets       →  🤖 OpenAI (ChatGPT)  →  📋 Parse JSON  →  🌐 HTTP POST        →  📊 Google Sheets
-(pick next topic)         (generate article)       (extract fields)   (parvaly.com/api)      (mark as "Done")
+(pick next topic)         (generate article)       (extract fields)   (api.parvaly.com)      (mark as "Done")
 ```
 
 When `published: true` — PARVALY API automatically:
@@ -205,7 +205,7 @@ Click **"Generate"** → **"Save"**
 
 | Field | Value |
 |-------|-------|
-| **URL** | `https://parvaly.com/api/articles` |
+| **URL** | `https://api.parvaly.com/api/articles` |
 | **Method** | `POST` |
 | **Body type** | `Raw` |
 | **Content type** | `JSON (application/json)` |
@@ -269,7 +269,7 @@ This marks the topic as processed so it won't be picked again.
 
 4. Check the result:
    - Click HTTP module → **Output** tab → should show `"success": true`
-   - Check admin panel: `https://parvaly.com/admin`
+   - Check admin panel: `https://parvaly.com/admin/`
    - Check Google Sheet: Status column should say "Done"
 
 ---
@@ -297,7 +297,7 @@ This marks the topic as processed so it won't be picked again.
 
 ```http
 POST /api/articles
-Host: parvaly.com
+Host: api.parvaly.com
 Content-Type: application/json
 X-API-Key: your-api-key
 
@@ -330,7 +330,7 @@ X-API-Key: your-api-key
 
 ```http
 GET /api/articles?language=en&published=false
-Host: parvaly.com
+Host: api.parvaly.com
 X-API-Key: your-api-key
 ```
 
