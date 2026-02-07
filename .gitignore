@@ -45,10 +45,14 @@ ecosystem.config.js
 tmp/
 temp/
 
+# Astro Blog build output
+astro-blog/dist/
+astro-blog/.astro/
+
 # FTP Deploy state
 .ftp-deploy-sync-state.json
 
-# Server configuration (Hostinger specific)
-.htaccess
+# Server configuration (Hostinger specific, root only)
+/.htaccess
 .user.ini
 php.ini

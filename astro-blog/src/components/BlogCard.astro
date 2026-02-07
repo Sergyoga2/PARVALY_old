@@ -1,0 +1,33 @@
+---
+import { formatDate, slugify } from '../utils/blog';
+
+interface Props {
+  post: any;
+}
+
+const { post } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<article class="blog-card">
+  <a href={`${base}${post.data.slug}/`} class="blog-card-link">
+    <h2 class="blog-card-title">{post.data.title}</h2>
+  </a>
+  <div class="blog-card-meta">
+    <time datetime={post.data.date}>{formatDate(post.data.date)}</time>
+    <span class="separator">&middot;</span>
+    <a href={`${base}category/${slugify(post.data.category)}/`} class="category-link">{post.data.category}</a>
+    {post.data.readingMinutes && (
+      <>
+        <span class="separator">&middot;</span>
+        <span>{post.data.readingMinutes} min read</span>
+      </>
+    )}
+  </div>
+  <p class="blog-card-desc">{post.data.description}</p>
+  <div class="blog-card-tags">
+    {post.data.tags.map((tag: string) => (
+      <a href={`${base}tag/${slugify(tag)}/`} class="tag-pill">{tag}</a>
+    ))}
+  </div>
+</article>

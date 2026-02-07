@@ -1,0 +1,44 @@
+name: Deploy Blog to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'astro-blog/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Blog
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: astro-blog/package-lock.json
+
+      - name: Install dependencies
+        working-directory: astro-blog
+        run: npm ci
+
+      - name: Build blog
+        working-directory: astro-blog
+        run: npm run build
+
+      - name: Deploy to Hostinger via rsync
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: -avz --delete
+          path: astro-blog/dist/
+          remote_path: ${{ secrets.HOSTINGER_TARGET_DIR }}/
+          remote_host: ${{ secrets.HOSTINGER_HOST }}
+          remote_user: ${{ secrets.HOSTINGER_USER }}
+          remote_port: ${{ secrets.HOSTINGER_PORT }}
+          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}

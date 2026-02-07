@@ -1,0 +1,30 @@
+---
+interface Props {
+  links: string[];
+  allPosts: any[];
+}
+
+const { links, allPosts } = Astro.props;
+
+const recommended = links
+  .map(link => {
+    const slug = link.replace(/^\/blog\//, '').replace(/\/$/, '');
+    return allPosts.find(p => p.data.slug === slug);
+  })
+  .filter(Boolean);
+---
+
+{recommended.length > 0 && (
+  <section class="recommended-reading">
+    <h2>Recommended Reading</h2>
+    <ul>
+      {recommended.map(post => (
+        <li>
+          <a href={`${import.meta.env.BASE_URL}${post.data.slug}/`}>
+            {post.data.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

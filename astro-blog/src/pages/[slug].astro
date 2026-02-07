@@ -1,0 +1,105 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+import JsonLdArticle from '../components/JsonLdArticle.astro';
+import JsonLdBreadcrumbs from '../components/JsonLdBreadcrumbs.astro';
+import JsonLdFAQ from '../components/JsonLdFAQ.astro';
+import TOC from '../components/TOC.astro';
+import CTA from '../components/CTA.astro';
+import FAQ from '../components/FAQ.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import RecommendedReading from '../components/RecommendedReading.astro';
+import { getPublishedPosts, getRelatedPosts, getCanonical, formatDate, slugify } from '../utils/blog';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+const allPosts = await getPublishedPosts();
+const relatedPosts = getRelatedPosts(post, allPosts);
+const canonical = getCanonical(post.data.slug, post.data.canonical);
+const base = import.meta.env.BASE_URL;
+
+const breadcrumbs = [
+  { name: 'Home', url: 'https://parvaly.com/' },
+  { name: 'Blog', url: `https://parvaly.com/blog/` },
+  { name: post.data.category, url: `https://parvaly.com/blog/category/${slugify(post.data.category)}/` },
+  { name: post.data.title, url: canonical },
+];
+---
+
+<BaseLayout class="article-page">
+  <Fragment slot="head">
+    <SEO
+      title={post.data.title}
+      description={post.data.description}
+      canonical={canonical}
+      ogType="article"
+      ogImage={post.data.heroImage}
+      ogImageAlt={post.data.heroImageAlt}
+      noindex={post.data.draft}
+    />
+    <JsonLdArticle
+      title={post.data.title}
+      description={post.data.description}
+      datePublished={post.data.date}
+      dateModified={post.data.updated}
+      url={canonical}
+      image={post.data.heroImage}
+    />
+    <JsonLdBreadcrumbs items={breadcrumbs} />
+    <JsonLdFAQ items={post.data.faq} />
+  </Fragment>
+
+  <div class="article-container">
+    <article class="article-content">
+      <header class="article-header">
+        <div class="article-meta">
+          <time datetime={post.data.date}>{formatDate(post.data.date)}</time>
+          <span class="separator">&middot;</span>
+          <a href={`${base}category/${slugify(post.data.category)}/`}>{post.data.category}</a>
+          {post.data.readingMinutes && (
+            <>
+              <span class="separator">&middot;</span>
+              <span>{post.data.readingMinutes} min read</span>
+            </>
+          )}
+        </div>
+        <h1>{post.data.title}</h1>
+        {post.data.heroImage && (
+          <img src={post.data.heroImage} alt={post.data.heroImageAlt || ''} class="hero-image" loading="lazy" />
+        )}
+      </header>
+
+      <TOC headings={headings} />
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="article-tags">
+        {post.data.tags.map((tag: string) => (
+          <a href={`${base}tag/${slugify(tag)}/`} class="tag-pill">{tag}</a>
+        ))}
+      </div>
+    </article>
+
+    <CTA />
+
+    {post.data.internalLinks && post.data.internalLinks.length > 0 && (
+      <RecommendedReading links={post.data.internalLinks} allPosts={allPosts} />
+    )}
+
+    <RelatedPosts posts={relatedPosts} />
+
+    <FAQ items={post.data.faq} />
+  </div>
+</BaseLayout>
