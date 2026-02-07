@@ -1,0 +1,52 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogType?: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  noindex?: boolean;
+  prevPage?: string;
+  nextPage?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogType = 'website',
+  ogImage,
+  ogImageAlt,
+  noindex = false,
+  prevPage,
+  nextPage,
+} = Astro.props;
+
+const fullTitle = `${title} | PARVALY`;
+const robotsContent = noindex ? 'noindex,nofollow' : 'index,follow';
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={robotsContent} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+<meta property="og:site_name" content="PARVALY" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+
+<!-- Pagination -->
+{prevPage && <link rel="prev" href={prevPage} />}
+{nextPage && <link rel="next" href={nextPage} />}

@@ -1,0 +1,21 @@
+---
+interface Props {
+  heading?: string;
+  text?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+}
+
+const {
+  heading = 'Ready to grow your business?',
+  text = 'Get a free SEO audit and discover opportunities to improve your online visibility.',
+  buttonText = 'Get Your Free Audit',
+  buttonUrl = 'https://parvaly.com/free-audit.html',
+} = Astro.props;
+---
+
+<aside class="cta-block">
+  <h2>{heading}</h2>
+  <p>{text}</p>
+  <a href={buttonUrl} class="cta-button">{buttonText}</a>
+</aside>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+---
+
+<BaseLayout class="error-page">
+  <Fragment slot="head">
+    <SEO
+      title="Page Not Found"
+      description="The page you're looking for doesn't exist."
+      canonical="https://parvaly.com/blog/404/"
+      noindex={true}
+    />
+  </Fragment>
+
+  <div class="error-container">
+    <h1>404</h1>
+    <p>The page you're looking for doesn't exist.</p>
+    <a href={import.meta.env.BASE_URL} class="cta-button">Back to Blog</a>
+  </div>
+</BaseLayout>

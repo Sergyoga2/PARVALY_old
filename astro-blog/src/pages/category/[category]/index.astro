@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SEO from '../../../components/SEO.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { getPublishedPosts, paginateArray, getCategories, slugify, POSTS_PER_PAGE } from '../../../utils/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const categories = getCategories(posts);
+  return categories.map(cat => ({
+    params: { category: slugify(cat) },
+    props: { categoryName: cat },
+  }));
+}
+
+const { category } = Astro.params;
+const { categoryName } = Astro.props;
+const posts = await getPublishedPosts();
+const filtered = posts.filter(p => slugify(p.data.category) === category);
+const { data, totalPages } = paginateArray(filtered, 1, POSTS_PER_PAGE);
+const base = import.meta.env.BASE_URL;
+const baseUrl = `${base}category/${category}/`;
+---
+
+<BaseLayout class="listing-page">
+  <Fragment slot="head">
+    <SEO
+      title={`Category: ${categoryName}`}
+      description={`Articles about ${categoryName} - digital marketing tips and guides from PARVALY.`}
+      canonical={`https://parvaly.com/blog/category/${category}/`}
+      nextPage={totalPages > 1 ? `https://parvaly.com/blog/category/${category}/page/2/` : undefined}
+    />
+  </Fragment>
+
+  <div class="listing-container">
+    <header class="listing-header">
+      <p class="listing-label">Category</p>
+      <h1>{categoryName}</h1>
+    </header>
+
+    <div class="post-list">
+      {data.map(post => <BlogCard post={post} />)}
+    </div>
+
+    <Pagination currentPage={1} totalPages={totalPages} baseUrl={baseUrl} />
+  </div>
+</BaseLayout>
