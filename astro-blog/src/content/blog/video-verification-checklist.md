@@ -12,12 +12,12 @@ tags:
   - "google maps"
   - "small business tips"
 faq:
-  - question: "What should be included in a GBP video verification?"
-    answer: "Your video should clearly show your business signage, entrance, workspace, proof of ownership, and any tools or equipment relevant to your operations."
-  - question: "Why does Google Business Profile video verification fail?"
-    answer: "Common reasons include blurry footage, missing required shots, unauthorized locations, or not following Google’s guidelines."
-  - question: "Can I redo the video verification if my first attempt fails?"
-    answer: "Yes, Google typically allows you to try again. Make sure to correct the issues noted in the rejection message and follow the checklist closely."
+  - q: "What should be included in a GBP video verification?"
+    a: "Your video should clearly show your business signage, entrance, workspace, proof of ownership, and any tools or equipment relevant to your operations."
+  - q: "Why does Google Business Profile video verification fail?"
+    a: "Common reasons include blurry footage, missing required shots, unauthorized locations, or not following Google’s guidelines."
+  - q: "Can I redo the video verification if my first attempt fails?"
+    a: "Yes, Google typically allows you to try again. Make sure to correct the issues noted in the rejection message and follow the checklist closely."
 ---
 
 # GBP Video Verification: Checklist That Passes on the First Try
