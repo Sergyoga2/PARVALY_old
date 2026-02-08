@@ -3,7 +3,7 @@ title: "GBP Suspension: Recovery Plan + Evidence Checklist | PARVALY"
 description: "A step-by-step recovery plan for suspended Google Business Profiles: common causes, evidence checklist, and safe next steps."
 slug: "google-business-profile-suspension-guide"
 category: "GBP_SUSPENSION"
-date: "formatDate(now; \"YYYY-MM-DDTHH:mm:ss[Z]\")"
+date: "2026-02-08T00:00:00Z"
 draft: false
 tags:
   - "google business profile"
