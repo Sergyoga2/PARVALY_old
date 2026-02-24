@@ -39,7 +39,7 @@
 | Зависимость | Тип |
 |-------------|-----|
 | TASK-A01 | Базовая data model |
-| SPIKE-02 | CloudPayments trial support |
+| SPIKE-02 | CloudPayments trial sandbox-тест (упрощён: trial не нативно, используем StartDate) |
 
 ---
 

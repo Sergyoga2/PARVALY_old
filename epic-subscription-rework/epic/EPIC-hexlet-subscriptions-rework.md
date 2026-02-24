@@ -143,10 +143,11 @@
 ## Non-Functional Requirements
 
 ### Reliability
-- Billing operations: idempotent (retry-safe)
+- Billing operations: idempotent (retry-safe, CloudPayments `transaction_id` as idempotency key)
 - State transitions: atomic (DB transaction + CloudPayments API call)
 - Jobs (trial expiration, renewal): at-least-once delivery, idempotent processing
-- Grace period: 3 retry с exponential backoff (24ч, +24ч, +48ч)
+- Grace period: CloudPayments управляет retry нативно (3 попытки, 1/день, 72ч). Backend реагирует на Fail-webhooks
+- Рекуррентные платежи: 3D Secure **не применяется** — списания автоматические без подтверждения плательщика
 
 ### Observability
 - Все state transitions логируются с context (user_id, subscription_id, plan, amount)
@@ -193,7 +194,8 @@
 
 | Риск | Impact | Митигация |
 |------|--------|-----------|
-| CloudPayments не поддерживает trial/multi-month | Блокер | Spike до старта |
+| ~~CloudPayments не поддерживает multi-month~~ | ~~Блокер~~ | ✅ **Снят:** `Period=3/6/12, Interval=Month` поддерживается нативно |
+| CloudPayments не поддерживает trial нативно | Средний (снижен) | Решение через `StartDate = now + 7 days`. Sandbox-тест в Spike |
 | Trial каннибализирует direct purchases | Высокий | Staged rollout + kill-метрики |
 | Chargeback рост из-за авто-конвертации | Высокий | Email уведомления, простая отмена |
 | State machine bugs (race conditions) | Средний | DB locks, idempotent jobs, e2e tests |

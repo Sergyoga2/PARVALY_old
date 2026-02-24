@@ -62,7 +62,7 @@ Subscription {
   pause_ends_at: datetime?
 
   // Billing
-  cloudpayments_subscription_id: string?
+  cloudpayments_subscription_id: string?   // формат: "sc_XXXXXXXXXXXX"
   card_token: string?
   next_billing_date: datetime?
 
@@ -86,7 +86,7 @@ BillingAttempt {
   amount: decimal
   currency: string                // "RUB"
   status: enum                    // "success" | "failed" | "pending"
-  attempt_number: int             // 1, 2, 3
+  attempt_number: int             // 1, 2, 3 (CP retry: 3 попытки, 1/день, 72ч)
   cloudpayments_transaction_id: string?
   error_code: string?
   error_message: string?
@@ -108,7 +108,7 @@ BillingAttempt {
 │  TRIAL_USED   — подписки нет (user.trial_used = true)       │
 │  TRIAL        — активный trial (7 дней)                     │
 │  ACTIVE       — активная платная подписка                    │
-│  GRACE_PERIOD — платёж не прошёл, ждём retry (24-72ч)       │
+│  GRACE_PERIOD — платёж не прошёл, ждём retry (до 72ч, 3 попытки CP) │
 │  PAUSED       — подписка на паузе (30 дней)                 │
 │  CANCELLED    — отменена, доступ до конца периода           │
 │  EXPIRED      — доступ закончился                           │
@@ -195,8 +195,8 @@ BillingAttempt {
 | T17 | EXPIRED | ACTIVE | `purchase_plan` | — | Новая подписка, event: subscription_started |
 | T18 | TRIAL_USED | ACTIVE | `purchase_plan` | — | Новая подписка, event: subscription_started |
 | T19 | GRACE_PERIOD | ACTIVE | `retry_success` | Retry-списание прошло | Доступ восстановлен, event: subscription_payment_recovered |
-| T20 | GRACE_PERIOD | EXPIRED | `retry_exhausted` | 3 попытки исчерпаны (для мес. тарифа) | Доступ закрыт, event: subscription_expired_payment_failed |
-| T21 | GRACE_PERIOD | CANCELLED | `retry_exhausted` | 3 попытки исчерпаны (для мультимес.) | Оплаченный период остаётся, автопродление отключено |
+| T20 | GRACE_PERIOD | EXPIRED | `retry_exhausted` | 3 попытки исчерпаны, 72ч прошло (для мес. тарифа). CP автоматически отменяет подписку | Доступ закрыт, event: subscription_expired_payment_failed |
+| T21 | GRACE_PERIOD | CANCELLED | `retry_exhausted` | 3 попытки исчерпаны, 72ч прошло (для мультимес.). CP автоматически отменяет подписку | Оплаченный период остаётся, автопродление отключено |
 
 ### 2.4. Что видит пользователь в каждом состоянии
 
@@ -252,11 +252,13 @@ BillingAttempt {
 
 ## 3. Фоновые процессы (Jobs / Cron)
 
+> **Обновлено 2026-02-24:** При использовании подхода с `StartDate` (подписка создаётся в CP сразу, первое списание отложено на 7 дней), CloudPayments сам управляет авто-конвертацией и retry. `TrialExpirationJob` **не нужен для списания** — только для мониторинга. `GracePeriodRetryJob` **не нужен для рекуррентных платежей** — CP делает 3 retry (1/день) самостоятельно. Job нужен только для синхронизации состояния в нашей БД.
+
 | Job | Частота | Описание | Влияет на переходы |
 |-----|---------|----------|-------------------|
-| `TrialExpirationJob` | каждую минуту | Проверяет trial с trial_ends_at <= now. Инициирует авто-конвертацию | T03, T06 |
-| `SubscriptionRenewalJob` | каждый час | Проверяет подписки с next_billing_date <= now. Инициирует списание | T07, T10 |
-| `GracePeriodRetryJob` | каждый час | Проверяет подписки в grace period с next_retry_at <= now | T19, T20, T21 |
+| `TrialExpirationJob` | каждую минуту | **Мониторинг:** проверяет trial с trial_ends_at <= now. При подходе StartDate CP сам списывает, job обновляет наш статус по webhook | T03, T06 |
+| `SubscriptionRenewalJob` | каждый час | **Мониторинг:** проверяет подписки с next_billing_date <= now. CP управляет renewal, job реагирует на webhooks (Pay/Fail) | T07, T10 |
+| `GracePeriodRetryJob` | каждый час | **Синхронизация:** CP делает 3 retry (1/день, 72ч). Job отслеживает Fail-webhooks и обновляет attempt_number. При 3-м Fail → EXPIRED/CANCELLED | T19, T20, T21 |
 | `PauseExpirationJob` | каждый час | Проверяет паузы с pause_ends_at <= now. Инициирует возобновление | T12 |
 | `CancelledExpirationJob` | каждый час | Проверяет отменённые с current_period_end <= now | T15 |
 | `TrialReminderEmailJob` | каждые 15 мин | Отправляет email за 24ч и 1ч до окончания trial | — (email) |
@@ -280,4 +282,4 @@ BillingAttempt {
 
 6. **Legacy-тарифы не оформляются заново.** plan.generation == "legacy" && plan.is_active == false → невозможно создать новую подписку на этот план.
 
-7. **Grace period — максимум 3 попытки.** attempt_number > 3 → переход в EXPIRED или CANCELLED.
+7. **Grace period — максимум 3 попытки (управляется CloudPayments).** CP делает 3 retry (1/день, 72ч), затем автоматически отменяет подписку. При получении 3-го Fail webhook → переход в EXPIRED или CANCELLED.

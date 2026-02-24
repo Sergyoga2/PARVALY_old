@@ -41,7 +41,7 @@
 | Зависимость | Тип |
 |-------------|-----|
 | TASK-A01 | Data model готова |
-| SPIKE-01 | CloudPayments multi-month подтверждён |
+| ~~SPIKE-01~~ | ✅ Multi-month подтверждён из документации API: `Period=3/6/12, Interval=Month` |
 
 ---
 
@@ -64,29 +64,39 @@ POST /subscriptions/create
   StartDate: <now + duration>     // дата следующего списания
 ```
 
-**Assumption:** CloudPayments поддерживает `Period` > 1 для Month-интервалов. Если нет (выяснится на Spike) — альтернатива: создавать one-time charge + cron job для продления.
+**✅ Подтверждено из документации API (2026-02-24):** CloudPayments поддерживает `Period` > 1 для Month-интервалов. Максимальный интервал — 1 год (Period=12, Interval=Month). Кастомный scheduler не нужен.
+
+**Дополнительно подтверждено:**
+- `subscriptions/update` позволяет менять Amount (для скидок)
+- `subscriptions/cancel` останавливает рекуррент
+- Webhook содержит: TransactionId, Amount, Token, AccountId, SubscriptionId
+- SubscriptionId формат: `"sc_XXXXXXXXXXXX"` (строка)
+- Rate limit: 30 одновременных запросов (production), 5 (test)
+- Sandbox доступен через test terminal ID
 
 ### 2. Webhook обработка
 
 ```
 POST /webhooks/cloudpayments
 
-Типы событий:
-  - recurrent/pay (успешное рекуррентное списание)
-  - recurrent/fail (неуспешное рекуррентное списание)
-  - recurrent/cancel (подписка отменена)
+Типы webhook-ов CloudPayments:
+  - Pay (успешное списание) — содержит: TransactionId, Amount, Token, AccountId, SubscriptionId
+  - Fail (неуспешное списание) — содержит: TransactionId, ReasonCode, Amount, AccountId
+  - Recurrent (статус рекуррента)
+  - Cancel (отмена подписки)
 
-Обработка pay:
-  1. Найти subscription по cloudpayments_subscription_id
-  2. Создать BillingAttempt (status=success)
+Обработка Pay:
+  1. Найти subscription по SubscriptionId (формат: "sc_XXXXXXXXXXXX")
+  2. Создать BillingAttempt (status=success, cloudpayments_transaction_id=TransactionId)
   3. Обновить current_period_start, current_period_end
   4. Отправить event: subscription_renewed
 
-Обработка fail:
+Обработка Fail:
   1. Найти subscription
-  2. Создать BillingAttempt (status=failed, error_code, error_message)
-  3. Если attempt_number < 3: установить next_retry_at
-  4. Если attempt_number >= 3: перевести в соответствующий статус
+  2. Создать BillingAttempt (status=failed, error_code=ReasonCode)
+  3. CloudPayments сам делает retry (3 попытки, 1/день, 72ч) — НЕ управляем retry вручную
+  4. Считаем Fail-webhooks: при 3-м подряд → перевести в EXPIRED/CANCELLED
+  5. Примечание: поля retry_count в webhook НЕТ — считаем на стороне приложения
   5. Отправить event: subscription_payment_failed
 
 Обработка cancel:

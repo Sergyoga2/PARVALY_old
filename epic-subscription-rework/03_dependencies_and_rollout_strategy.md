@@ -4,10 +4,12 @@
 
 ### Внешние зависимости (блокеры)
 
-| Зависимость | Блокирует | Кто отвечает | Срок |
-|-------------|-----------|-------------|------|
-| CloudPayments API: подтверждение multi-month subscriptions | Phase A целиком | Backend + CloudPayments support | Неделя 1-2 (Spike) |
-| CloudPayments API: подтверждение trial → recurring | Phase B целиком | Backend + CloudPayments support | Неделя 1-2 (Spike) |
+> **Обновлено 2026-02-24:** Первые две зависимости разрешены из документации CloudPayments API.
+
+| Зависимость | Блокирует | Статус | Комментарий |
+|-------------|-----------|--------|-------------|
+| ~~CloudPayments API: multi-month subscriptions~~ | ~~Phase A~~ | ✅ **Снята** | `Period=3/6/12, Interval=Month` — поддерживается нативно |
+| ~~CloudPayments API: trial → recurring~~ | ~~Phase B~~ | ✅ **Упрощена** | Trial не нативно, но решение через `StartDate = now + 7 days`. Нужен sandbox-тест |
 | Обновление оферты (юридический текст) | Phase B release | Legal / юрист | Неделя 4-6 |
 | Feature flag инфраструктура | Phase B staged rollout | Fullstack / DevOps | Неделя 2-3 |
 | Email scheduler (cron/queue) | Phase B (email за 24ч/1ч) | Backend | Неделя 3-4 |
@@ -65,7 +67,7 @@ Phase D (зависит от Phase B, C):
 
 ```
 Подготовка:
-  1. Spike CloudPayments multi-month ✓
+  1. Spike CloudPayments multi-month ✓ (подтверждено из документации: Period=3/6/12, Interval=Month)
   2. Data model migration (добавление новых планов) ✓
   3. Billing integration готова ✓
   4. UI новой страницы тарифов за feature flag ✓
@@ -89,7 +91,7 @@ Rollback Phase A:
 
 ```
 Подготовка:
-  1. Spike CloudPayments trial ✓
+  1. Spike CloudPayments trial ✓ (trial не нативно; решение: subscriptions/create с StartDate = now + 7 days)
   2. Trial backend + UI готовы ✓
   3. Email scheduler готов, email-шаблоны утверждены ✓
   4. Оферта обновлена (юрист подтвердил) ✓

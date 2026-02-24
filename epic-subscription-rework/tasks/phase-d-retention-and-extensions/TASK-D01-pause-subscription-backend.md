@@ -59,7 +59,14 @@ class PauseService
     validate_pausable!(subscription)
 
     # 1. Приостановить рекуррент в CloudPayments
-    CloudPaymentsClient.cancel_subscription(subscription.cloudpayments_subscription_id)
+    #    Вариант A: Использовать нативный статус Paused в CP
+    #    POST /subscriptions/update { Status: "Paused" }
+    #    Вариант B: Cancel + recreate при resume
+    #    Рекомендация: Вариант A (CP нативно поддерживает Paused)
+    CloudPaymentsClient.update_subscription(
+      subscription.cloudpayments_subscription_id,
+      status: 'Paused'
+    )
 
     # 2. Обновить подписку
     subscription.update!(

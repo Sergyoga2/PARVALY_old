@@ -16,18 +16,20 @@
 
 ## Goal / Why
 
-Обеспечить корректную обработку неуспешных платежей: при конвертации trial и при renewal обычных подписок. Grace period (24ч) + 3 retry попытки с интервалами.
+Обеспечить корректную обработку неуспешных платежей: при конвертации trial и при renewal обычных подписок.
+
+> **Обновлено 2026-02-24:** CloudPayments **управляет retry нативно**: 3 попытки, 1/день, 72 часа. После 3-й неуспешной — CP автоматически отменяет подписку. Наша задача — **реагировать на Fail-webhooks** и обновлять состояние в БД.
 
 ---
 
 ## Scope
 
-- Grace period: 24ч доступа при первом неуспешном списании
-- Retry: 3 попытки (через 24ч, +24ч, +48ч)
-- GracePeriodRetryJob: cron job для повторных попыток
-- Переход GRACE_PERIOD → ACTIVE (при успехе) или → EXPIRED/CANCELLED (при исчерпании)
-- Email при каждой неуспешной попытке
-- Email при окончательной приостановке
+- Grace period: 72 часа (3 дня) — управляется CloudPayments
+- Retry: 3 попытки с интервалом 1 день — **CP делает это автоматически**
+- GracePeriodRetryJob: **мониторинг/синхронизация** — отслеживает Fail-webhooks, считает attempt_number
+- Переход GRACE_PERIOD → ACTIVE (при Pay webhook) или → EXPIRED/CANCELLED (при 3-м Fail webhook)
+- Email при каждой неуспешной попытке (триггер: Fail webhook)
+- Email при окончательной приостановке (триггер: Cancel webhook после 3 failures)
 
 ## Out of Scope
 
@@ -47,80 +49,82 @@
 
 ## Detailed Implementation Notes
 
-### 1. Retry Schedule
+### 1. Retry Schedule (управляется CloudPayments)
 
 ```
-Попытка 1: В момент auto-conversion / renewal (fail → GRACE_PERIOD)
-Попытка 2: +24 часа
-Попытка 3: +24 часа (48 часов от первой)
-Попытка 4 (финальная): +48 часов (96 часов от первой)
+Попытка 1: В момент auto-conversion / renewal (fail → GRACE_PERIOD, Fail webhook)
+Попытка 2: +24 часа (автоматически от CP, Fail/Pay webhook)
+Попытка 3: +24 часа (автоматически от CP, Fail/Pay webhook)
+После 3-й неуспешной: CP автоматически отменяет подписку (Cancel webhook)
 
-Итого grace period: ~4 дня (96 часов)
+Итого grace period: ~3 дня (72 часа)
 ```
 
-### 2. GracePeriodRetryJob
+**Важно:** CloudPayments управляет retry **самостоятельно**. Мы НЕ инициируем повторные попытки через API. Мы только реагируем на webhooks.
+
+### 2. Webhook-based Grace Period Handler
 
 ```ruby
-class GracePeriodRetryJob
-  # Запускается каждый час
+class GracePeriodWebhookHandler
+  # Вызывается при получении Fail/Pay webhook для подписки в grace_period
 
-  def perform
-    Subscription.where(status: :grace_period)
-                .joins(:billing_attempts)
-                .where('billing_attempts.next_retry_at <= ?', Time.current)
-                .where('billing_attempts.status = ?', 'failed')
-                .distinct
-                .find_each do |subscription|
+  def handle_pay(webhook_payload)
+    subscription = find_subscription(webhook_payload)
+    return unless subscription.status == 'grace_period'
 
-      last_attempt = subscription.billing_attempts.failed.order(created_at: :desc).first
-      next_attempt_number = last_attempt.attempt_number + 1
+    attempt_number = subscription.billing_attempts.count + 1
 
-      if next_attempt_number > 4
-        expire_subscription(subscription)
-        next
-      end
+    subscription.update!(
+      status: :active,
+      current_period_start: Time.current,
+      current_period_end: Time.current + subscription.plan.duration_months.months,
+      next_billing_date: Time.current + subscription.plan.duration_months.months
+    )
 
-      retry_payment(subscription, next_attempt_number)
+    BillingAttempt.create!(
+      subscription: subscription,
+      amount: subscription.plan.total_price,
+      status: :success,
+      attempt_number: attempt_number,
+      cloudpayments_transaction_id: webhook_payload[:transaction_id]
+    )
+
+    Analytics.track('subscription_payment_recovered', user_id: subscription.user_id)
+    SubscriptionMailer.payment_recovered(subscription.user).deliver_later
+  end
+
+  def handle_fail(webhook_payload)
+    subscription = find_subscription(webhook_payload)
+    return unless subscription.status == 'grace_period'
+
+    attempt_number = subscription.billing_attempts.failed.count + 1
+
+    BillingAttempt.create!(
+      subscription: subscription,
+      amount: subscription.plan.total_price,
+      status: :failed,
+      attempt_number: attempt_number,
+      error_code: webhook_payload[:reason_code]
+    )
+
+    # После 3-го Fail: CP сам отменит подписку и пришлёт Cancel webhook
+    # Но на всякий случай проверяем:
+    if attempt_number >= 3
+      expire_subscription(subscription)
     end
+
+    Analytics.track('subscription_payment_failed',
+      user_id: subscription.user_id,
+      attempt_number: attempt_number,
+      error_code: webhook_payload[:reason_code]
+    )
+    SubscriptionMailer.payment_retry_failed(subscription.user, attempt_number).deliver_later
   end
 
   private
 
-  def retry_payment(subscription, attempt_number)
-    result = CloudPaymentsClient.charge_saved_card(
-      token: subscription.card_token,
-      amount: subscription.plan.total_price,
-      account_id: subscription.user_id
-    )
-
-    if result.success?
-      subscription.update!(
-        status: :active,
-        current_period_start: Time.current,
-        current_period_end: Time.current + subscription.plan.duration_months.months,
-        next_billing_date: Time.current + subscription.plan.duration_months.months
-      )
-
-      BillingAttempt.create!(subscription: subscription, amount: subscription.plan.total_price,
-                             status: :success, attempt_number: attempt_number,
-                             cloudpayments_transaction_id: result.transaction_id)
-
-      # Создать рекуррент в CloudPayments (если trial conversion)
-      ensure_recurring_subscription(subscription)
-
-      Analytics.track('subscription_payment_recovered', user_id: subscription.user_id)
-      SubscriptionMailer.payment_recovered(subscription.user).deliver_later
-    else
-      retry_interval = attempt_number < 3 ? 24.hours : 48.hours
-
-      BillingAttempt.create!(subscription: subscription, amount: subscription.plan.total_price,
-                             status: :failed, attempt_number: attempt_number,
-                             error_code: result.error_code, next_retry_at: Time.current + retry_interval)
-
-      Analytics.track('subscription_payment_failed', user_id: subscription.user_id,
-                      attempt_number: attempt_number, error_code: result.error_code)
-      SubscriptionMailer.payment_retry_failed(subscription.user, attempt_number).deliver_later
-    end
+  def find_subscription(webhook_payload)
+    Subscription.find_by!(cloudpayments_subscription_id: webhook_payload[:subscription_id])
   end
 
   def expire_subscription(subscription)
@@ -138,6 +142,24 @@ class GracePeriodRetryJob
 end
 ```
 
+### 2.1. GracePeriodMonitorJob (safety-net)
+
+```ruby
+class GracePeriodMonitorJob
+  # Запускается каждый час — мониторинг, не управление retry
+
+  def perform
+    # Подписки в grace_period дольше 72 часов (CP должен был уже отменить)
+    Subscription.where(status: :grace_period)
+                .where('updated_at <= ?', Time.current - 72.hours)
+                .find_each do |subscription|
+      Rails.logger.warn("Grace period #{subscription.id} exceeded 72h. CP should have cancelled.")
+      AlertService.notify("grace_period_stale", subscription_id: subscription.id)
+    end
+  end
+end
+```
+
 ### 3. Access during Grace Period
 
 - GRACE_PERIOD → доступ **сохранён** (как при ACTIVE)
@@ -147,36 +169,37 @@ end
 
 ## Edge Cases / Failure Cases
 
-1. **Пользователь обновил карту во время grace period:** Нужен endpoint для manual retry. Или: следующий scheduled retry использует новый token.
-2. **Пользователь отменяет во время grace period:** Разрешить. Status → CANCELLED, retry прекращается.
-3. **CloudPayments API timeout при retry:** Считать как failed attempt, но НЕ инкрементировать attempt_number (retry в следующий цикл).
-4. **Все 4 попытки failed для месячного подписчика:** EXPIRED, доступ закрыт. Email: «Подписка приостановлена, оформите заново».
-5. **Все 4 попытки failed для 6-мес подписчика (оплаченный период ещё идёт):** CANCELLED, доступ до current_period_end. Автопродление отключено.
+1. **Пользователь обновил карту во время grace period:** CP предлагает обновить карту через `my.cloudpayments.ru`. Новый token используется автоматически при следующем retry.
+2. **Пользователь отменяет во время grace period:** Разрешить. `subscriptions/cancel` → Status → CANCELLED, CP прекращает retry.
+3. **Все 3 попытки failed для месячного подписчика:** CP автоматически отменяет подписку. Cancel webhook → EXPIRED, доступ закрыт. Email: «Подписка приостановлена, оформите заново».
+4. **Все 3 попытки failed для 6-мес подписчика (оплаченный период ещё идёт):** Cancel webhook → CANCELLED, доступ до current_period_end. Автопродление отключено.
+5. **Webhook не дошёл (сетевая проблема):** GracePeriodMonitorJob через 72ч поднимет alert. Ручная проверка состояния через `GET /subscriptions/get`.
 
 ---
 
 ## Acceptance Criteria
 
-- **Given** первый неуспешный платёж, **When** auto-conversion, **Then** status = GRACE_PERIOD, доступ сохранён
-- **Given** grace period, **When** retry через 24ч успешен, **Then** status → ACTIVE, period обновлён
-- **Given** 4 неуспешные попытки (месячный), **When** retry exhausted, **Then** status → EXPIRED, доступ закрыт
-- **Given** 4 неуспешные попытки (6-мес, period не истёк), **When** retry exhausted, **Then** status → CANCELLED, доступ до period_end
-- **Given** grace period, **When** пользователь отменяет, **Then** status → CANCELLED, retry прекращается
+- **Given** первый Fail webhook, **When** auto-conversion/renewal, **Then** status = GRACE_PERIOD, доступ сохранён
+- **Given** grace period + Pay webhook (retry CP успешен), **Then** status → ACTIVE, period обновлён
+- **Given** 3 Fail webhook подряд (месячный), **Then** status → EXPIRED, доступ закрыт
+- **Given** 3 Fail webhook подряд (6-мес, period не истёк), **Then** status → CANCELLED, доступ до period_end
+- **Given** grace period, **When** пользователь отменяет через `subscriptions/cancel`, **Then** status → CANCELLED, CP прекращает retry
 
 ---
 
 ## Test Cases
 
 ### Unit Tests
-- retry_payment: success → ACTIVE
-- retry_payment: fail → next attempt scheduled
+- handle_pay webhook: GRACE_PERIOD → ACTIVE
+- handle_fail webhook: attempt_number incremented, BillingAttempt created
+- handle_fail webhook (3rd): expire_subscription called
 - expire_subscription: monthly → EXPIRED
 - expire_subscription: multi-month with remaining period → CANCELLED
-- Attempt number correctly incremented
 - Access check: GRACE_PERIOD → access granted
 
-### Integration Tests
-- Full retry cycle: fail → retry → fail → retry → fail → retry → fail → expire
+### Integration Tests (sandbox)
+- Full retry cycle: Fail webhook → Fail webhook → Fail webhook → Cancel webhook → EXPIRED
+- Recovery: Fail webhook → Pay webhook → ACTIVE
 
 ---
 
