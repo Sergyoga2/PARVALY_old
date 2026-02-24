@@ -11,10 +11,10 @@
 | BR05 | Webhook приходит раньше, чем create_subscription завершился | DB lock/upsert, webhook обрабатывается корректно | A |
 | BR06 | Сумма в webhook не совпадает с plan.total_price | Alert + log, обрабатываем (CloudPayments — source of truth) | A |
 | BR07 | Renewal webhook для cancelled подписки | Warning log, подписка НЕ обновляется. Если деньги списались — alert для refund | A |
-| BR08 | Все 4 retry failed для месячного | Status → expired, доступ закрыт | B |
-| BR09 | Все 4 retry failed для 6-мес (период ещё идёт) | Status → cancelled, доступ до period_end | B |
+| BR08 | Все 3 retry failed для месячного (CP auto-cancel после 72ч) | Status → expired, доступ закрыт. CP отменяет подписку и шлёт Cancel webhook | B |
+| BR09 | Все 3 retry failed для 6-мес (период ещё идёт, CP auto-cancel) | Status → cancelled, доступ до period_end | B |
 | BR10 | Скидка применена, renewal failed → retry | Retry с discounted amount | C |
-| BR11 | 3D Secure при рекуррентном списании (auto-conversion) | CloudPayments обрабатывает. Если fails → grace period | B |
+| BR11 | ~~3D Secure при рекуррентном списании (auto-conversion)~~ | ✅ **Не применяется.** 3DS только для первого платежа (привязка карты). Рекуррентные — автоматические без подтверждения | B |
 | BR12 | Пользователь обновил карту во время grace period | Следующий retry использует новый token | B |
 
 ## 2. Trial Abuse / Duplicate Usage
@@ -44,7 +44,7 @@
 |---|------------|-------------------|:-----:|
 | SD01 | CloudPayments отменил подписку (dashboard), но в нашей DB — active | Webhook cancel → обновить status. Если webhook потерян — мониторинг расхождений | A |
 | SD02 | Наша DB: cancelled, CloudPayments: active (рекуррент не отменён) | Renewal webhook → warning log, don't process. Нужен reconciliation job | A |
-| SD03 | Trial expired в нашей DB, но CloudPayments не знает | CloudPayments не управляет trial (если Вариант B). Нет десинка | B |
+| SD03 | Trial expired в нашей DB, но CloudPayments не списал | При подходе StartDate: CP знает о подписке. Если CP не списал по StartDate — проблема на стороне CP. TrialExpirationJob поднимет alert через 1ч после trial_ends_at | B |
 | SD04 | Пауза: рекуррент отменён в CP, но resume fails → subscr в limbo | Rollback pause: если resume payment fails, статус обратно в paused | D |
 
 ## 5. Email Timing

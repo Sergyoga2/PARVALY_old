@@ -42,46 +42,63 @@
 | Зависимость | Тип |
 |-------------|-----|
 | TASK-B01 | Trial data model |
-| SPIKE-02 | CloudPayments trial / card tokenization |
+| SPIKE-02 | CloudPayments trial sandbox-тест (упрощён) |
 
 ---
 
 ## Detailed Implementation Notes
 
-### 1. Card Tokenization Options
+> **Обновлено 2026-02-24:** Исследование CloudPayments API показало, что trial **не поддерживается нативно**. Рекомендуемый подход — **Вариант A (отложенная подписка через StartDate)**. Вариант B (token + scheduler) оставлен как fallback.
 
-В зависимости от результата Spike-02, одна из двух стратегий:
+### 1. Card Tokenization и Trial — рекомендуемый подход
 
-**Вариант A: CloudPayments natively supports trial**
+**✅ Рекомендуемый: Вариант A — Отложенная подписка через StartDate**
+
+Создаём подписку сразу, но с `StartDate = now + 7 days`. CloudPayments сам выполнит первое списание через 7 дней. Отмена trial = `subscriptions/cancel`.
+
 ```
+// Шаг 1: Виджет с tokenize + recurrent
+const widget = new cp.CloudPayments();
+widget.start({
+  publicTerminalId: "pk_...",
+  amount: 1,                      // 1 ₽ верификационный платёж (или tokenize без charge — проверить в sandbox)
+  currency: "RUB",
+  tokenize: true,
+  recurrent: {
+    period: 1,
+    interval: 'Month',
+    amount: 3900,
+    startDate: trial_ends_at       // now + 7 days — первое списание через 7 дней
+  }
+});
+
+// Результат: подписка создана в CP с StartDate = now + 7 days
+// CP вернёт: SubscriptionId (формат "sc_XXXXXXXXXXXX"), Token
+// Первое списание 3 900 ₽ произойдёт автоматически через 7 дней
+// 3D Secure применяется ТОЛЬКО сейчас, не при рекуррентном списании
+```
+
+**Fallback: Вариант B — Token + deferred subscription (если StartDate не работает как ожидается)**
+```
+// Шаг 1: Токенизация через виджет с tokenize: true (без recurrent)
+// Шаг 2: Сохраняем card_token в нашей БД
+// Шаг 3: Через 7 дней (TrialExpirationJob) создаём подписку через API:
 POST /subscriptions/create
-  Token: <card_cryptogram>
+  Token: <saved_card_token>
   AccountId: <user_id>
   Amount: 3900
   Currency: RUB
-  StartDate: now + 7 days  // первое списание через 7 дней
   Interval: Month
   Period: 1
 ```
 
-**Вариант B: Tokenization + deferred subscription (если trial не поддерживается)**
-```
-// Шаг 1: Токенизация через charge 1 ₽ + immediate refund
-POST /payments/charge
-  Amount: 1
-  Currency: RUB
-  Token: <card_cryptogram>
-  // → получаем card_token
+**Что проверить в sandbox (SPIKE-02):**
+1. Подписка с `startDate = now + 7 days` через виджет — подтвердить автоматическое списание
+2. Cancel подписки до StartDate — подтвердить отсутствие списания
+3. Какой webhook приходит при первом списании (Pay? Recurrent?)
+4. Нужен ли верификационный платёж 1 ₽ или достаточно `tokenize: true`
 
-// Шаг 2: Сохраняем card_token в subscription
-// Шаг 3: Через 7 дней (cron) создаём подписку с card_token
-POST /subscriptions/create
-  Token: <saved_card_token>
-  Amount: 3900
-  ...
-```
-
-### 2. Backend Flow
+### 2. Backend Flow (подход StartDate)
 
 ```ruby
 class TrialService
@@ -89,22 +106,34 @@ class TrialService
     # 1. Validate: trial available (B01 validations)
     raise TrialNotAvailable unless user.can_activate_trial?
 
-    # 2. Tokenize card via CloudPayments
-    card_token = CloudPaymentsClient.tokenize(
-      cryptogram: card_cryptogram,
-      account_id: user.id
-    )
+    trial_ends_at = Time.current + 7.days
 
-    # 3. Create subscription
+    # 2. Создаём подписку в CloudPayments с отложенным стартом
+    #    (виджет уже создал подписку с startDate — получаем данные из callback)
+    #    Если API-подход:
+    cp_result = CloudPaymentsClient.create_subscription(
+      token: card_cryptogram,       # или card_token от виджета
+      account_id: user.id,
+      amount: 3900,
+      currency: 'RUB',
+      interval: 'Month',
+      period: 1,
+      start_date: trial_ends_at,    # первое списание через 7 дней
+      description: "Подписка Hexlet (после trial)"
+    )
+    # cp_result.subscription_id = "sc_XXXXXXXXXXXX"
+
+    # 3. Create subscription в нашей БД
     subscription = Subscription.create!(
       user: user,
-      plan: SubscriptionPlan.find_by(name: 'monthly_v2'),  # trial → monthly
+      plan: SubscriptionPlan.find_by(name: 'monthly_v2'),
       status: :trial,
       trial_started_at: Time.current,
-      trial_ends_at: Time.current + 7.days,
-      card_token: card_token,
+      trial_ends_at: trial_ends_at,
+      card_token: cp_result.token,
+      cloudpayments_subscription_id: cp_result.subscription_id,  # сохраняем CP ID сразу
       current_period_start: Time.current,
-      current_period_end: Time.current + 7.days
+      current_period_end: trial_ends_at
     )
 
     # 4. Mark trial as used
@@ -113,9 +142,9 @@ class TrialService
     # 5. Grant access (навыки подписки)
     AccessService.grant_subscription_access(user)
 
-    # 6. Schedule reminders
-    TrialReminderJob.perform_at(subscription.trial_ends_at - 24.hours, subscription.id, :day_before)
-    TrialReminderJob.perform_at(subscription.trial_ends_at - 1.hour, subscription.id, :hour_before)
+    # 6. Schedule reminders (юридически обязательные email)
+    TrialReminderJob.perform_at(trial_ends_at - 24.hours, subscription.id, :day_before)
+    TrialReminderJob.perform_at(trial_ends_at - 1.hour, subscription.id, :hour_before)
 
     # 7. Send welcome email
     TrialMailer.welcome(user).deliver_later

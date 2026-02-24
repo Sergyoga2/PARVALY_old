@@ -26,16 +26,18 @@ Phase D │   │   │   │   │   │   │   │   │   │   │   │   
 
 **Цель:** снять технические риски до начала основной разработки.
 
-| ID | Spike | Результат | Ответственный |
-|----|-------|-----------|---------------|
-| SPIKE-01 | CloudPayments: multi-month subscription API | Документация интеграции, пример запроса/ответа | Backend |
-| SPIKE-02 | CloudPayments: trial → recurring flow | Подтверждение возможности, flow-диаграмма | Backend |
-| SPIKE-03 | Feature flag infrastructure | Выбор решения, базовая реализация | Fullstack |
-| SPIKE-04 | Email scheduler | Выбор решения для scheduled emails (cron / queue) | Backend |
+> **Обновлено 2026-02-24:** SPIKE-01 **снят** (multi-month подтверждён из документации API). SPIKE-02 **упрощён** (trial не нативно, но решение через StartDate простое). Подробности: [appendix/cloudpayments-api-research.md](appendix/cloudpayments-api-research.md)
+
+| ID | Spike | Результат | Статус |
+|----|-------|-----------|--------|
+| ~~SPIKE-01~~ | ~~CloudPayments: multi-month subscription API~~ | ✅ Подтверждено: `Period=3/6/12, Interval=Month` | **СНЯТ** |
+| SPIKE-02 | CloudPayments: trial → recurring flow (sandbox-тест) | Проверить: подписка с `StartDate = now + 7 days`, cancel до StartDate, webhook type | **Упрощён** |
+| SPIKE-03 | Feature flag infrastructure | Выбор решения, базовая реализация | Без изменений |
+| SPIKE-04 | Email scheduler | Выбор решения для scheduled emails (cron / queue) | Без изменений |
 
 **Go/No-Go критерии после Spike:**
-- CloudPayments подтверждённо поддерживает trial → recurring ИЛИ есть workaround
-- CloudPayments подтверждённо поддерживает multi-month intervals
+- ~~CloudPayments подтверждённо поддерживает multi-month intervals~~ ✅ Подтверждено из документации
+- CloudPayments: sandbox-тест подписки с `StartDate` (trial workaround) успешен
 - Feature flag решение выбрано и готово к использованию
 
 ---
@@ -44,8 +46,8 @@ Phase D │   │   │   │   │   │   │   │   │   │   │   │   
 
 | ID | Задача | Тип | Estimate | Зависимости |
 |----|--------|-----|----------|-------------|
-| A01 | Data model: новые планы подписки | Backend | M (3д) | SPIKE-01 |
-| A02 | Billing: интеграция CloudPayments для новых планов | Backend | L (5д) | A01, SPIKE-01 |
+| A01 | Data model: новые планы подписки | Backend | M (3д) | — (SPIKE-01 снят) |
+| A02 | Billing: интеграция CloudPayments для новых планов | Backend | L (5д) | A01 |
 | A03 | UI: новая страница тарифов | Frontend | M (3д) | A01 |
 | A04 | Purchase flow: покупка нового тарифа | Fullstack | M (3д) | A02, A03 |
 | A05 | Auto-renewal: автопродление новых тарифов | Backend | M (3д) | A02 |
@@ -81,7 +83,7 @@ A01 ──→ A02 ──→ A04 ──→ A07
 | ID | Задача | Тип | Estimate | Зависимости |
 |----|--------|-----|----------|-------------|
 | B01 | Data model: trial state, trial_used flag | Backend | S (2д) | A01 |
-| B02 | Trial activation: card binding + 7-day start | Backend/Billing | L (5д) | B01, SPIKE-02 |
+| B02 | Trial activation: card binding + 7-day start (StartDate подход) | Backend/Billing | M (3-4д) | B01, SPIKE-02 |
 | B03 | Trial auto-conversion: списание после 7 дней | Backend/Billing | M (3д) | B02 |
 | B04 | Trial cancellation: отмена во время trial | Backend | S (2д) | B02 |
 | B05 | UI: trial states в ЛК + pricing page | Frontend | M (3д) | B01 |
@@ -157,7 +159,7 @@ B01 ──→ B02 ──→ B03 ──→ B06
 ### Critical path
 
 ```
-SPIKE-01 → A01 → A02 → A04 → [Phase A release]
+A01 → A02 → A04 → [Phase A release]  (SPIKE-01 снят)
 → B01 → B02 → B03 → B06 → [Phase B release]
 → C01 → C03 → C07 → [Phase C release]
 → D01 → D02 → [Phase D release]
@@ -171,7 +173,7 @@ SPIKE-01 → A01 → A02 → A04 → [Phase A release]
 
 | Checkpoint | Неделя | Решение |
 |-----------|--------|---------|
-| Spike complete | 2 | Go/No-Go для Phase A (зависит от CloudPayments) |
+| Spike complete | 2 | Go/No-Go для Phase B (trial sandbox-тест). Phase A может стартовать раньше — multi-month подтверждён |
 | Phase A release | 6 | Go/No-Go для Phase B (новые тарифы стабильны?) |
 | Phase B 20% rollout | 8 | Мониторинг 3-5 дней: trial CR, ошибки |
 | Phase B 50% rollout | 9 | Мониторинг 5-7 дней: RPV, conversion |

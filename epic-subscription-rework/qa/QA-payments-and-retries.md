@@ -40,10 +40,10 @@
 | R02 | Quarterly renewal success | Period +3 мес |
 | R03 | Semi-annual renewal success | Period +6 мес |
 | R04 | Annual renewal success | Period +12 мес |
-| R05 | Renewal failed (1st attempt) | Grace period, email, retry in 24h |
-| R06 | Renewal retry success (2nd attempt) | Active restored, email |
-| R07 | All 4 retries failed (monthly) | Expired, access closed |
-| R08 | All 4 retries failed (6-month, period active) | Cancelled, access until period_end |
+| R05 | Renewal failed (1st Fail webhook) | Grace period, email, CP retries in 24h |
+| R06 | Renewal retry success (Pay webhook after Fail) | Active restored, email |
+| R07 | All 3 Fail webhooks (monthly) — CP auto-cancels | Expired, access closed |
+| R08 | All 3 Fail webhooks (6-month, period active) — CP auto-cancels | Cancelled, access until period_end |
 | R09 | Double webhook (same transaction) | Idempotent, single BillingAttempt |
 | R10 | Webhook for cancelled subscription | Warning logged, no update |
 
@@ -52,12 +52,12 @@
 | # | Сценарий | Ожидание |
 |---|---------|----------|
 | G01 | Grace period: access check | Access granted (like active) |
-| G02 | Grace retry #2: success | Active restored |
-| G03 | Grace retry #2: fail | Next retry scheduled (+24h) |
-| G04 | Grace retry #3: fail | Next retry scheduled (+48h) |
-| G05 | Grace retry #4: fail | Expired/Cancelled |
-| G06 | User updates card during grace | Next retry uses new card |
-| G07 | User cancels during grace | Cancelled, no more retries |
+| G02 | Grace retry #2 (CP auto, Pay webhook): success | Active restored |
+| G03 | Grace retry #2 (CP auto, Fail webhook): fail | CP schedules next retry (+24h) |
+| G04 | Grace retry #3 (CP auto, Fail webhook): fail | CP auto-cancels. Cancel webhook → Expired/Cancelled |
+| G05 | User updates card during grace (via my.cloudpayments.ru) | Next CP retry uses new card |
+| G06 | User cancels during grace | subscriptions/cancel → Cancelled, CP stops retries |
+| G07 | Grace period > 72h, no Cancel webhook received | GracePeriodMonitorJob raises alert |
 
 ### 5. Pause Billing
 
@@ -87,6 +87,12 @@
 
 ## Среда тестирования
 
-- CloudPayments sandbox (test cards)
+> **Из документации API (2026-02-24):**
+
+- **CloudPayments sandbox:** Доступен через test terminal ID (`test_api_...`). Те же endpoints, деньги НЕ списываются.
+- **Rate limit sandbox:** 5 одновременных запросов (vs 30 в production)
 - Test cards: success, decline, 3DS, timeout
-- Webhook simulator (если sandbox не поддерживает automatic webhooks)
+- Ответы содержат `"TestMode": true`
+- Webhook-ы: проверить, поддерживает ли sandbox автоматическую отправку webhook-ов. Если нет — использовать webhook simulator.
+- **3D Secure:** Применяется ТОЛЬКО к первому платежу. Рекуррентные списания — автоматические без 3DS.
+- **Retry в sandbox:** CP делает 3 retry (1/день). В sandbox можно наблюдать поведение, но ждать 3 дня. Рекомендация: тестировать retry через мок webhook-ов.

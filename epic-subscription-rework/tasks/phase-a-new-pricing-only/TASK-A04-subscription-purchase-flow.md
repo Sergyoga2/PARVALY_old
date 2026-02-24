@@ -55,6 +55,31 @@
 Pricing Page → [Оформить] → Checkout Page → [CloudPayments Widget] → Success/Error
 ```
 
+### 1.1. Инициализация CloudPayments Widget
+
+> **Из документации API (2026-02-24):**
+
+```html
+<script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
+```
+
+```javascript
+const widget = new cp.CloudPayments();
+widget.start({
+  publicTerminalId: "pk_...",       // Terminal ID
+  amount: plan.total_price,          // 9900 для quarterly
+  currency: "RUB",
+  tokenize: true,                    // сохранить токен карты для рекуррента
+  recurrent: {
+    period: plan.duration_months,    // 3 для quarterly
+    interval: 'Month',
+    amount: plan.total_price,        // 9900
+  }
+});
+```
+
+**Примечание:** При использовании `recurrent` параметра подписка создаётся автоматически через виджет. Первый платёж = установочный. Последующие — автоматические. 3D Secure обрабатывается виджетом inline.
+
 ### 2. Checkout Page
 
 ```

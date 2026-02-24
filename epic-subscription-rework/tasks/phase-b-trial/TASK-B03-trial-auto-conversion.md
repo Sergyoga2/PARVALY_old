@@ -18,15 +18,17 @@
 
 По истечении 7-дневного trial автоматически списать 3 900 ₽ и перевести пользователя на месячную подписку. Это ядро монетизации trial-модели.
 
+> **Обновлено 2026-02-24:** При подходе StartDate (B02) CloudPayments **сам выполняет первое списание** через 7 дней. Задача B03 сводится к **обработке webhook-ов** (Pay/Fail) и обновлению нашей БД. TrialExpirationJob нужен только как **safety net** для мониторинга.
+
 ---
 
 ## Scope
 
-- Background job: TrialExpirationJob — проверяет истёкшие trial
-- Автоматическое списание через CloudPayments (используя сохранённый card_token)
-- Перевод subscription: TRIAL → ACTIVE
-- Создание рекуррентной подписки в CloudPayments
-- Обработка неуспешного списания → GRACE_PERIOD
+- Обработка Pay-webhook от CloudPayments при первом рекуррентном списании (trial → paid)
+- Перевод subscription: TRIAL → ACTIVE при успешном Pay webhook
+- Обработка Fail-webhook → GRACE_PERIOD
+- Safety-net job: TrialExpirationJob — проверяет, что CP действительно списал (мониторинг)
+- **Не нужно:** самостоятельно инициировать списание через API (CP делает это сам по StartDate)
 
 ## Out of Scope
 
@@ -46,128 +48,127 @@
 
 ## Detailed Implementation Notes
 
-### 1. TrialExpirationJob
+### 1. Подход StartDate: CloudPayments управляет списанием
+
+При подходе StartDate (рекомендуемый — см. B02):
+- Подписка в CP создана с `StartDate = trial_ends_at`
+- CloudPayments **сам** выполняет первое списание 3 900 ₽ в указанную дату
+- При успешном списании приходит **Pay webhook**
+- При неуспешном — **Fail webhook**
+- Наша задача: обработать webhook и обновить состояние
+
+### 2. Webhook Handler (основная логика)
 
 ```ruby
-class TrialExpirationJob
-  # Запускается каждую минуту
-  def perform
-    Subscription.where(status: :trial)
-                .where('trial_ends_at <= ?', Time.current)
-                .find_each do |subscription|
-      TrialConversionService.convert(subscription)
-    end
-  end
-end
-```
+class TrialConversionWebhookHandler
+  # Вызывается при получении Pay/Fail webhook от CloudPayments
+  # для подписки в статусе trial
 
-### 2. TrialConversionService
-
-```ruby
-class TrialConversionService
-  def self.convert(subscription)
-    return if subscription.status != 'trial'  # idempotency guard
-
-    user = subscription.user
-    plan = subscription.plan  # monthly_v2 (3 900 ₽)
-
-    begin
-      # 1. Списание через CloudPayments
-      result = CloudPaymentsClient.charge_saved_card(
-        token: subscription.card_token,
-        amount: plan.total_price,
-        account_id: user.id,
-        description: "Подписка Hexlet: #{plan.name}"
-      )
-
-      if result.success?
-        # 2. Создание рекуррента в CloudPayments
-        cp_subscription = CloudPaymentsClient.create_subscription(
-          token: subscription.card_token,
-          amount: plan.total_price,
-          account_id: user.id,
-          interval: 'Month',
-          period: plan.duration_months,
-          start_date: Time.current + plan.duration_months.months
-        )
-
-        # 3. Обновление подписки
-        subscription.update!(
-          status: :active,
-          cloudpayments_subscription_id: cp_subscription.id,
-          current_period_start: Time.current,
-          current_period_end: Time.current + plan.duration_months.months,
-          next_billing_date: Time.current + plan.duration_months.months
-        )
-
-        # 4. BillingAttempt
-        BillingAttempt.create!(
-          subscription: subscription,
-          amount: plan.total_price,
-          status: :success,
-          attempt_number: 1,
-          cloudpayments_transaction_id: result.transaction_id
-        )
-
-        # 5. Events
-        Analytics.track('trial_converted', user_id: user.id, plan_months: plan.duration_months, amount: plan.total_price)
-
-        # 6. Email: подписка оформлена
-        SubscriptionMailer.trial_converted(user).deliver_later
-
-      else
-        handle_conversion_failure(subscription, result)
-      end
-
-    rescue CloudPaymentsError => e
-      handle_conversion_failure(subscription, e)
-    end
-  end
-
-  def self.handle_conversion_failure(subscription, error)
-    # Перевести в GRACE_PERIOD
-    subscription.update!(
-      status: :grace_period,
-      next_billing_date: Time.current + 24.hours
+  def handle_pay(webhook_payload)
+    subscription = Subscription.find_by!(
+      cloudpayments_subscription_id: webhook_payload[:subscription_id]
     )
+    return unless subscription.status == 'trial'  # idempotency guard
+
+    plan = subscription.plan
+
+    # 1. Обновление подписки → ACTIVE
+    subscription.update!(
+      status: :active,
+      current_period_start: Time.current,
+      current_period_end: Time.current + plan.duration_months.months,
+      next_billing_date: Time.current + plan.duration_months.months
+    )
+
+    # 2. BillingAttempt
+    BillingAttempt.create!(
+      subscription: subscription,
+      amount: plan.total_price,
+      status: :success,
+      attempt_number: 1,
+      cloudpayments_transaction_id: webhook_payload[:transaction_id]
+    )
+
+    # 3. Events
+    Analytics.track('trial_converted',
+      user_id: subscription.user_id,
+      plan_months: plan.duration_months,
+      amount: plan.total_price
+    )
+
+    # 4. Email: подписка оформлена
+    SubscriptionMailer.trial_converted(subscription.user).deliver_later
+  end
+
+  def handle_fail(webhook_payload)
+    subscription = Subscription.find_by!(
+      cloudpayments_subscription_id: webhook_payload[:subscription_id]
+    )
+    return unless subscription.status == 'trial'  # idempotency guard
+
+    # Перевести в GRACE_PERIOD
+    # CloudPayments сам сделает 3 retry (1/день, 72ч)
+    subscription.update!(status: :grace_period)
 
     BillingAttempt.create!(
       subscription: subscription,
       amount: subscription.plan.total_price,
       status: :failed,
       attempt_number: 1,
-      error_code: error.respond_to?(:code) ? error.code : 'unknown',
-      error_message: error.message,
-      next_retry_at: Time.current + 24.hours
+      error_code: webhook_payload[:reason_code]
     )
 
-    Analytics.track('trial_payment_failed', user_id: subscription.user_id, attempt: 1, error: error.message)
+    Analytics.track('trial_payment_failed',
+      user_id: subscription.user_id,
+      attempt: 1,
+      error: webhook_payload[:reason_code]
+    )
 
-    # Email: оплата не прошла
     SubscriptionMailer.payment_failed(subscription.user).deliver_later
   end
 end
 ```
 
-### 3. Timing
+### 3. Safety-net TrialExpirationJob (мониторинг)
 
-- TrialExpirationJob запускается **каждую минуту**
-- Максимальная задержка конвертации: ~1 минута после trial_ends_at
-- Acceptable: пользователь не заметит задержку
-- Доступ сохраняется до момента обработки (subscription status = trial → всё ещё имеет доступ)
+```ruby
+class TrialExpirationJob
+  # Запускается каждые 15 минут
+  # Safety-net: проверяет, что CP действительно обработал trial
+  # При нормальной работе — ничего не делает (webhook уже обработан)
 
-### 4. Idempotency
+  def perform
+    Subscription.where(status: :trial)
+                .where('trial_ends_at <= ?', Time.current - 1.hour)  # даём CP час
+                .find_each do |subscription|
+      # Если trial до сих пор в статусе trial через час после окончания —
+      # значит webhook не дошёл. Логируем alert.
+      Rails.logger.warn("Trial #{subscription.id} not converted 1h after expiry. Check CP webhooks.")
+      AlertService.notify("trial_conversion_delayed", subscription_id: subscription.id)
+    end
+  end
+end
+```
 
-- Проверка `subscription.status != 'trial'` в начале convert — если уже обработан, skip
-- TrialExpirationJob re-entrant: если предыдущий запуск ещё работает, lock prevents double processing
-- Рекомендация: advisory lock на subscription.id перед обработкой
+### 4. Timing
+
+- CloudPayments выполняет списание в момент `StartDate` (погрешность — минуты)
+- Webhook приходит сразу после попытки списания
+- Safety-net job проверяет через 1 час после trial_ends_at
+- Доступ сохраняется до получения Fail webhook (subscription status = trial → доступ есть)
+
+### 5. Idempotency
+
+- Проверка `subscription.status == 'trial'` в начале — если уже обработан, skip
+- CloudPayments transaction_id как idempotency key для BillingAttempt
+- Webhook может прийти дважды — обработка идемпотентна
 
 ---
 
 ## Edge Cases / Failure Cases
 
 1. **Пользователь отменил trial за 10 секунд до job-а:** Job проверяет status = trial. Если cancelled — skip. Race condition: DB lock.
-2. **CloudPayments timeout при списании:** handle_conversion_failure → GRACE_PERIOD → retry через 24ч
+2. **CloudPayments timeout при первом списании:** Fail webhook → GRACE_PERIOD. CP сам retry через 24ч
 3. **Карта просрочилась за 7 дней trial:** Списание не пройдёт → GRACE_PERIOD
 4. **Двойное списание (job запустился дважды):** Idempotency check + DB lock
 5. **Trial_ends_at в прошлом (job был остановлен на несколько часов):** Обработает backlog, все просроченные trial конвертируются. Допустимо.
@@ -178,7 +179,7 @@ end
 
 - **Given** trial с trial_ends_at = now, **When** TrialExpirationJob запускается, **Then** списание 3 900 ₽, status → ACTIVE
 - **Given** trial конвертирован, **When** проверяем subscription, **Then** current_period_end = conversion_time + 1 month
-- **Given** списание не прошло, **When** TrialExpirationJob, **Then** status → GRACE_PERIOD, retry через 24ч
+- **Given** списание не прошло (Fail webhook), **Then** status → GRACE_PERIOD, CP retry через 24ч
 - **Given** trial уже cancelled, **When** TrialExpirationJob, **Then** subscription не трогается (skip)
 - **Given** два параллельных запуска job, **When** оба обрабатывают один trial, **Then** только один выполняет списание
 
