@@ -4,13 +4,16 @@
 
 ### Billing / CloudPayments
 
-| # | Assumption | Impact if wrong | Recommendation |
-|---|-----------|-----------------|----------------|
-| AS-01 | CloudPayments поддерживает создание подписки с trial period (0 ₽ первые 7 дней, затем рекуррент) | Высокий: нужно реализовывать trial на стороне приложения (scheduler + отложенное создание подписки) | **Spike обязателен до Phase B** |
-| AS-02 | CloudPayments поддерживает интервалы подписки 3/6/12 месяцев (не только 1 месяц) | Высокий: если нет — нужна кастомная логика: разовый платёж + cron для продления | **Spike обязателен до Phase A** |
-| AS-03 | При отмене подписки в CloudPayments рекуррентные списания прекращаются, но токен карты сохраняется для возможного переоформления | Средний: если токен удаляется — пользователю придётся заново вводить карту при переоформлении | Проверить в документации API |
-| AS-04 | Webhook от CloudPayments содержит достаточно данных для идентификации: subscription_id, transaction_id, status, amount | Низкий: можно добавить metadata при создании подписки | Проверить формат webhook |
-| AS-05 | CloudPayments позволяет изменить сумму рекуррента (для скидки при cancellation save-offer) | Средний: если нет — отменяем старый рекуррент и создаём новый | Проверить API |
+> **Обновлено 2026-02-24** по результатам исследования CloudPayments API.
+> Полный отчёт: [appendix/cloudpayments-api-research.md](appendix/cloudpayments-api-research.md)
+
+| # | Assumption | Статус | Комментарий |
+|---|-----------|--------|-------------|
+| AS-01 | CloudPayments поддерживает создание подписки с trial period | ❌ **Не подтвердился** | Нет нативного trial. Решение: `subscriptions/create` с `StartDate = now + 7 days`. Spike 1 упрощён |
+| AS-02 | CloudPayments поддерживает интервалы подписки 3/6/12 месяцев | ✅ **Подтвердился** | `Interval: "Month"` + `Period: 3/6/12`. Spike 2 **снят** |
+| AS-03 | При отмене подписки токен карты сохраняется | ⚠️ **Вероятно да** | Токен привязан к карте, не к подписке. Но явного подтверждения в документации нет. **Нужен тест в sandbox** |
+| AS-04 | Webhook содержит достаточно данных (subscription_id, transaction_id, status, amount) | ✅ **Подтвердился** | Pay webhook содержит: TransactionId, Amount, Token, AccountId, SubscriptionId |
+| AS-05 | Можно изменить сумму рекуррента | ✅ **Подтвердился** | `subscriptions/update` → поле Amount. Можно менять в любой момент |
 
 ### Архитектура
 
@@ -45,15 +48,15 @@
 | OQ-04 | После конвертации trial → paid: сразу предлагать upgrade на мультимесячный или дать 1-2 месяца? | Влияет на email-цепочку | В confirmation email после конвертации + через 2 недели | Низкий |
 | OQ-05 | Пауза: пользователь на паузе может покупать ДПО (отдельные профессии)? | Влияет на access control | Да, ДПО — независимый продукт | Низкий |
 
-### Для backend / платежей (адресовать Tech Lead)
+### Для backend / платежей (✅ ответы получены из документации API)
 
-| # | Вопрос | Зачем нужен ответ | Impact if unresolved |
-|---|--------|-------------------|---------------------|
-| OQ-06 | Какой формат subscription_id в CloudPayments? Строка, число? | Data model | Низкий, но лучше знать заранее |
-| OQ-07 | Есть ли у CloudPayments sandbox/test environment? | Тестирование trial flow | Высокий: без sandbox нельзя тестировать billing |
-| OQ-08 | Как CloudPayments обрабатывает 3D Secure при рекуррентном списании? | Может ли auto-conversion заблочиться на 3DS | Средний: может сломать auto-conversion |
-| OQ-09 | Текущая кодовая база: какой фреймворк, какой ORM, есть ли миграции? | Планирование data model changes | Средний |
-| OQ-10 | Есть ли rate limits у CloudPayments API? | Массовые retry | Низкий |
+| # | Вопрос | Ответ | Источник |
+|---|--------|-------|----------|
+| OQ-06 | Какой формат subscription_id? | Строка `"sc_XXXXXXXXXXXX"` | API docs: subscriptions/create response |
+| OQ-07 | Есть ли sandbox? | **Да.** Test terminal (ID: `test_api_...`). Те же endpoints, деньги не списываются. Rate limit: 5 запросов | API docs: тестовый режим |
+| OQ-08 | 3D Secure при рекуррентных? | **Не применяется.** 3DS только для первого платежа (привязка карты). Рекуррентные списания автоматические без подтверждения | API docs: 3-D Secure |
+| OQ-09 | Кодовая база: фреймворк, ORM? | **Ожидает ответа от команды** | — |
+| OQ-10 | Rate limits? | Test: 5, Production: **30 одновременных запросов**. HTTP 429 при превышении | API docs: общая информация |
 
 ### Для юристов (адресовать Legal)
 
@@ -81,8 +84,8 @@
 
 | # | Риск | Probability | Impact | Митигация | Owner |
 |---|------|:-----------:|:------:|-----------|-------|
-| R-01 | CloudPayments не поддерживает trial natively → нужна кастомная реализация | 30% | Высокий (+2-3 нед) | Spike в неделю 1-2 | Backend |
-| R-02 | CloudPayments не поддерживает multi-month intervals → кастомный scheduler | 20% | Высокий (+1-2 нед) | Spike в неделю 1-2 | Backend |
+| R-01 | ~~CloudPayments не поддерживает trial natively~~ | ~~30%~~ | ~~Высокий~~ | ✅ **Подтверждён, но impact ниже:** trial через `StartDate` реализуется за ~1 нед, не 2-3. Spike упрощён | Backend |
+| R-02 | ~~CloudPayments не поддерживает multi-month intervals~~ | ~~20%~~ | ~~Высокий~~ | ✅ **СНЯТ:** `Period=3/6/12, Interval=Month` работает нативно | Backend |
 | R-03 | Trial expiration job опаздывает (задержка cron) → списание происходит позже 7 дней | 15% | Средний | Idempotent job, мониторинг задержек | Backend |
 | R-04 | Race condition: пользователь отменяет trial за секунды до авто-конвертации | 10% | Средний | DB lock на subscription при изменении статуса, проверка status перед списанием | Backend |
 | R-05 | Email scheduler отправляет дубликаты (за 24ч и за 1ч) | 10% | Низкий | Idempotency key на email sends, deduplication | Backend |
