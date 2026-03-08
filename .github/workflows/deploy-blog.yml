@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Hostinger via rsync
-        uses: burnett01/rsync-deployments@7.0.2
+        uses: burnett01/rsync-deployments@8.0.0
         with:
           switches: -avz --delete
           path: astro-blog/dist/
