@@ -31,13 +31,12 @@ jobs:
         run: npm run build
 
       - name: Deploy to Hostinger via rsync
-        uses: burnett01/rsync-deployments@8.0.0
-        with:
-          switches: -avz --delete
-          path: astro-blog/dist/
-          remote_path: ${{ secrets.HOSTINGER_TARGET_DIR }}/
-          remote_host: ${{ secrets.HOSTINGER_HOST }}
-          remote_user: ${{ secrets.HOSTINGER_USER }}
-          remote_port: ${{ secrets.HOSTINGER_PORT }}
-          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          legacy_allow_rsa_hostkeys: true
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.HOSTINGER_PORT }} -H ${{ secrets.HOSTINGER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no -o IdentitiesOnly=yes" \
+            astro-blog/dist/ \
+            ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:${{ secrets.HOSTINGER_TARGET_DIR }}/
