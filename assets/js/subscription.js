@@ -25,23 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
       source: 'subscription_landing'
     };
 
-    // Validate Google Maps URL
-    var mapsPatterns = [
-      /google\.com\/maps/,
-      /goo\.gl\/maps/,
-      /maps\.app\.goo\.gl/,
-      /maps\.google\.com/,
-      /google\.\w+\/maps/
-    ];
-    var isValidUrl = mapsPatterns.some(function (p) {
-      return p.test(data.google_maps_url);
-    });
-
-    if (!isValidUrl) {
-      showFormError(form, 'Please enter a valid Google Maps link');
-      return;
-    }
-
     // Loading state
     var originalText = btn.textContent;
     btn.disabled = true;
@@ -67,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         status: 'pending_audit'
       }));
 
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
 
     } catch (error) {
       // Fallback: save locally and redirect anyway
@@ -80,18 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
         status: 'pending_audit'
       }));
 
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     }
-  }
-
-  function showFormError(form, message) {
-    var existing = form.querySelector('.form-error');
-    if (existing) existing.remove();
-
-    var errorEl = document.createElement('p');
-    errorEl.className = 'form-error';
-    errorEl.textContent = message;
-    form.appendChild(errorEl);
   }
 
   function generateId() {
