@@ -26,6 +26,7 @@ const logger = require('./utils/logger');
 const authRoutes = require('./routes/auth');
 const articlesRoutes = require('./routes/articles');
 const uploadRoutes = require('./routes/upload');
+const auditRoutes = require('./routes/audit');
 
 // Initialize Express app
 const app = express();
@@ -114,6 +115,7 @@ app.use('/api/upload', (req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/articles', articlesRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api', auditRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
