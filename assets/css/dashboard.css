@@ -1,0 +1,235 @@
+/* ============================================
+   DASHBOARD — dashboard.css
+   Only loaded on /dashboard.html
+   ============================================ */
+
+/* --- HEADER --- */
+.dashboard-header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-user-email {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* --- MAIN --- */
+.dashboard-main {
+  padding: 40px 0 80px;
+}
+
+.dashboard-main > .container {
+  max-width: 800px;
+}
+
+/* --- WELCOME --- */
+.dashboard-welcome {
+  margin-bottom: 32px;
+}
+
+.dashboard-welcome h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.dashboard-welcome p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+/* --- CARD --- */
+.dashboard-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.dashboard-card h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* --- STATUS --- */
+.status-badge {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+.status-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-progress {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.status-ready {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-active {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-details p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.status-details strong {
+  color: var(--text);
+}
+
+.status-details a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.status-details a:hover {
+  text-decoration: underline;
+}
+
+/* --- STEPS TIMELINE --- */
+.dashboard-steps {
+  position: relative;
+}
+
+.dashboard-step {
+  display: flex;
+  gap: 20px;
+  padding-bottom: 28px;
+  position: relative;
+  opacity: 0.5;
+}
+
+.dashboard-step.active {
+  opacity: 1;
+}
+
+.dashboard-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Vertical line */
+.dashboard-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 44px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.dashboard-step.active:not(:last-child)::after {
+  background: var(--accent);
+}
+
+.dashboard-step-number {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background: var(--border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.dashboard-step.active .dashboard-step-number {
+  background: var(--accent);
+  color: white;
+}
+
+.dashboard-step h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dashboard-step p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* --- CTA CARD --- */
+.cta-card {
+  background: #EFF6FF;
+  border: 2px solid var(--accent);
+  text-align: center;
+}
+
+.cta-card p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 24px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .dashboard-main {
+    padding: 24px 0 60px;
+  }
+
+  .dashboard-card {
+    padding: 24px 20px;
+  }
+
+  .dashboard-user-email {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-step {
+    gap: 14px;
+  }
+
+  .dashboard-step-number {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 0.9rem;
+  }
+
+  .dashboard-step:not(:last-child)::after {
+    left: 17px;
+  }
+}

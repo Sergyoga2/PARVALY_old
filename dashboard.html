@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard — Parvaly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=20260121">
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+  <link rel="stylesheet" href="/assets/css/cookie-consent.css">
+</head>
+<body>
+
+  <!-- DASHBOARD HEADER -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="dashboard-header-content">
+        <a href="/" class="logo"><img src="/assets/logo.svg" alt="PARVALY"></a>
+        <div class="dashboard-user">
+          <span class="dashboard-user-email"></span>
+          <button class="btn btn-sm btn-outline" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="container">
+
+      <!-- Welcome -->
+      <div class="dashboard-welcome">
+        <h1>Welcome, <span id="businessName"></span></h1>
+        <p>Your free audit is being prepared. Here's your dashboard.</p>
+      </div>
+
+      <!-- Status Card -->
+      <div class="dashboard-card status-card">
+        <h2>Audit Status</h2>
+        <div class="status-badge status-pending" id="auditStatus">
+          🔄 Audit Requested — We'll have your report ready within 48 hours
+        </div>
+        <div class="status-details">
+          <p><strong>Business:</strong> <span id="dashBusinessName"></span></p>
+          <p><strong>Google Maps:</strong> <a id="dashMapsLink" href="#" target="_blank" rel="noopener noreferrer">View listing →</a></p>
+          <p><strong>Submitted:</strong> <span id="dashSubmittedAt"></span></p>
+        </div>
+      </div>
+
+      <!-- What's Next -->
+      <div class="dashboard-card">
+        <h2>What Happens Next</h2>
+        <div class="dashboard-steps">
+          <div class="dashboard-step active">
+            <div class="dashboard-step-number">1</div>
+            <div>
+              <h3>Audit Request Received</h3>
+              <p>We've received your listing and started the analysis.</p>
+            </div>
+          </div>
+          <div class="dashboard-step">
+            <div class="dashboard-step-number">2</div>
+            <div>
+              <h3>Profile Analysis</h3>
+              <p>We review your profile completeness, keywords, photos, reviews, and rankings.</p>
+            </div>
+          </div>
+          <div class="dashboard-step">
+            <div class="dashboard-step-number">3</div>
+            <div>
+              <h3>Competitor Comparison</h3>
+              <p>We compare your profile against your top 3 local competitors.</p>
+            </div>
+          </div>
+          <div class="dashboard-step">
+            <div class="dashboard-step-number">4</div>
+            <div>
+              <h3>Audit Report Delivery</h3>
+              <p>You'll receive your full report via email within 48 hours.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="dashboard-card cta-card">
+        <h2>Ready to Start Growing?</h2>
+        <p>After reviewing your audit report, you can activate your subscription to start getting more customers from Google Maps.</p>
+        <a href="/subscription.html#pricing" class="btn btn-primary btn-lg">View Subscription Plan — $199/mo</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/dashboard.js"></script>
+  <script src="/assets/js/cookie-consent.js"></script>
+</body>
+</html>
