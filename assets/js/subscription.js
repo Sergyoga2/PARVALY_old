@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
         status: 'pending_audit'
       }));
 
-      window.location.href = '/dashboard';
+      window.location.href = '/dashboard.html';
 
     } catch (error) {
       // Fallback: save locally and redirect anyway
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         status: 'pending_audit'
       }));
 
-      window.location.href = '/dashboard';
+      window.location.href = '/dashboard.html';
     }
   }
 
