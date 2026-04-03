@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // If no data — redirect to landing
   if (!userData) {
-    window.location.href = '/subscription.html';
+    window.location.href = '/subscription';
     return;
   }
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', function () {
       localStorage.removeItem('parvaly_user');
-      window.location.href = '/subscription.html';
+      window.location.href = '/subscription';
     });
   }
 
