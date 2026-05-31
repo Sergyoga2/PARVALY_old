@@ -1,0 +1,77 @@
+name: Deploy Web (Marketing Site) to Hostinger
+
+# Builds the Astro marketing site in web/ and rsyncs the static output to the
+# Hostinger docroot ROOT. A single `git push` to main (touching web/) updates the
+# live homepage automatically.
+#
+# ⚠️ SAFETY: the target is the docroot ROOT, which ALSO contains server-generated
+# files that are NOT in git (blog/, ru/blog/, uploaded assets, api/). Therefore:
+#   - NEVER use `rsync --delete` here (it would erase those files irrecoverably).
+#   - The --exclude list below is a belt-and-suspenders guard.
+#
+# Required GitHub secrets (reuse the blog's, plus one new):
+#   HOSTINGER_SSH_KEY, HOSTINGER_HOST, HOSTINGER_PORT, HOSTINGER_USER  (already set for the blog)
+#   HOSTINGER_WEB_DIR  (NEW) = absolute docroot path, e.g. /home/uXXXX/domains/parvaly.com/public_html
+#
+# Safe rollout tip: for the first run, point HOSTINGER_WEB_DIR at a preview subfolder
+# (…/public_html/preview) and set `site` in web/astro.config.mjs accordingly, review live,
+# then switch the secret back to the real docroot to go live.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+# Prevent racing with the blog deploy on the same SSH host.
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Marketing Site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build site
+        working-directory: web
+        run: npm run build
+
+      - name: Deploy to Hostinger via rsync (NO --delete at docroot root)
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.HOSTINGER_PORT }} -H ${{ secrets.HOSTINGER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+          rsync -avz \
+            --exclude 'blog/' \
+            --exclude 'ru/blog/' \
+            --exclude 'assets/blog/' \
+            --exclude 'assets/uploads/' \
+            --exclude 'uploads/' \
+            --exclude 'api/' \
+            --exclude '.env' \
+            --exclude '.env.*' \
+            --exclude '.htaccess' \
+            --exclude '.user.ini' \
+            --exclude 'blog-data.json' \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no -o IdentitiesOnly=yes" \
+            web/dist/ \
+            ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:${{ secrets.HOSTINGER_WEB_DIR }}/

@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/react/Hero.tsx';
+import Hero3D from '../components/react/Hero3D.tsx';
+import BentoServices from '../components/react/BentoServices.tsx';
+import LogoMarquee from '../components/react/LogoMarquee.tsx';
+import ScrollReveal from '../components/react/ScrollReveal.tsx';
+---
+
+<Layout>
+  <!-- Section 1: Animated Hero (Tailwind + React islands) -->
+  <section class="relative overflow-hidden bg-white">
+    <!-- Aurora background (pure CSS, no JS) -->
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-0">
+      <div class="absolute -left-32 -top-32 h-[420px] w-[420px] animate-aurora rounded-full bg-accent-light blur-3xl opacity-70"></div>
+      <div class="absolute right-[-10%] top-10 h-[360px] w-[360px] animate-aurora rounded-full bg-sky-200 blur-3xl opacity-60" style="animation-delay:-6s"></div>
+      <div class="absolute bottom-[-20%] left-1/3 h-[380px] w-[380px] animate-aurora rounded-full bg-indigo-200 blur-3xl opacity-50" style="animation-delay:-12s"></div>
+    </div>
+
+    <div class="container relative z-10">
+      <div class="grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
+        <Hero client:load />
+        <div class="hidden lg:block">
+          <Hero3D client:visible />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust strip: marquee -->
+  <section class="border-y border-line bg-surface/60 py-5">
+    <div class="container">
+      <LogoMarquee client:visible />
+    </div>
+  </section>
+
+  <!-- Section 2: How it works (legacy markup, revealed on scroll) -->
+  <section class="bg-gray">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Simple Process. Clear Deliverables.</h2>
+      </div>
+      <ScrollReveal client:visible>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Download the free checklist</h3>
+            <p>Get a practical PDF with quick wins for Google Maps, reviews, website, and ads.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Get a personalized $49 Video Audit</h3>
+            <p>PDF report + 5–8 minute video walkthrough delivered in 24–48 hours.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Choose a monthly package</h3>
+            <p>Starter / Growth / Full-Service — based on your needs and budget.</p>
+          </div>
+        </div>
+      </ScrollReveal>
+      <p class="steps-note">We work via WhatsApp/Email and keep everything documented.</p>
+    </div>
+  </section>
+
+  <!-- Section 3: What we do (NEW bento grid) -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">What We Manage</h2>
+      </div>
+      <BentoServices client:visible />
+      <div class="text-center mt-8">
+        <a href="/pricing.html" class="btn btn-primary">See Pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Video Audit Spotlight (legacy) -->
+  <section class="bg-gray">
+    <div class="container">
+      <ScrollReveal client:visible>
+        <div class="audit-spotlight">
+          <div class="audit-spotlight-content">
+            <h2>Start With a $49 Video Audit</h2>
+            <ul class="audit-features">
+              <li>PDF report (7–12 pages)</li>
+              <li>5–8 min screen-recorded walkthrough</li>
+              <li>One main channel + quick wins from 2–3 related areas</li>
+              <li>30-day action plan</li>
+              <li>Delivered in 24–48 hours</li>
+            </ul>
+            <a href="/video-audit.html" class="btn btn-primary btn-lg">Get $49 Video Audit</a>
+          </div>
+        </div>
+      </ScrollReveal>
+    </div>
+  </section>
+
+  <!-- Section 5: Pricing Preview (legacy) -->
+  <section>
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Monthly Packages</h2>
+        <p class="section-desc">Choose a package or start with a low-risk $49 Video Audit. Month-to-month.</p>
+      </div>
+      <ScrollReveal client:visible>
+        <div class="pricing-preview-grid">
+          <div class="pricing-card">
+            <h3>Starter Presence</h3>
+            <div class="price">$1,099<span>/mo</span></div>
+            <p class="price-note">Visibility + trust (no ads yet)</p>
+            <ul class="pricing-features">
+              <li>Google Maps (GBP) management</li>
+              <li>Review responses (up to 25/mo)</li>
+              <li>Local SEO Lite</li>
+              <li>Instagram content system</li>
+              <li>Website maintenance + edits</li>
+              <li>Monthly PDF report</li>
+            </ul>
+            <a href="/pricing/starter-presence.html" class="btn btn-outline">View Details</a>
+          </div>
+          <div class="pricing-card featured" data-badge="Most Popular">
+            <h3>Growth Leads</h3>
+            <div class="price">$1,899<span>/mo</span></div>
+            <p class="price-note">Leads with ads (choose 1 channel)</p>
+            <ul class="pricing-features">
+              <li>Everything in Starter</li>
+              <li>Stronger Local SEO</li>
+              <li>Instagram + Facebook</li>
+              <li>Google Ads OR Meta Ads</li>
+              <li>Weekly optimization loop</li>
+              <li>Ads setup included</li>
+            </ul>
+            <a href="/pricing/growth-leads.html" class="btn btn-primary">View Details</a>
+          </div>
+          <div class="pricing-card">
+            <h3>Full-Service (All-in)</h3>
+            <div class="price">$2,999<span>/mo</span></div>
+            <p class="price-note">One team runs your entire marketing</p>
+            <ul class="pricing-features">
+              <li>Everything in Growth</li>
+              <li>Google Ads + Meta Ads</li>
+              <li>SEO content (2 pieces/mo)</li>
+              <li>Website support + landing pages</li>
+              <li>Weekly updates + deep report</li>
+              <li>Both ad setups included</li>
+            </ul>
+            <a href="/pricing/full-service.html" class="btn btn-outline">View Details</a>
+          </div>
+        </div>
+      </ScrollReveal>
+      <p class="pricing-note-global">Ad spend is paid by clients directly to Google/Meta and is not included in our fees. We do not handle client funds; clients pay advertising platforms directly.</p>
+    </div>
+  </section>
+
+  <!-- Section 6: FAQ Teaser (legacy) -->
+  <section class="bg-gray">
+    <div class="container text-center">
+      <h2 class="section-title">Questions?</h2>
+      <p class="section-desc mb-8">Find answers about our process, pricing, and what's included.</p>
+      <a href="/pricing.html#faq" class="btn btn-outline">View FAQ</a>
+    </div>
+  </section>
+
+  <!-- Section 7: Final CTA (legacy) -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to grow?</h2>
+      <p>Start with a quick audit or download our free checklist.</p>
+      <div class="cta-buttons">
+        <a href="/video-audit.html" class="btn btn-white btn-lg">Get $49 Video Audit</a>
+        <a href="/free-checklist.html" class="btn btn-outline-white btn-lg">Download Free Checklist</a>
+      </div>
+    </div>
+  </section>
+</Layout>

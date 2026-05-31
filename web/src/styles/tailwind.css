@@ -1,0 +1,8 @@
+/*
+ * Tailwind WITHOUT the base layer (Preflight).
+ * We deliberately omit `@tailwind base;` so Tailwind's global CSS reset does not
+ * override the legacy /styles.css that still controls headings, buttons, body, etc.
+ * Only utilities + components are emitted, scoped to the new React islands.
+ */
+@tailwind components;
+@tailwind utilities;
