@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/react/Hero.tsx';
+import RobotScene from '../components/react/RobotScene.tsx';
 import BentoServices from '../components/react/BentoServices.tsx';
 import LogoMarquee from '../components/react/LogoMarquee.tsx';
 import ScrollReveal from '../components/react/ScrollReveal.tsx';
@@ -19,35 +20,9 @@ import ScrollReveal from '../components/react/ScrollReveal.tsx';
     <div class="container relative z-10">
       <div class="grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
         <Hero client:load />
-        <!-- Right column: lightweight stat panel (no 3D) -->
+        <!-- Right column: interactive 3D robot (cursor-following) -->
         <div class="hidden lg:block">
-          <div class="relative mx-auto max-w-md rounded-xl2 border border-line bg-white/70 p-8 shadow-brand-lg backdrop-blur">
-            <div class="mb-6 flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded bg-accent text-lg text-white">📈</div>
-              <div>
-                <p class="text-sm font-semibold text-ink">Local growth, measured</p>
-                <p class="text-xs text-muted">Maps · Reviews · Ads</p>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="rounded border border-line bg-surface p-4">
-                <p class="text-2xl font-extrabold text-accent">+38%</p>
-                <p class="mt-1 text-xs text-muted">Avg. calls from Maps</p>
-              </div>
-              <div class="rounded border border-line bg-surface p-4">
-                <p class="text-2xl font-extrabold text-accent">24–48h</p>
-                <p class="mt-1 text-xs text-muted">Audit turnaround</p>
-              </div>
-              <div class="rounded border border-line bg-surface p-4">
-                <p class="text-2xl font-extrabold text-accent">4.8★</p>
-                <p class="mt-1 text-xs text-muted">Review rating lift</p>
-              </div>
-              <div class="rounded border border-line bg-surface p-4">
-                <p class="text-2xl font-extrabold text-accent">100%</p>
-                <p class="mt-1 text-xs text-muted">Month-to-month</p>
-              </div>
-            </div>
-          </div>
+          <RobotScene client:visible />
         </div>
       </div>
     </div>

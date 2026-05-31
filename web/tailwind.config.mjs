@@ -42,10 +42,15 @@ export default {
           '33%': { transform: 'translate(4%, -6%) scale(1.1)' },
           '66%': { transform: 'translate(-4%, 4%) scale(0.95)' },
         },
+        spotlight: {
+          '0%': { opacity: '0', transform: 'translate(-72%, -62%) scale(0.5)' },
+          '100%': { opacity: '1', transform: 'translate(-50%, -40%) scale(1)' },
+        },
       },
       animation: {
         marquee: 'marquee 30s linear infinite',
         aurora: 'aurora 18s ease-in-out infinite',
+        spotlight: 'spotlight 2s ease 0.75s 1 forwards',
       },
     },
   },
