@@ -40,7 +40,7 @@ export default function Hero() {
         className="font-sans text-4xl font-extrabold leading-[1.1] tracking-tight text-ink sm:text-5xl lg:text-6xl"
       >
         Digital Marketing Consulting for{' '}
-        <span className="bg-gradient-to-r from-accent to-sky-400 bg-clip-text text-transparent">
+        <span className="inline-block bg-gradient-to-r from-accent to-sky-400 bg-clip-text text-transparent [-webkit-text-fill-color:transparent]">
           Local Businesses
         </span>
       </motion.h1>
