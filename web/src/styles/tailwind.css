@@ -11,8 +11,8 @@
  * 3D "stacking boxes" loader (loader-3, 21st.dev / ravikatiyar)
  * Pure CSS. The .loader:before/:after "masks" are painted with --background
  * to hide boxes as they fly in, so the loader MUST sit on a solid surface of
- * that same colour. We tune it to the site theme: brand blue boxes on the
- * light `surface` (#f8fafc) panel used in index.astro.
+ * that same colour. It sits directly on the white hero section, so
+ * --background is #fff. Brand-blue cubes (#2563eb).
  * Class names (.box/.ground) are scoped under .loader, so no legacy clash.
  * ===================================================================== */
 .loader {
@@ -20,7 +20,7 @@
   --primary: #2563eb;            /* brand accent */
   --primary-light: #3b82f6;
   --primary-rgba: rgba(37, 99, 235, 0);
-  --background: #f8fafc;         /* must match the panel background */
+  --background: #ffffff;         /* must match the section background (bg-white) */
   width: 200px;
   height: 320px;
   position: relative;

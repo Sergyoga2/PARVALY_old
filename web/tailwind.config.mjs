@@ -37,15 +37,9 @@ export default {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(-50%)' },
         },
-        aurora: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(4%, -6%) scale(1.1)' },
-          '66%': { transform: 'translate(-4%, 4%) scale(0.95)' },
-        },
       },
       animation: {
         marquee: 'marquee 30s linear infinite',
-        aurora: 'aurora 18s ease-in-out infinite',
       },
     },
   },
