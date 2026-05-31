@@ -20,8 +20,12 @@ import ScrollReveal from '../components/react/ScrollReveal.tsx';
     <div class="container relative z-10">
       <div class="grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
         <Hero client:load />
-        <!-- Right column: interactive 3D robot (cursor-following) -->
-        <div class="hidden lg:block">
+        <!-- Right column: interactive 3D robot (cursor-following).
+             NOTE: do NOT use the `hidden` class — legacy styles.css defines
+             `.hidden { display:none !important }` which would override lg:block
+             and hide this column on all widths. Use `max-lg:!hidden` so the
+             important applies only below the lg breakpoint. -->
+        <div class="robot-col max-lg:!hidden h-[460px]">
           <RobotScene client:visible />
         </div>
       </div>
