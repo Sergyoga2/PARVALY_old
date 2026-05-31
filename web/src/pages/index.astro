@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/react/Hero.tsx';
-import RobotScene from '../components/react/RobotScene.tsx';
+import Loader3 from '../components/ui/loader-3.tsx';
 import BentoServices from '../components/react/BentoServices.tsx';
 import LogoMarquee from '../components/react/LogoMarquee.tsx';
 import ScrollReveal from '../components/react/ScrollReveal.tsx';
@@ -20,13 +20,15 @@ import ScrollReveal from '../components/react/ScrollReveal.tsx';
     <div class="container relative z-10">
       <div class="grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
         <Hero client:load />
-        <!-- Right column: interactive 3D robot (cursor-following).
+        <!-- Right column: animated 3D "stacking boxes" loader (pure CSS, no JS).
              NOTE: do NOT use the `hidden` class — legacy styles.css defines
              `.hidden { display:none !important }` which would override lg:block
-             and hide this column on all widths. Use `max-lg:!hidden` so the
-             important applies only below the lg breakpoint. -->
-        <div class="robot-col max-lg:!hidden h-[460px]">
-          <RobotScene client:visible />
+             and hide this column on all widths. `max-lg:!hidden` scopes the
+             important to below the lg breakpoint.
+             The panel background MUST match the loader's --background (#f8fafc =
+             bg-surface) so the loader's masks blend in. -->
+        <div class="max-lg:!hidden flex h-[460px] items-center justify-center overflow-hidden rounded-xl2 border border-line bg-surface shadow-brand">
+          <Loader3 />
         </div>
       </div>
     </div>
