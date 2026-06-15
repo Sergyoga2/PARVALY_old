@@ -1,180 +1,130 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/react/Hero.tsx';
-import Loader3 from '../components/ui/loader-3.tsx';
-import BentoServices from '../components/react/BentoServices.tsx';
+import ServicesSection from '../components/react/ServicesSection.tsx';
 import LogoMarquee from '../components/react/LogoMarquee.tsx';
-import ScrollReveal from '../components/react/ScrollReveal.tsx';
+import AuditSpotlight from '../components/react/AuditSpotlight.tsx';
+import PricingSection from '../components/react/PricingSection.tsx';
+import FAQSection from '../components/react/FAQSection.tsx';
+import TeamSection from '../components/react/TeamSection.tsx';
+import CTASection from '../components/react/CTASection.tsx';
+import GBPSection from '../components/react/GBPSection.tsx';
+import HeroSplitBlock from '../components/react/HeroSplitBlock.tsx';
+import HeroBackground from '../components/react/HeroBackground.tsx';
+import GBPBackground from '../components/react/GBPBackground.tsx';
+import HeroLottie from '../components/react/HeroLottie.tsx';
+import SEOSection from '../components/react/SEOSection.tsx';
+import Header from '../components/Header.astro';
 ---
 
-<Layout>
-  <!-- Section 1: Animated Hero (Tailwind + React islands) -->
-  <section class="relative bg-white">
-    <div class="container relative z-10">
-      <div class="grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-24">
-        <Hero client:load />
-        <!-- Right column: animated 3D "stacking boxes" loader (pure CSS, no JS),
-             sitting directly on the white section background (no panel).
-             NOTE: do NOT use the `hidden` class — legacy styles.css defines
-             `.hidden { display:none !important }` which would override lg:block
-             and hide this column on all widths. `max-lg:!hidden` scopes the
-             important to below the lg breakpoint.
-             The loader's --background is set to #fff (in tailwind.css) to match
-             this section's bg-white so the loader's masks blend in.
-             overflow-hidden clips the boxes' fly-in so they can't overlap the
-             hero text on the left. -->
-        <div class="max-lg:!hidden flex h-[460px] items-center justify-center overflow-hidden">
-          <Loader3 />
-        </div>
-      </div>
-    </div>
-  </section>
+<Layout hideHeader={true}>
+  <style is:inline>
+    /* ── Fullpage scroll snap ───────────────────────────────────── */
+    html {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      height: 100%;
+    }
+    body {
+      height: 100%;
+    }
+    .snap-block {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100vh;
+      overflow: hidden;
+      /* Force a GPU compositing layer so WebGL canvases render
+         continuously even when the block is offscreen */
+      transform: translateZ(0);
+      will-change: transform;
+    }
 
-  <!-- Trust strip: marquee -->
-  <section class="border-y border-line bg-surface/60 py-5">
-    <div class="container">
-      <LogoMarquee client:visible />
-    </div>
-  </section>
+    /* ── Hero header override ───────────────────────────────────── */
+    .site-header {
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+  </style>
 
-  <!-- Section 2: How it works (legacy markup, revealed on scroll) -->
-  <section class="bg-gray">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Simple Process. Clear Deliverables.</h2>
-      </div>
-      <ScrollReveal client:visible>
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">1</div>
-            <h3>Download the free checklist</h3>
-            <p>Get a practical PDF with quick wins for Google Maps, reviews, website, and ads.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-number">2</div>
-            <h3>Get a personalized $49 Video Audit</h3>
-            <p>PDF report + 5–8 minute video walkthrough delivered in 24–48 hours.</p>
-          </div>
-          <div class="step-card">
-            <div class="step-number">3</div>
-            <h3>Choose a monthly package</h3>
-            <p>Starter / Growth / Full-Service — based on your needs and budget.</p>
+  <!-- Block 1: Hero -->
+  <div class="snap-block relative w-full" style="background:#ebedff">
+    <HeroBackground client:load />
+
+    <div class="relative z-20 w-full">
+      <Header />
+    </div>
+
+    <section class="relative z-10 pt-16 pb-8 lg:pt-20 h-full flex flex-col justify-center">
+      <div class="container relative">
+        <div class="grid items-center gap-10 lg:grid-cols-2">
+          <Hero client:load />
+          <div class="max-lg:!hidden flex h-[420px] items-center justify-center overflow-hidden relative">
+            <HeroLottie client:load />
           </div>
         </div>
-      </ScrollReveal>
-      <p class="steps-note">We work via WhatsApp/Email and keep everything documented.</p>
-    </div>
-  </section>
-
-  <!-- Section 3: What we do (NEW bento grid) -->
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">What We Manage</h2>
       </div>
-      <BentoServices client:visible />
-      <div class="text-center mt-8">
-        <a href="/pricing.html" class="btn btn-primary">See Pricing</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 4: Video Audit Spotlight (legacy) -->
-  <section class="bg-gray">
-    <div class="container">
-      <ScrollReveal client:visible>
-        <div class="audit-spotlight">
-          <div class="audit-spotlight-content">
-            <h2>Start With a $49 Video Audit</h2>
-            <ul class="audit-features">
-              <li>PDF report (7–12 pages)</li>
-              <li>5–8 min screen-recorded walkthrough</li>
-              <li>One main channel + quick wins from 2–3 related areas</li>
-              <li>30-day action plan</li>
-              <li>Delivered in 24–48 hours</li>
-            </ul>
-            <a href="/video-audit.html" class="btn btn-primary btn-lg">Get $49 Video Audit</a>
-          </div>
+      <div class="relative z-10 border-t border-white/20 mt-8 py-4">
+        <div class="container">
+          <LogoMarquee client:load />
         </div>
-      </ScrollReveal>
-    </div>
-  </section>
-
-  <!-- Section 5: Pricing Preview (legacy) -->
-  <section>
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Monthly Packages</h2>
-        <p class="section-desc">Choose a package or start with a low-risk $49 Video Audit. Month-to-month.</p>
       </div>
-      <ScrollReveal client:visible>
-        <div class="pricing-preview-grid">
-          <div class="pricing-card">
-            <h3>Starter Presence</h3>
-            <div class="price">$1,099<span>/mo</span></div>
-            <p class="price-note">Visibility + trust (no ads yet)</p>
-            <ul class="pricing-features">
-              <li>Google Maps (GBP) management</li>
-              <li>Review responses (up to 25/mo)</li>
-              <li>Local SEO Lite</li>
-              <li>Instagram content system</li>
-              <li>Website maintenance + edits</li>
-              <li>Monthly PDF report</li>
-            </ul>
-            <a href="/pricing/starter-presence.html" class="btn btn-outline">View Details</a>
-          </div>
-          <div class="pricing-card featured" data-badge="Most Popular">
-            <h3>Growth Leads</h3>
-            <div class="price">$1,899<span>/mo</span></div>
-            <p class="price-note">Leads with ads (choose 1 channel)</p>
-            <ul class="pricing-features">
-              <li>Everything in Starter</li>
-              <li>Stronger Local SEO</li>
-              <li>Instagram + Facebook</li>
-              <li>Google Ads OR Meta Ads</li>
-              <li>Weekly optimization loop</li>
-              <li>Ads setup included</li>
-            </ul>
-            <a href="/pricing/growth-leads.html" class="btn btn-primary">View Details</a>
-          </div>
-          <div class="pricing-card">
-            <h3>Full-Service (All-in)</h3>
-            <div class="price">$2,999<span>/mo</span></div>
-            <p class="price-note">One team runs your entire marketing</p>
-            <ul class="pricing-features">
-              <li>Everything in Growth</li>
-              <li>Google Ads + Meta Ads</li>
-              <li>SEO content (2 pieces/mo)</li>
-              <li>Website support + landing pages</li>
-              <li>Weekly updates + deep report</li>
-              <li>Both ad setups included</li>
-            </ul>
-            <a href="/pricing/full-service.html" class="btn btn-outline">View Details</a>
-          </div>
-        </div>
-      </ScrollReveal>
-      <p class="pricing-note-global">Ad spend is paid by clients directly to Google/Meta and is not included in our fees. We do not handle client funds; clients pay advertising platforms directly.</p>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <!-- Section 6: FAQ Teaser (legacy) -->
-  <section class="bg-gray">
-    <div class="container text-center">
-      <h2 class="section-title">Questions?</h2>
-      <p class="section-desc mb-8">Find answers about our process, pricing, and what's included.</p>
-      <a href="/pricing.html#faq" class="btn btn-outline">View FAQ</a>
-    </div>
-  </section>
-
-  <!-- Section 7: Final CTA (legacy) -->
-  <section class="cta-section">
-    <div class="container">
-      <h2>Ready to grow?</h2>
-      <p>Start with a quick audit or download our free checklist.</p>
-      <div class="cta-buttons">
-        <a href="/video-audit.html" class="btn btn-white btn-lg">Get $49 Video Audit</a>
-        <a href="/free-checklist.html" class="btn btn-outline-white btn-lg">Download Free Checklist</a>
+  <!-- Block 2: Hero Split — GBP card + 20 platforms -->
+  <div class="snap-block relative w-full" style="background:#d4ffee; overflow-y:auto">
+    <GBPBackground client:load />
+    <section class="relative z-10 pt-16 pb-8 lg:pt-20 h-full flex flex-col justify-center">
+      <div class="container relative">
+        <HeroSplitBlock client:load />
       </div>
+    </section>
+  </div>
+
+  <!-- Block 3: GBP gradient (сайты для бизнеса) -->
+  <GBPSection client:load />
+
+  <!-- Block 4: SEO продвижение в Google -->
+  <SEOSection client:load />
+
+  <!-- Block 5: Services -->
+  <section id="services" class="snap-block relative overflow-hidden flex items-center">
+    <div class="container w-full">
+      <ServicesSection client:visible />
     </div>
   </section>
+
+  <!-- Block 4: Video Audit Spotlight -->
+  <section class="snap-block relative overflow-hidden flex items-center">
+    <div class="container w-full">
+      <AuditSpotlight client:visible />
+    </div>
+  </section>
+
+  <!-- Block 5: Pricing -->
+  <section id="pricing" class="snap-block relative overflow-hidden flex items-center">
+    <div class="container w-full">
+      <PricingSection client:visible />
+    </div>
+  </section>
+
+  <!-- Block 6: FAQ -->
+  <section class="snap-block relative overflow-hidden flex items-center bg-surface">
+    <div class="container w-full">
+      <FAQSection client:visible />
+    </div>
+  </section>
+
+  <!-- Block 7: Team -->
+  <section id="team" class="snap-block relative overflow-hidden flex items-center bg-white">
+    <div class="container w-full">
+      <TeamSection client:visible />
+    </div>
+  </section>
+
+  <!-- Block 8: Final CTA -->
+  <div class="snap-block">
+    <CTASection client:visible />
+  </div>
 </Layout>
