@@ -53,7 +53,7 @@ jobs:
           port: 21
           local-dir: ./web/dist/
           server-dir: /public_html/new/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
           exclude: |
             **/.git*
             **/.git*/**
