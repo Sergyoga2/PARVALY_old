@@ -1,11 +1,28 @@
 import { useState } from 'react';
 import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
-import { Plus, Minus, HelpCircle } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
+
+const SANS = "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+
+const C = {
+  accent: '#2563eb',
+  ink: '#17223f',
+  ink2: '#2e3a52',
+  ink3: '#8b92a6',
+};
 
 const faqs = [
   {
     q: 'Как скоро будут первые результаты?',
-    a: 'Первые изменения в профилях и листингах появляются за 24–48 часов. Рост видимости в Google Maps обычно заметен через 2–4 недели после старта. Платная реклама начинает приводить заявки с первой недели.',
+    a: 'Первые изменения в профиле и листингах видны за 24–48 часов. Рост позиций в Google Maps — обычно через 30–60 дней. Устойчивые позиции в топ-3 — через 60–90 дней на среднеконкурентных рынках. Платная реклама начинает приводить заявки с первой недели.',
+  },
+  {
+    q: 'Что конкретно вы делаете каждый месяц?',
+    a: 'Каждый месяц мы публикуем 4–8 постов в Google Business Profile, отвечаем на отзывы (до 30 шт.) в течение 48 часов, добавляем компанию в 5–10 новых справочников (Yelp, Apple Maps, Bing и др.), мониторим несанкционированные правки профиля и присылаем отчёт с данными: звонки, запросы маршрутов, показы, позиции в топ-3.',
+  },
+  {
+    q: 'Почему нужно платить каждый месяц, а не настроить один раз?',
+    a: 'Потому что конкуренты активны постоянно, алгоритмы Google меняются тысячи раз в год, а профили без обновлений 30+ дней теряют позиции в показах. Ведение — это не техподдержка, а непрерывная работа по удержанию и росту позиций. Профиль, оптимизированный 3 месяца назад, уже не даёт максимума.',
   },
   {
     q: 'Нужно ли мне что-то делать самому?',
@@ -13,11 +30,15 @@ const faqs = [
   },
   {
     q: 'Входит ли рекламный бюджет в стоимость пакета?',
-    a: 'Нет. Рекламный бюджет вы оплачиваете напрямую в Google или Meta — мы не работаем со средствами клиентов. Наша комиссия — только плата за управление.',
+    a: 'Нет. Рекламный бюджет вы оплачиваете напрямую в Google или Meta — мы не работаем со средствами клиентов. Наша комиссия — только плата за управление кампаниями.',
   },
   {
     q: 'Можно ли отменить подписку?',
     a: 'Да. Мы работаем помесячно — без долгосрочных контрактов. Уведомите нас за 7 дней до следующего платёжного периода.',
+  },
+  {
+    q: 'Что произойдёт с моими данными, если я отменю подписку?',
+    a: 'Ваш Google Business Profile и все данные в справочниках остаются вашими. Мы не блокируем доступ к аккаунтам при отмене — в отличие от платформ типа Yext, где данные «откатываются» к исходному состоянию сразу после отмены подписки.',
   },
   {
     q: 'Вы работаете с бизнесами в любом штате США?',
@@ -25,114 +46,235 @@ const faqs = [
   },
   {
     q: 'Что входит в бесплатный аудит?',
-    a: 'Бесплатный аудит — это первичная оценка вашего онлайн-присутствия: карточка GBP, отзывы, листинги и сайт. Вы получите 3–5 конкретных рекомендаций без обязательств.',
+    a: 'Бесплатный аудит — это первичная оценка вашего онлайн-присутствия: карточка GBP, отзывы, листинги (Yelp, Apple Maps, Bing и др.) и сайт. Вы получите 3–5 конкретных рекомендаций без обязательств — в течение 48 часов.',
   },
 ];
 
-function FAQItem({ item, index }: { item: (typeof faqs)[0]; index: number }) {
-  const [open, setOpen] = useState(false);
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+interface FAQItemProps {
+  item: (typeof faqs)[0];
+  index: number;
+  open: boolean;
+  onToggle: () => void;
+}
+
+function FAQItem({ item, index, open, onToggle }: FAQItemProps) {
   const reduce = useReducedMotion();
 
   return (
-    <motion.div
-      className="border-b last:border-0"
-      style={{ borderColor: 'var(--border)' }}
-      initial={reduce ? false : { opacity: 0, y: 14 }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-20px' }}
-      transition={{ duration: 0.45, delay: reduce ? 0 : index * 0.065, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      itemScope
+      itemProp="mainEntity"
+      itemType="https://schema.org/Question"
+      style={{ borderBottom: '1px solid rgba(28,42,90,.09)', fontFamily: SANS }}
     >
-      <button
-        className="flex w-full items-center justify-between gap-4 py-5 text-left"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 10 }}
+        whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-10px' }}
+        transition={{ duration: 0.4, delay: reduce ? 0 : index * 0.04, ease: [0.22, 1, 0.36, 1] }}
       >
-        <span className="text-base font-semibold leading-snug" style={{ color: 'var(--text)' }}>
-          {item.q}
-        </span>
-        <div
-          className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center transition-all duration-200"
+        <button
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={`faq-answer-${index}`}
+          id={`faq-question-${index}`}
           style={{
-            background: open ? 'rgba(37,99,235,0.10)' : 'rgba(0,0,0,0.04)',
-            border: open ? '1px solid rgba(37,99,235,0.28)' : '1px solid rgba(0,0,0,0.08)',
+            display: 'flex',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+            /* padding scales with viewport height */
+            padding: 'clamp(7px, 1.15vh, 18px) 0',
+            textAlign: 'left',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: SANS,
           }}
         >
-          {open ? (
-            <Minus size={13} style={{ color: '#2563eb' }} />
-          ) : (
-            <Plus size={13} style={{ color: 'var(--text-secondary)' }} />
-          )}
-        </div>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="answer"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
+          <h3
+            itemProp="name"
+            style={{
+              /* scales with both vh and vw, capped at 18px */
+              fontSize: 'clamp(13px, 1.7vh, 18px)',
+              fontWeight: 700,
+              lineHeight: 1.3,
+              color: C.ink,
+              margin: 0,
+              fontFamily: SANS,
+            }}
           >
-            <p className="pb-5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              {item.a}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            {item.q}
+          </h3>
+          <div
+            aria-hidden="true"
+            style={{
+              flexShrink: 0,
+              width: 'clamp(26px, 3.2vh, 34px)',
+              height: 'clamp(26px, 3.2vh, 34px)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background .2s, border-color .2s',
+              background: open ? 'rgba(37,99,235,0.10)' : 'rgba(28,42,90,0.05)',
+              border: open ? '1px solid rgba(37,99,235,0.30)' : '1px solid rgba(28,42,90,0.10)',
+            }}
+          >
+            {open
+              ? <Minus size={13} color={C.accent} />
+              : <Plus size={13} color={C.ink3} />
+            }
+          </div>
+        </button>
+
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              key="answer"
+              id={`faq-answer-${index}`}
+              role="region"
+              aria-labelledby={`faq-question-${index}`}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              style={{ overflow: 'hidden' }}
+              itemScope
+              itemProp="acceptedAnswer"
+              itemType="https://schema.org/Answer"
+            >
+              <p
+                itemProp="text"
+                style={{
+                  paddingBottom: 'clamp(7px, 1.15vh, 18px)',
+                  lineHeight: 1.6,
+                  color: C.ink2,
+                  /* answer text slightly smaller than question */
+                  fontSize: 'clamp(12px, 1.5vh, 15px)',
+                  fontWeight: 500,
+                  margin: 0,
+                  fontFamily: SANS,
+                }}
+              >
+                {item.a}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
   );
 }
 
 export default function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
   const reduce = useReducedMotion();
 
+  function handleToggle(i: number) {
+    setOpenIndex((prev) => (prev === i ? null : i));
+  }
+
+  const fadeUp = (delay: number) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 16 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true, margin: '-30px' },
+          transition: { duration: 0.6, delay, ease: [0.2, 0.7, 0.2, 1] },
+        };
+
   return (
-    <div className="relative">
-      <div className="section-header mb-12">
-        <motion.div
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-widest mb-6"
-          style={{
-            background: 'rgba(37,99,235,0.08)',
-            border: '1px solid rgba(37,99,235,0.25)',
-            color: '#2563eb',
-          }}
-          initial={reduce ? false : { opacity: 0, y: 14 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45 }}
-        >
-          <HelpCircle size={12} />
-          FAQ
-        </motion.div>
+    <section
+      className="snap-block"
+      itemScope
+      itemType="https://schema.org/FAQPage"
+      style={{ position: 'relative', width: '100%', background: '#fff' }}
+    >
+      {/* JSON-LD for Google FAQ rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
-        <motion.h2
-          className="section-title"
-          initial={reduce ? false : { opacity: 0, y: 18 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-        >
-          Частые вопросы
-        </motion.h2>
+      {/* Same inner pattern as AuditSection: h-full flex-col justify-center */}
+      <section
+        className="relative z-10 h-full flex flex-col justify-center"
+        style={{
+          paddingTop: 'clamp(8px, 1.5vh, 24px)',
+          paddingBottom: 'clamp(8px, 1.5vh, 24px)',
+        }}
+      >
+        <div className="container relative">
+          <div
+            style={{
+              fontFamily: SANS,
+              maxWidth: 780,
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <motion.h2
+              {...fadeUp(0)}
+              style={{
+                fontSize: 'clamp(28px, 4.6vw, 62px)',
+                fontWeight: 900,
+                lineHeight: 1.05,
+                letterSpacing: '-0.03em',
+                color: C.ink,
+                textAlign: 'center',
+                margin: '0 0 clamp(12px, 2vh, 40px)',
+                fontFamily: SANS,
+              }}
+            >
+              Частые{' '}
+              <span style={{ color: C.accent }}>вопросы</span>
+            </motion.h2>
 
-        <motion.p
-          className="section-desc mt-4"
-          initial={reduce ? false : { opacity: 0, y: 14 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: 0.14 }}
-        >
-          Если не нашли ответ — напишите нам, мы ответим в течение дня.
-        </motion.p>
-      </div>
+            <motion.p
+              {...fadeUp(0.08)}
+              style={{
+                fontSize: 'clamp(12px, 1.55vh, 16px)',
+                lineHeight: 1.6,
+                color: C.ink2,
+                textAlign: 'center',
+                margin: '0 0 clamp(10px, 2vh, 32px)',
+                fontWeight: 500,
+                fontFamily: SANS,
+                maxWidth: 500,
+              }}
+            >
+              Если не нашли ответ — напишите нам, мы ответим в течение дня.
+            </motion.p>
 
-      <div className="max-w-2xl mx-auto">
-        {faqs.map((item, i) => (
-          <FAQItem key={item.q} item={item} index={i} />
-        ))}
-      </div>
-    </div>
+            <div style={{ width: '100%' }} aria-label="Часто задаваемые вопросы">
+              {faqs.map((item, i) => (
+                <FAQItem
+                  key={item.q}
+                  item={item}
+                  index={i}
+                  open={openIndex === i}
+                  onToggle={() => handleToggle(i)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
   );
 }

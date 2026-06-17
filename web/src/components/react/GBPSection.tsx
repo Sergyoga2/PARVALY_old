@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { ShaderGradientCanvas, ShaderGradient } from '@shadergradient/react';
+import { scrollToAudit } from '../../utils/scrollToAudit';
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -8,7 +9,8 @@ const CHECKS = [
   'SEO-структура и локальные ключевые слова для видимости в Google',
   'Посадочные страницы по услугам и городам',
   'Mobile-first дизайн и скорость загрузки',
-  'Интеграция с Google-профилем и локальными листингами',
+  'Интеграция с Google Business Profile и 20+ листингами',
+  'Страницы под каждый город — попадание в локальный поиск',
 ];
 
 const SERVICES = [
@@ -214,7 +216,7 @@ export default function GBPSection() {
 
                 <motion.p
                   {...fadeUp(0.16)}
-                  style={{ fontSize: 18, lineHeight: 1.6, color: C.ink2, maxWidth: 520, margin: '0 0 28px', fontWeight: 500 }}
+                  style={{ fontSize: 'clamp(14px, 1.8vw, 18px)', lineHeight: 1.6, color: C.ink2, maxWidth: 520, margin: '0 0 28px', fontWeight: 500 }}
                 >
                   У большинства локальных бизнесов уже есть сайт — но он не приносит звонков, заявок и бронирований.{' '}
                   <strong style={{ color: C.ink, fontWeight: 700 }}>PARVALY чинит сайты, которые не конвертируют</strong>, и создаёт новые — заточенные под Google, локальное SEO и реальные действия клиентов.
@@ -240,14 +242,15 @@ export default function GBPSection() {
                         />
                       </>
                     )}
-                    <a
-                      href="#"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 9, fontFamily: SANS, fontSize: 16, fontWeight: 700, padding: '15px 26px', borderRadius: 14, textDecoration: 'none', background: C.accent, color: '#fff', boxShadow: '0 14px 30px -10px rgba(58,100,232,.6)', border: 'none', transition: 'transform .14s ease, box-shadow .14s ease', position: 'relative' }}
+                    <button
+                      type="button"
+                      onClick={() => scrollToAudit('site')}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 9, fontFamily: SANS, fontSize: 16, fontWeight: 700, padding: '15px 26px', borderRadius: 14, background: C.accent, color: '#fff', boxShadow: '0 14px 30px -10px rgba(58,100,232,.6)', border: 'none', transition: 'transform .14s ease, box-shadow .14s ease', position: 'relative', cursor: 'pointer' }}
                       onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 38px -10px rgba(58,100,232,.7)'; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 14px 30px -10px rgba(58,100,232,.6)'; }}
                     >
                       Получить аудит сайта <span>→</span>
-                    </a>
+                    </button>
                   </div>
                 </motion.div>
 
@@ -271,7 +274,7 @@ export default function GBPSection() {
               <motion.div
                 {...cardAnim}
                 className="max-lg:!hidden"
-                style={{ position: 'relative', paddingTop: 28, paddingRight: 32 }}
+                style={{ position: 'relative', paddingTop: 28, paddingRight: 'clamp(0px, 3vw, 32px)' }}
               >
                 <BrowserMockup />
 
@@ -284,10 +287,10 @@ export default function GBPSection() {
                     SEO · Google
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 4 }}>
-                    <span style={{ fontSize: 30, fontWeight: 800, color: C.good, lineHeight: 1, letterSpacing: '-0.02em' }}>Топ-3</span>
+                    <span style={{ fontSize: 26, fontWeight: 800, color: C.good, lineHeight: 1, letterSpacing: '-0.02em' }}>+312%</span>
                     <span style={{ color: C.good, fontSize: 15 }}>▲</span>
                   </div>
-                  <div style={{ fontSize: 12, color: C.ink2, fontWeight: 600, marginTop: 2 }}>в локальной выдаче</div>
+                  <div style={{ fontSize: 12, color: C.ink2, fontWeight: 600, marginTop: 2 }}>показов за 8 месяцев</div>
                   <div style={{ marginTop: 10, display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
                     {SPARK_HEIGHTS.map((h, i) => (
                       <div key={i} style={{ width: 8, height: `${h}%`, background: i === SPARK_HEIGHTS.length - 1 ? C.good : '#cdeccf', borderRadius: 3 }} />
@@ -317,8 +320,8 @@ export default function GBPSection() {
               style={{ borderTop: '1px solid rgba(255,255,255,.25)', marginTop: 32, paddingTop: 20 }}
             >
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 11, marginBottom: 14, flexWrap: 'wrap', fontFamily: SANS }}>
-                <span style={{ fontSize: 24, fontWeight: 800, color: C.accent, letterSpacing: '-0.02em' }}>12 точек роста</span>
-                <span style={{ fontSize: 15, fontWeight: 600, color: C.ink2 }}>— чтобы сайт работал как часть системы привлечения клиентов</span>
+                <span style={{ fontSize: 'clamp(16px, 2.4vw, 24px)', fontWeight: 800, color: C.accent, letterSpacing: '-0.02em' }}>12 точек роста</span>
+                <span style={{ fontSize: 'clamp(12px, 1.5vw, 15px)', fontWeight: 600, color: C.ink2 }}>— чтобы сайт работал как часть системы привлечения клиентов</span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {SERVICES.map((s) => (

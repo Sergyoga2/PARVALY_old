@@ -2,80 +2,55 @@ import { motion, useReducedMotion } from 'motion/react';
 import { ShaderGradientCanvas, ShaderGradient } from '@shadergradient/react';
 import { scrollToAudit } from '../../utils/scrollToAudit';
 
-// ── Data ─────────────────────────────────────────────────────────────────────
-
 const CHECKS = [
-  'Технический SEO-аудит и устранение ошибок',
-  'Семантическое ядро под запросы в Google США',
-  'Страницы под каждый город и услугу',
-  'Оптимизация текстов, мета-тегов и структуры',
-  'Построение ссылочного профиля и авторитета',
-  'Мониторинг позиций и ежемесячные отчёты',
+  'Бесплатный аудит текущих рекламных кампаний',
+  'Кампании на лиды, звонки и прямые продажи',
+  'Точный таргетинг на вашу целевую аудиторию',
+  'Настройка CRM, воронок и работы с базой клиентов',
 ];
 
 const SERVICES = [
-  { n: 'SEO-аудит', lead: true },
-  { n: 'Ключевые слова' },
-  { n: 'On-page SEO' },
-  { n: 'Технический SEO' },
-  { n: 'Локальные страницы' },
-  { n: 'Link Building' },
-  { n: 'Google Search Console' },
-  { n: 'Core Web Vitals' },
-  { n: 'Schema Markup' },
-  { n: 'Конкурентный анализ' },
-  { n: 'Контент-маркетинг' },
-  { n: 'Отчётность' },
-  { n: '+ ChatGPT / AI-поиск', lead: false, aiTag: true },
+  { n: 'Аудит рекламы', lead: true },
+  { n: 'Facebook Ads' },
+  { n: 'Instagram Ads' },
+  { n: 'Lead Ads' },
+  { n: 'Ретаргетинг' },
+  { n: 'Look-alike аудитории' },
+  { n: 'A/B тестирование' },
+  { n: 'Пиксель Meta' },
+  { n: 'Конверсионные кампании' },
+  { n: 'Аналитика и отчёты' },
+  { n: 'Скрипты продаж' },
+  { n: 'CRM и воронки' },
 ];
 
-const SPARK_HEIGHTS = [28, 35, 42, 55, 68, 82, 100];
+const SPARK_DATA = [22, 34, 28, 42, 58, 71, 65, 80, 74, 92, 85, 100];
 
 const SANS = "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
 
 const C = {
-  accent: '#0f9d58',
-  accentBlue: '#1a73e8',
-  accentSoft: '#e6f4ea',
+  accent: '#1877F2',
+  accentSoft: '#e7f0fe',
+  accentPink: '#E1306C',
   ink: '#17223f',
   ink2: '#2e3a52',
   ink3: '#8b92a6',
 };
 
-// ── Google SERP Mockup ────────────────────────────────────────────────────────
+// ── Meta Ads Manager Mockup ───────────────────────────────────────────────────
 
-function GoogleSerpMockup() {
-  const results = [
-    {
-      url: 'sparkleprocleaning.com',
-      breadcrumb: 'sparkleprocleaning.com › Chicago',
-      title: 'Sparkle Pro Cleaning Chicago — #1 Home Cleaning Service',
-      desc: 'Professional home & office cleaning in Chicago, IL. 4.9★ on Google · 218 reviews. Same-week appointments. Licensed & insured. Get a free quote today.',
-      tags: ['Топ-1', 'Featured Snippet'],
-      isTop: true,
-    },
-    {
-      url: 'sparkleprocleaning.com',
-      breadcrumb: 'sparkleprocleaning.com › deep-cleaning',
-      title: 'Deep Cleaning Services Chicago | Move-In / Move-Out',
-      desc: 'Professional deep cleaning for homes and apartments. Trusted by 500+ clients. Book online or call (312) 555-0148.',
-      tags: [],
-      isTop: false,
-    },
-    {
-      url: 'sparkleprocleaning.com',
-      breadcrumb: 'sparkleprocleaning.com › office-cleaning',
-      title: 'Office Cleaning Chicago | Commercial Cleaning Service',
-      desc: 'Daily, weekly and monthly commercial cleaning packages for Chicago businesses. Free estimate available.',
-      tags: [],
-      isTop: false,
-    },
+function MetaAdsMockup() {
+  const metrics = [
+    { label: 'Лиды', value: '847', sub: 'за месяц' },
+    { label: 'CPL', value: '$18.40', sub: 'цена лида' },
+    { label: 'ROAS', value: '4.2×', sub: 'возврат' },
+    { label: 'Охват', value: '48.2K', sub: 'человек' },
   ];
 
   return (
     <div
       style={{
-        fontFamily: "'Roboto', sans-serif",
+        fontFamily: SANS,
         background: '#fff',
         border: '1px solid #eceef2',
         borderRadius: 18,
@@ -84,170 +59,159 @@ function GoogleSerpMockup() {
         color: '#202124',
       }}
     >
-      {/* Google search bar */}
+      {/* Header bar */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          padding: '14px 16px',
+          padding: '13px 16px',
           borderBottom: '1px solid #f0f1f4',
-          background: '#f8f9fa',
+          background: '#f8f9ff',
         }}
       >
-        <img
-          src="https://www.google.com/s2/favicons?domain=google.com&sz=64"
-          alt="Google"
-          width="20"
-          height="20"
-          style={{ flexShrink: 0 }}
-        />
         <div
           style={{
-            flex: 1,
-            height: 38,
-            background: '#fff',
-            border: '1px solid #dfe1e5',
-            borderRadius: 999,
+            width: 28,
+            height: 28,
+            borderRadius: 8,
+            background: '#1877F2',
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
-            padding: '0 14px',
-            fontSize: 13,
-            color: '#202124',
-            fontWeight: 500,
-            boxShadow: '0 1px 6px rgba(32,33,36,.1)',
+            justifyContent: 'center',
+            flexShrink: 0,
           }}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9aa0a6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-          cleaning service chicago il
-          <span style={{ marginLeft: 'auto', color: '#4285f4', fontWeight: 700, fontSize: 11 }}>×</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15.2 8h-1.6c-.66 0-.8.28-.8.7V10h2.4l-.3 2.4H12.8V18h-2.4v-5.6H9V10h1.4V8.5C10.4 6.7 11.4 6 13 6c.8 0 2.2.1 2.2.1V8z" fill="white"/>
+          </svg>
+        </div>
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#1c1e21' }}>Meta Ads Manager</span>
+        <div style={{ marginLeft: 'auto' }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              padding: '3px 9px',
+              borderRadius: 6,
+              background: '#e7f5e7',
+              color: '#2d7a2d',
+            }}
+          >
+            ● Активна
+          </span>
         </div>
       </div>
 
-      {/* Search tabs */}
+      {/* Campaign name */}
+      <div style={{ padding: '10px 16px 8px', borderBottom: '1px solid #f0f1f4' }}>
+        <div
+          style={{
+            fontSize: 11,
+            color: C.ink3,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+          }}
+        >
+          Кампания
+        </div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: C.ink, marginTop: 2 }}>
+          Chicago Home Services — Leads & Calls
+        </div>
+      </div>
+
+      {/* Metrics grid */}
       <div
+        className="grid grid-cols-2 sm:grid-cols-4"
         style={{
-          display: 'flex',
-          gap: 0,
-          padding: '0 16px',
-          borderBottom: '1px solid #ececf1',
-          fontSize: 13,
-          color: '#70757a',
+          borderBottom: '1px solid #f0f1f4',
         }}
       >
-        {['Все', 'Карты', 'Новости', 'Картинки', 'Ещё'].map((tab, i) => (
-          <span
-            key={tab}
-            style={{
-              padding: '10px 14px',
-              fontWeight: i === 0 ? 700 : 400,
-              color: i === 0 ? '#1a73e8' : '#70757a',
-              borderBottom: i === 0 ? '3px solid #1a73e8' : '3px solid transparent',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              fontSize: 13,
-            }}
-          >
-            {tab}
-          </span>
-        ))}
-      </div>
-
-      {/* Results info */}
-      <div style={{ padding: '8px 16px 4px', fontSize: 12, color: '#70757a' }}>
-        Около 2 840 000 результатов (0,42 сек.)
-      </div>
-
-      {/* SERP Results */}
-      <div style={{ padding: '4px 16px 16px', display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {results.map((r, i) => (
+        {metrics.map((m, i) => (
           <div
             key={i}
             style={{
-              padding: '12px 0',
-              borderBottom: i < results.length - 1 ? '1px solid #f0f1f4' : 'none',
-              position: 'relative',
+              padding: '12px 14px',
+              borderRight: i < metrics.length - 1 ? '1px solid #f0f1f4' : 'none',
             }}
           >
-            {/* Position badge */}
+            <div style={{ fontSize: 11, color: C.ink3, fontWeight: 600, marginBottom: 3 }}>
+              {m.label}
+            </div>
             <div
               style={{
-                position: 'absolute',
-                right: 0,
-                top: 12,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-                fontSize: 10.5,
-                fontWeight: 700,
-                padding: '3px 8px',
-                borderRadius: 6,
-                background: r.isTop ? C.accentSoft : '#f3f4f8',
-                color: r.isTop ? C.accent : '#5f6368',
-                fontFamily: SANS,
+                fontSize: 20,
+                fontWeight: 800,
+                color: i === 2 ? C.accent : C.ink,
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
               }}
             >
-              {r.isTop ? (
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={C.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7"/></svg>
-              ) : null}
-              #{i + 1}
+              {m.value}
             </div>
-
-            {/* Breadcrumb */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
-              <img
-                src={`https://www.google.com/s2/favicons?domain=${r.url}&sz=32`}
-                alt=""
-                width="14"
-                height="14"
-                style={{ borderRadius: 2 }}
-              />
-              <span style={{ fontSize: 12, color: '#202124', fontWeight: 500 }}>{r.url}</span>
-              <span style={{ fontSize: 12, color: '#70757a' }}>› {r.breadcrumb.split('› ')[1]}</span>
-            </div>
-
-            {/* Title */}
-            <div
-              style={{
-                fontSize: r.isTop ? 16 : 15,
-                color: '#1a0dab',
-                fontWeight: r.isTop ? 600 : 400,
-                lineHeight: 1.3,
-                marginBottom: 4,
-                textDecoration: 'underline',
-                textDecorationColor: 'transparent',
-                cursor: 'pointer',
-              }}
-            >
-              {r.title}
-            </div>
-
-            {/* Tags */}
-            {r.tags.length > 0 && (
-              <div style={{ display: 'flex', gap: 5, marginBottom: 5 }}>
-                {r.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontSize: 10.5,
-                      fontWeight: 700,
-                      padding: '2px 7px',
-                      borderRadius: 4,
-                      background: tag === 'Топ-1' ? C.accentSoft : '#fef7e0',
-                      color: tag === 'Топ-1' ? C.accent : '#b06a00',
-                      fontFamily: SANS,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Description */}
-            <div style={{ fontSize: 12.5, color: '#4d5156', lineHeight: 1.5 }}>{r.desc}</div>
+            <div style={{ fontSize: 11, color: C.ink3, marginTop: 2 }}>{m.sub}</div>
           </div>
+        ))}
+      </div>
+
+      {/* Sparkline chart */}
+      <div style={{ padding: '12px 16px 14px' }}>
+        <div
+          style={{
+            fontSize: 11,
+            color: C.ink3,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            marginBottom: 8,
+          }}
+        >
+          Лиды · последние 30 дней
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 52 }}>
+          {SPARK_DATA.map((h, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: `${h}%`,
+                background:
+                  i === SPARK_DATA.length - 1
+                    ? C.accent
+                    : `rgba(24,119,242,${0.15 + (h / 100) * 0.35})`,
+                borderRadius: '3px 3px 0 0',
+                minWidth: 0,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Placement tags */}
+      <div
+        style={{
+          padding: '8px 16px 12px',
+          borderTop: '1px solid #f0f1f4',
+          display: 'flex',
+          gap: 6,
+          flexWrap: 'wrap',
+        }}
+      >
+        {['Facebook Feed', 'Instagram Feed', 'Instagram Stories', 'Messenger'].map((p, i) => (
+          <span
+            key={i}
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              padding: '3px 9px',
+              borderRadius: 6,
+              background: i === 1 || i === 2 ? '#fce4ef' : '#f0f4ff',
+              color: i === 1 || i === 2 ? C.accentPink : C.accent,
+            }}
+          >
+            {p}
+          </span>
         ))}
       </div>
     </div>
@@ -256,7 +220,7 @@ function GoogleSerpMockup() {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export default function SEOSection() {
+export default function MetaAdsSection() {
   const reduce = useReducedMotion();
 
   const fadeUp = (delay: number) =>
@@ -283,7 +247,7 @@ export default function SEOSection() {
       className="snap-block"
       style={{ position: 'relative', width: '100%', overflowY: 'auto' }}
     >
-      {/* Gradient background — green/mint tone */}
+      {/* Gradient background — blue/violet tone */}
       <ShaderGradientCanvas
         style={{
           position: 'absolute',
@@ -299,13 +263,13 @@ export default function SEOSection() {
       >
         <ShaderGradient
           animate="on"
-          brightness={1.7}
+          brightness={1.9}
           cAzimuthAngle={200}
           cDistance={4.4}
           cPolarAngle={70}
           cameraZoom={1}
-          color1="#a8ffce"
-          color2="#c4ffe0"
+          color1="#b8d5ff"
+          color2="#cfc4ff"
           color3="#ffffff"
           envPreset="city"
           grain="off"
@@ -355,9 +319,9 @@ export default function SEOSection() {
                     textWrap: 'balance',
                   } as React.CSSProperties}
                 >
-                  SEO-продвижение в Google —<br />
-                  <span style={{ color: C.accent }}>стабильный поток клиентов</span>{' '}
-                  из поиска
+                  Таргетированная реклама —<br />
+                  <span style={{ color: C.accent }}>лиды и звонки</span>{' '}
+                  из Facebook & Instagram
                 </motion.h2>
 
                 <motion.p
@@ -371,12 +335,14 @@ export default function SEOSection() {
                     fontWeight: 500,
                   }}
                 >
-                  Продвигаем сайты малого бизнеса в США в органической выдаче Google.{' '}
-                  <strong style={{ color: C.ink, fontWeight: 700 }}>Топ-3 по целевым запросам</strong> — это
-                  бесплатные переходы каждый день без оплаты за клик.
+                  Настраиваем кампании в Meta Ads с{' '}
+                  <strong style={{ color: C.ink, fontWeight: 700 }}>10+ лет опыта</strong>{' '}
+                  и управляем бюджетами до{' '}
+                  <strong style={{ color: C.ink, fontWeight: 700 }}>$10 млн в год</strong>.{' '}
+                  Бесплатный аудит текущей рекламы — без обязательств.
                 </motion.p>
 
-                {/* CTA — pulse animation same as other blocks */}
+                {/* CTA */}
                 <motion.div
                   {...fadeUp(0.24)}
                   style={{
@@ -395,7 +361,7 @@ export default function SEOSection() {
                             position: 'absolute',
                             inset: -5,
                             borderRadius: 19,
-                            border: `2.5px solid rgba(15,157,88,.65)`,
+                            border: `2.5px solid rgba(24,119,242,.65)`,
                             pointerEvents: 'none',
                           }}
                           animate={{ scale: [1, 1.14], opacity: [0.75, 0] }}
@@ -411,7 +377,7 @@ export default function SEOSection() {
                             position: 'absolute',
                             inset: -5,
                             borderRadius: 19,
-                            border: `2.5px solid rgba(15,157,88,.4)`,
+                            border: `2.5px solid rgba(24,119,242,.4)`,
                             pointerEvents: 'none',
                           }}
                           animate={{ scale: [1, 1.26], opacity: [0.5, 0] }}
@@ -427,7 +393,7 @@ export default function SEOSection() {
                     )}
                     <button
                       type="button"
-                      onClick={() => scrollToAudit('seo')}
+                      onClick={() => scrollToAudit('meta')}
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -439,7 +405,7 @@ export default function SEOSection() {
                         borderRadius: 14,
                         background: C.accent,
                         color: '#fff',
-                        boxShadow: `0 14px 30px -10px rgba(15,157,88,.6)`,
+                        boxShadow: `0 14px 30px -10px rgba(24,119,242,.6)`,
                         border: 'none',
                         transition: 'transform .14s ease, box-shadow .14s ease',
                         position: 'relative',
@@ -448,15 +414,15 @@ export default function SEOSection() {
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
                         (e.currentTarget as HTMLElement).style.boxShadow =
-                          '0 20px 38px -10px rgba(15,157,88,.7)';
+                          '0 20px 38px -10px rgba(24,119,242,.7)';
                       }}
                       onMouseLeave={(e) => {
                         (e.currentTarget as HTMLElement).style.transform = '';
                         (e.currentTarget as HTMLElement).style.boxShadow =
-                          '0 14px 30px -10px rgba(15,157,88,.6)';
+                          '0 14px 30px -10px rgba(24,119,242,.6)';
                       }}
                     >
-                      Получить аудит по SEO <span>→</span>
+                      Получить бесплатный аудит <span>→</span>
                     </button>
                   </div>
                 </motion.div>
@@ -470,7 +436,6 @@ export default function SEOSection() {
                     margin: 0,
                     padding: 0,
                     listStyle: 'none',
-                    marginBottom: 24,
                   }}
                 >
                   {CHECKS.map((text) => (
@@ -480,7 +445,7 @@ export default function SEOSection() {
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: 11,
-                        fontSize: 14.5,
+                        fontSize: 17,
                         fontWeight: 600,
                         color: C.ink,
                         lineHeight: 1.35,
@@ -516,18 +481,17 @@ export default function SEOSection() {
                     </li>
                   ))}
                 </motion.ul>
-
               </div>
 
-              {/* ── RIGHT: Google SERP mockup ── */}
+              {/* ── RIGHT: Meta Ads Manager mockup ── */}
               <motion.div
                 {...cardAnim}
                 className="max-lg:!hidden"
                 style={{ position: 'relative', paddingTop: 28, paddingRight: 'clamp(0px, 3vw, 32px)' }}
               >
-                <GoogleSerpMockup />
+                <MetaAdsMockup />
 
-                {/* Floating insight chip — top-right */}
+                {/* Floating chip — top right: experience & budgets */}
                 <div
                   style={{
                     position: 'absolute',
@@ -576,68 +540,42 @@ export default function SEOSection() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       >
-                        <path d="M3 17l6-6 4 4 8-8" />
-                        <path d="M21 7v5h-5" />
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
                       </svg>
                     </span>
-                    Google · Органика
+                    Наш опыт
                   </div>
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'baseline',
-                      gap: 7,
+                      gap: 5,
                       marginTop: 4,
                     }}
                   >
                     <span
                       style={{
-                        fontSize: 26,
+                        fontSize: 30,
                         fontWeight: 800,
                         color: C.accent,
                         lineHeight: 1,
                         letterSpacing: '-0.02em',
                       }}
                     >
-                      #7 → #2
+                      $10M+
                     </span>
-                    <span style={{ color: C.accent, fontSize: 15 }}>▲</span>
                   </div>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: C.ink2,
-                      fontWeight: 600,
-                      marginTop: 2,
-                    }}
-                  >
-                    в Google Maps за 90 дней
+                  <div style={{ fontSize: 12, color: C.ink2, fontWeight: 600, marginTop: 2 }}>
+                    бюджетов в год
                   </div>
-                  <div
-                    style={{
-                      marginTop: 10,
-                      display: 'flex',
-                      alignItems: 'flex-end',
-                      gap: 3,
-                      height: 28,
-                    }}
-                  >
-                    {SPARK_HEIGHTS.map((h, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          width: 8,
-                          height: `${h}%`,
-                          background:
-                            i === SPARK_HEIGHTS.length - 1 ? C.accent : '#bbf7d0',
-                          borderRadius: 3,
-                        }}
-                      />
-                    ))}
+                  <div style={{ fontSize: 11, color: C.ink3, marginTop: 4 }}>
+                    · 10+ лет в Meta Ads
                   </div>
                 </div>
 
-                {/* Keywords chip — bottom-left */}
+                {/* Floating chip — bottom left: ROAS */}
                 <div
                   style={{
                     position: 'absolute',
@@ -685,11 +623,11 @@ export default function SEOSection() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       >
-                        <circle cx="11" cy="11" r="7" />
-                        <path d="M21 21l-4.35-4.35" />
+                        <path d="M3 17l6-6 4 4 8-8" />
+                        <path d="M21 7v5h-5" />
                       </svg>
                     </span>
-                    Позиции
+                    Результат
                   </div>
                   <div
                     style={{
@@ -700,10 +638,7 @@ export default function SEOSection() {
                       marginTop: 5,
                     }}
                   >
-                    Топ-<span style={{ color: C.accent }}>3</span>{' '}
-                    <span style={{ fontSize: 12, fontWeight: 700, color: C.accent }}>
-                      Google
-                    </span>
+                    ROAS <span style={{ color: C.accent }}>4.2×</span>
                   </div>
                 </div>
               </motion.div>
@@ -736,12 +671,10 @@ export default function SEOSection() {
                     letterSpacing: '-0.02em',
                   }}
                 >
-                  12 направлений SEO
+                  12 направлений
                 </span>
-                <span
-                  style={{ fontSize: 'clamp(12px, 1.5vw, 15px)', fontWeight: 600, color: C.ink2 }}
-                >
-                  — комплексное продвижение в Google США
+                <span style={{ fontSize: 'clamp(12px, 1.5vw, 15px)', fontWeight: 600, color: C.ink2 }}>
+                  — таргетированная реклама под ключ
                 </span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -754,16 +687,16 @@ export default function SEOSection() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 8,
-                      background: s.lead ? C.accent : (s as any).aiTag ? 'rgba(124,58,237,.10)' : 'rgba(255,255,255,.82)',
-                      border: s.lead ? 'none' : (s as any).aiTag ? '1px solid rgba(124,58,237,.35)' : '1px solid rgba(28,42,90,.07)',
+                      background: s.lead ? C.accent : 'rgba(255,255,255,.82)',
+                      border: s.lead ? 'none' : '1px solid rgba(28,42,90,.07)',
                       borderRadius: 999,
                       padding: '7px 13px 7px 10px',
                       boxShadow: s.lead
-                        ? '0 10px 22px -6px rgba(15,157,88,.5)'
+                        ? '0 10px 22px -6px rgba(24,119,242,.5)'
                         : '0 4px 14px rgba(28,42,90,.07)',
                       fontSize: 13,
                       fontWeight: 600,
-                      color: s.lead ? '#fff' : (s as any).aiTag ? '#7c3aed' : C.ink,
+                      color: s.lead ? '#fff' : C.ink,
                       fontFamily: SANS,
                       cursor: 'default',
                     }}
@@ -773,7 +706,7 @@ export default function SEOSection() {
                         width: 6,
                         height: 6,
                         borderRadius: '50%',
-                        background: s.lead ? '#fff' : (s as any).aiTag ? '#7c3aed' : C.accent,
+                        background: s.lead ? '#fff' : C.accent,
                         flexShrink: 0,
                       }}
                     />

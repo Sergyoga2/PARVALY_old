@@ -1,10 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/react/Hero.tsx';
-import ServicesSection from '../components/react/ServicesSection.tsx';
 import LogoMarquee from '../components/react/LogoMarquee.tsx';
-import AuditSpotlight from '../components/react/AuditSpotlight.tsx';
-import PricingSection from '../components/react/PricingSection.tsx';
+import AuditSection from '../components/react/AuditSection.tsx';
 import FAQSection from '../components/react/FAQSection.tsx';
 import TeamSection from '../components/react/TeamSection.tsx';
 import CTASection from '../components/react/CTASection.tsx';
@@ -14,6 +12,7 @@ import HeroBackground from '../components/react/HeroBackground.tsx';
 import GBPBackground from '../components/react/GBPBackground.tsx';
 import HeroLottie from '../components/react/HeroLottie.tsx';
 import SEOSection from '../components/react/SEOSection.tsx';
+import MetaAdsSection from '../components/react/MetaAdsSection.tsx';
 import Header from '../components/Header.astro';
 ---
 
@@ -82,39 +81,20 @@ import Header from '../components/Header.astro';
     </section>
   </div>
 
-  <!-- Block 3: GBP gradient (сайты для бизнеса) -->
-  <GBPSection client:load />
-
-  <!-- Block 4: SEO продвижение в Google -->
+  <!-- Block 3: SEO продвижение в Google -->
   <SEOSection client:load />
 
-  <!-- Block 5: Services -->
-  <section id="services" class="snap-block relative overflow-hidden flex items-center">
-    <div class="container w-full">
-      <ServicesSection client:visible />
-    </div>
-  </section>
+  <!-- Block 4: Сайты для бизнеса -->
+  <GBPSection client:load />
 
-  <!-- Block 4: Video Audit Spotlight -->
-  <section class="snap-block relative overflow-hidden flex items-center">
-    <div class="container w-full">
-      <AuditSpotlight client:visible />
-    </div>
-  </section>
+  <!-- Block 5: Meta Ads — таргетированная реклама -->
+  <MetaAdsSection client:load />
 
-  <!-- Block 5: Pricing -->
-  <section id="pricing" class="snap-block relative overflow-hidden flex items-center">
-    <div class="container w-full">
-      <PricingSection client:visible />
-    </div>
-  </section>
+  <!-- Block 6: Free Audit -->
+  <AuditSection client:visible />
 
   <!-- Block 6: FAQ -->
-  <section class="snap-block relative overflow-hidden flex items-center bg-surface">
-    <div class="container w-full">
-      <FAQSection client:visible />
-    </div>
-  </section>
+  <FAQSection client:visible />
 
   <!-- Block 7: Team -->
   <section id="team" class="snap-block relative overflow-hidden flex items-center bg-white">
@@ -123,8 +103,8 @@ import Header from '../components/Header.astro';
     </div>
   </section>
 
-  <!-- Block 8: Final CTA -->
-  <div class="snap-block">
+  <!-- Block 9: Final CTA (scroll-snap-stop: normal allows scrolling to footer) -->
+  <div class="snap-block" style="scroll-snap-stop: normal;">
     <CTASection client:visible />
   </div>
 </Layout>

@@ -37,7 +37,9 @@ const {
     <main>
       <slot />
     </main>
-    <Footer />
+    <div style="scroll-snap-align: start;">
+      <Footer />
+    </div>
     <!-- Legacy scripts: mobile menu, header scroll effect, cookie consent -->
     <script is:inline src="/script.js"></script>
     <script is:inline src="/assets/js/cookie-consent.js"></script>

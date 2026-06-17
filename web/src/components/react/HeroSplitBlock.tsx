@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react';
+import { scrollToAudit } from '../../utils/scrollToAudit';
 
 const PLATFORMS = [
   { d: 'google.com', n: 'Google', lead: true },
@@ -25,7 +26,7 @@ const PLATFORMS = [
 
 const STATS = [
   { n: '×4', l: 'звонков\nза 4 месяца' },
-  { n: '×3', l: 'заявок\nс карточки' },
+  { n: '+87%', l: 'звонков\nза 90 дней' },
   { n: '−80%', l: 'затрат\nна рекламу' },
 ];
 
@@ -147,7 +148,7 @@ export default function HeroSplitBlock() {
           <motion.p
             {...fadeUp(0.16)}
             style={{
-              fontSize: '18px',
+              fontSize: 'clamp(14px, 1.8vw, 18px)',
               lineHeight: 1.6,
               color: '#5a6379',
               maxWidth: 520,
@@ -167,7 +168,7 @@ export default function HeroSplitBlock() {
           {/* CTA Row */}
           <motion.div
             {...fadeUp(0.24)}
-            style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', marginBottom: 30 }}
+            style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center', marginBottom: 16 }}
           >
             <div style={{ position: 'relative', display: 'inline-flex' }}>
               {!reduce && (
@@ -194,8 +195,9 @@ export default function HeroSplitBlock() {
                   />
                 </>
               )}
-              <a
-                href="/video-audit.html"
+              <button
+                type="button"
+                onClick={() => scrollToAudit('gbp')}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -205,13 +207,13 @@ export default function HeroSplitBlock() {
                   fontWeight: 700,
                   padding: '15px 26px',
                   borderRadius: 14,
-                  textDecoration: 'none',
                   background: '#3a64e8',
                   color: '#fff',
                   boxShadow: '0 14px 30px -10px rgba(58,100,232,.6)',
                   border: 'none',
                   transition: 'transform .14s ease, box-shadow .14s ease',
                   position: 'relative',
+                  cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
@@ -223,7 +225,7 @@ export default function HeroSplitBlock() {
                 }}
               >
                 Получить бесплатный аудит <span>→</span>
-              </a>
+              </button>
             </div>
             <a
               href="#cases"
@@ -259,19 +261,62 @@ export default function HeroSplitBlock() {
           {/* Stats */}
           <motion.div
             {...fadeUp(0.32)}
-            style={{ display: 'flex', gap: 34, flexWrap: 'wrap' }}
+            style={{ display: 'flex', gap: 'clamp(18px, 3.4vw, 34px)', flexWrap: 'wrap', marginBottom: 28 }}
           >
             {STATS.map((s) => (
               <div key={s.n}>
-                <div style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.02em', color: '#3a64e8', lineHeight: 1 }}>
+                <div style={{ fontSize: 'clamp(22px, 3.5vw, 34px)', fontWeight: 800, letterSpacing: '-0.02em', color: '#3a64e8', lineHeight: 1 }}>
                   {s.n}
                 </div>
-                <div style={{ fontSize: 13, color: '#5a6379', fontWeight: 600, marginTop: 5, lineHeight: 1.25, whiteSpace: 'pre-line' }}>
+                <div style={{ fontSize: 'clamp(11px, 1.4vw, 13px)', color: '#5a6379', fontWeight: 600, marginTop: 5, lineHeight: 1.25, whiteSpace: 'pre-line' }}>
                   {s.l}
                 </div>
               </div>
             ))}
           </motion.div>
+
+          {/* Mobile GBP preview — visible only below lg */}
+          <div className="lg:hidden mt-2 mb-2">
+            <div
+              style={{
+                fontFamily: "'Roboto', sans-serif",
+                background: '#fff',
+                border: '1px solid #eceef2',
+                borderRadius: 16,
+                overflow: 'hidden',
+                boxShadow: '0 10px 28px -10px rgba(28,42,90,.20)',
+                color: '#202124',
+              }}
+            >
+              <div style={{ position: 'relative', height: 130, background: '#eef1f5' }}>
+                <img
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80&auto=format&fit=crop"
+                  alt="Business cover"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{ position: 'absolute', top: 10, left: 10, background: '#fff', borderRadius: 8, padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 2px 8px rgba(0,0,0,.14)', fontSize: 11, fontWeight: 500, color: '#5f6368' }}>
+                  <img src="https://www.google.com/s2/favicons?domain=google.com&sz=64" alt="Google" width="14" height="14" />
+                  Google · Бизнес-профиль
+                </div>
+              </div>
+              <div style={{ padding: '13px 16px 14px', fontFamily: SANS }}>
+                <div style={{ fontSize: 17, fontWeight: 600, lineHeight: 1.15 }}>Sparkle Pro Cleaning</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 5, fontSize: 13, color: '#70757a' }}>
+                  <span style={{ color: '#202124', fontWeight: 500 }}>4,9</span>
+                  <span style={{ color: '#fbbc04', letterSpacing: 1 }}>★★★★★</span>
+                  <span>218 отзывов</span>
+                </div>
+                <div style={{ marginTop: 4, fontSize: 13, color: '#70757a' }}>
+                  <b style={{ color: '#188038', fontWeight: 500 }}>Открыто</b> · до 18:00
+                </div>
+                <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 10, padding: '6px 12px' }}>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: '#1aa050' }}>+150%</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#166534' }}>звонков за 28 дней</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* ── RIGHT: Google Business Profile card ─────────── */}
@@ -406,8 +451,8 @@ export default function HeroSplitBlock() {
         style={{ borderTop: '1px solid rgba(255,255,255,.25)', marginTop: 32, paddingTop: 20 }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 11, marginBottom: 14, flexWrap: 'wrap', fontFamily: SANS }}>
-          <span style={{ fontSize: 24, fontWeight: 800, color: '#3a64e8', letterSpacing: '-0.02em' }}>20 крупнейших площадок</span>
-          <span style={{ fontSize: 15, fontWeight: 600, color: '#5a6379' }}>
+          <span style={{ fontSize: 'clamp(16px, 2.4vw, 24px)', fontWeight: 800, color: '#3a64e8', letterSpacing: '-0.02em' }}>20 крупнейших площадок</span>
+          <span style={{ fontSize: 'clamp(12px, 1.5vw, 15px)', fontWeight: 600, color: '#5a6379' }}>
             — и вы появитесь на каждой из них
           </span>
         </div>

@@ -1,5 +1,12 @@
 import { motion, useReducedMotion } from 'motion/react';
-import { ArrowRight, FileText } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { scrollToAudit } from '../../utils/scrollToAudit';
+
+const TRUST_POINTS = [
+  'Без долгосрочных контрактов',
+  'Ваши данные остаются у вас',
+  'Результат за 60–90 дней или возврат за месяц',
+];
 
 export default function CTASection() {
   const reduce = useReducedMotion();
@@ -59,38 +66,61 @@ export default function CTASection() {
 
         {/* Headline */}
         <motion.h2
-          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight mb-6"
+          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight mb-4"
           initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
-          Готовы расти?
+          Попробуйте без риска —<br className="hidden sm:block" /> отменить можно в любой момент
         </motion.h2>
 
         {/* Sub */}
         <motion.p
-          className="text-lg max-w-xl mx-auto mb-10 leading-relaxed"
+          className="text-lg max-w-xl mx-auto mb-8 leading-relaxed"
           style={{ color: 'rgba(191,219,254,0.8)' }}
           initial={reduce ? false : { opacity: 0, y: 14 }}
           whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.15 }}
         >
-          Начните с бесплатного аудита или скачайте чек-лист — без рисков и долгосрочных обязательств.
+          Начните с бесплатного аудита — без долгосрочных обязательств.
         </motion.p>
 
-        {/* Buttons */}
+        {/* Trust trifecta */}
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-wrap justify-center gap-3 mb-10"
           initial={reduce ? false : { opacity: 0, y: 14 }}
           whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.22 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <motion.a
-            href="/video-audit.html"
-            className="inline-flex items-center justify-center gap-2.5 rounded-2xl px-8 py-4 text-base font-bold text-white"
+          {TRUST_POINTS.map((point) => (
+            <div key={point} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              background: 'rgba(255,255,255,.08)',
+              border: '1px solid rgba(255,255,255,.18)',
+              borderRadius: 999, padding: '6px 14px',
+              fontSize: 'clamp(11px, 1.4vw, 13px)', fontWeight: 700, color: 'rgba(255,255,255,.85)',
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+              {point}
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Button */}
+        <motion.div
+          className="flex justify-center"
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.28 }}
+        >
+          <motion.button
+            type="button"
+            onClick={() => scrollToAudit('all')}
+            className="inline-flex items-center justify-center gap-2.5 rounded-2xl px-6 py-3 sm:px-8 sm:py-4 text-base font-bold text-white border-0 cursor-pointer"
             style={{
               background: 'linear-gradient(135deg, #38bdf8, #818cf8)',
               boxShadow: '0 8px 32px rgba(56,189,248,0.32)',
@@ -102,30 +132,9 @@ export default function CTASection() {
             }
             whileTap={reduce ? undefined : { scale: 0.97 }}
           >
-            Получить бесплатный аудит
+            Начать с аудита
             <ArrowRight size={18} />
-          </motion.a>
-
-          <motion.a
-            href="/free-checklist.html"
-            className="inline-flex items-center justify-center gap-2.5 rounded-2xl px-8 py-4 text-base font-bold text-white"
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.18)',
-            }}
-            whileHover={
-              reduce
-                ? undefined
-                : {
-                    background: 'rgba(255,255,255,0.14)',
-                    scale: 1.02,
-                  }
-            }
-            whileTap={reduce ? undefined : { scale: 0.97 }}
-          >
-            <FileText size={18} />
-            Скачать чек-лист
-          </motion.a>
+          </motion.button>
         </motion.div>
       </div>
     </section>
