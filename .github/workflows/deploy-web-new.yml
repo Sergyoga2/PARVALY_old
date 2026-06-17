@@ -1,16 +1,11 @@
 name: Deploy Web to new.parvaly.com
 
-# Builds the Astro marketing site in web/ and deploys to new.parvaly.com subdomain.
-# Triggers on push to any branch touching web/ (not just main), so you can preview
-# changes on the subdomain before merging.
+# Builds the Astro marketing site in web/ and deploys to new.parvaly.com via FTP.
 #
-# Required GitHub secrets (same SSH key as existing deploy):
-#   HOSTINGER_SSH_KEY   — private SSH key for Hostinger
-#   HOSTINGER_HOST      — SSH host (e.g. ssh.hostinger.com or server IP)
-#   HOSTINGER_PORT      — SSH port (usually 65002 on Hostinger)
-#   HOSTINGER_USER      — SSH username
-#   HOSTINGER_NEW_DIR   — absolute path to new.parvaly.com docroot,
-#                         e.g. /home/uXXXX/domains/parvaly.com/public_html/new.parvaly.com
+# Required GitHub secrets:
+#   FTP_SERVER    — FTP host (e.g. ftp.parvaly.com)
+#   FTP_USERNAME  — FTP username
+#   FTP_PASSWORD  — FTP password
 
 on:
   push:
@@ -21,7 +16,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-hostinger-new
+  group: deploy-ftp-new
   cancel-in-progress: true
 
 jobs:
@@ -48,13 +43,18 @@ jobs:
         working-directory: web
         run: npm run build
 
-      - name: Deploy to new.parvaly.com via rsync
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p ${{ secrets.HOSTINGER_PORT }} -H ${{ secrets.HOSTINGER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
-          rsync -avz \
-            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.HOSTINGER_PORT }} -o StrictHostKeyChecking=no -o IdentitiesOnly=yes" \
-            web/dist/ \
-            ${{ secrets.HOSTINGER_USER }}@${{ secrets.HOSTINGER_HOST }}:${{ secrets.HOSTINGER_NEW_DIR }}/
+      - name: Deploy to new.parvaly.com via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./web/dist/
+          server-dir: /domains/parvaly.com/public_html/new/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.DS_Store
