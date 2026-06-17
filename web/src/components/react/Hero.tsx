@@ -1,4 +1,13 @@
 import { motion, useReducedMotion } from 'motion/react';
+import { scrollToAudit } from '../../utils/scrollToAudit';
+
+const SANS = "'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+
+const CONSUMER_STATS = [
+  { n: '97%', l: 'клиентов читают отзывы\nперед покупкой' },
+  { n: '44%', l: 'всех кликов получают\nтоп-3 в Google Maps' },
+  { n: '31%', l: 'выбирают только бизнесы\nс рейтингом 4.5★ и выше' },
+];
 
 const container = {
   hidden: {},
@@ -12,10 +21,6 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/**
- * Animated hero text block: staggered headline / lead / badges / CTAs.
- * Keeps the exact legacy copy and CTA links. Honors reduced-motion.
- */
 export default function Hero() {
   const reduce = useReducedMotion();
   const variants = reduce ? undefined : { container, item };
@@ -27,57 +32,56 @@ export default function Hero() {
       animate={reduce ? undefined : 'show'}
       className="max-w-2xl"
     >
-      <motion.span
-        variants={variants?.item}
-        className="mb-5 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent-light/60 px-4 py-1.5 text-sm font-semibold text-accent"
-      >
-        <span className="h-2 w-2 rounded-full bg-accent" />
-        Local marketing, done for you
-      </motion.span>
-
       <motion.h1
         variants={variants?.item}
         className="font-sans text-4xl font-extrabold leading-[1.1] tracking-tight text-ink sm:text-5xl lg:text-6xl"
       >
-        Digital Marketing Consulting for{' '}
-        <span className="bg-gradient-to-r from-accent to-sky-400 bg-clip-text text-transparent">
-          Local Businesses
+        Настроим поток заявок и звонков со всех{' '}
+        <span
+          className="inline-block"
+          style={{
+            backgroundImage: 'linear-gradient(to right, #2563eb, #38bdf8)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            color: 'transparent',
+          }}
+        >
+          площадок в USA
         </span>
       </motion.h1>
 
-      <motion.p variants={variants?.item} className="mt-6 text-lg leading-relaxed text-muted">
-        We help clinics, cafes, local services, and small businesses across the United States
-        improve their online visibility and reputation through expert consulting and hands-on
-        management.
+      <motion.p variants={variants?.item} className="mt-6 text-base sm:text-lg leading-relaxed text-muted">
+        Мы помогаем клиникам, кафе, местным сервисам и малому бизнесу по всей территории США
+        снизить зависимость от рекламы и построить стабильный поток бесплатных заявок и звонков.
       </motion.p>
 
-      <motion.div variants={variants?.item} className="mt-6 flex flex-wrap gap-3">
-        <span className="rounded-full bg-surface px-4 py-1.5 text-sm font-medium text-ink ring-1 ring-line">
-          Month-to-month. Cancel anytime.
-        </span>
-        <span className="rounded-full bg-surface px-4 py-1.5 text-sm font-medium text-ink ring-1 ring-line">
-          Stripe (cards) &amp; ACH.
-        </span>
+      {/* Consumer stats — BrightLocal 2026 */}
+      <motion.div
+        variants={variants?.item}
+        style={{ display: 'flex', gap: 'clamp(12px, 2vw, 20px)', flexWrap: 'wrap', marginTop: 24, fontFamily: SANS }}
+      >
+        {CONSUMER_STATS.map((s) => (
+          <div key={s.n} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <span style={{ fontSize: 'clamp(18px, 2.6vw, 26px)', fontWeight: 900, color: '#2563eb', letterSpacing: '-0.02em', lineHeight: 1 }}>
+              {s.n}
+            </span>
+            <span style={{ fontSize: 'clamp(10px, 1.2vw, 11.5px)', color: '#5a6379', fontWeight: 600, lineHeight: 1.3, whiteSpace: 'pre-line' }}>
+              {s.l}
+            </span>
+          </div>
+        ))}
       </motion.div>
 
-      <motion.div variants={variants?.item} className="mt-8 flex flex-wrap gap-4">
-        <a
-          href="/video-audit.html"
-          className="inline-flex items-center justify-center rounded bg-accent px-7 py-3.5 text-base font-semibold text-white shadow-brand transition hover:bg-accent-hover hover:shadow-brand-lg"
+      <motion.div variants={variants?.item} className="mt-8 flex flex-wrap gap-4 items-center">
+        <button
+          type="button"
+          onClick={() => scrollToAudit('all')}
+          className="inline-flex items-center justify-center rounded bg-accent px-7 py-3.5 text-base font-semibold text-white shadow-brand transition hover:bg-accent-hover hover:shadow-brand-lg cursor-pointer border-0"
         >
-          Get a $49 Video Audit
-        </a>
-        <a
-          href="/free-checklist.html"
-          className="inline-flex items-center justify-center rounded border border-line bg-white px-7 py-3.5 text-base font-semibold text-ink transition hover:border-accent hover:text-accent"
-        >
-          Download Free Checklist (PDF)
-        </a>
+          Получите бесплатный аудит
+        </button>
       </motion.div>
-
-      <motion.p variants={variants?.item} className="mt-5 text-sm text-muted">
-        Prefer to start small? The $49 audit includes a PDF report + a 5–8 minute video walkthrough.
-      </motion.p>
     </motion.div>
   );
 }

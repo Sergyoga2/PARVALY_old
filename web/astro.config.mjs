@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
 
 // PARVALY marketing site — pilot (homepage only).
 // Outputs a single root index.html so parvaly.com/ serves this page,
@@ -16,8 +15,10 @@ export default defineConfig({
   },
   integrations: [
     react(),
-    // CRITICAL: applyBaseStyles:false -> do NOT inject Tailwind Preflight globally.
-    // The legacy /styles.css stays authoritative for base elements. See src/styles/tailwind.css.
-    tailwind({ applyBaseStyles: false }),
   ],
+  // Tailwind 3 is processed via PostCSS (see postcss.config.mjs) instead of the
+  // deprecated @astrojs/tailwind integration (incompatible with Astro 6).
+  // No Preflight: src/styles/tailwind.css omits `@tailwind base`, and
+  // tailwind.config sets corePlugins.preflight:false — the legacy /styles.css
+  // stays authoritative for base elements.
 });
