@@ -20,7 +20,7 @@ import Header from '../components/Header.astro';
   <style is:inline>
     /* ── Fullpage scroll snap ───────────────────────────────────── */
     html {
-      scroll-snap-type: y mandatory;
+      scroll-snap-type: y proximity;
       overflow-y: scroll;
       height: 100%;
     }
@@ -29,13 +29,22 @@ import Header from '../components/Header.astro';
     }
     .snap-block {
       scroll-snap-align: start;
-      scroll-snap-stop: always;
+      scroll-snap-stop: normal;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
-      /* Force a GPU compositing layer so WebGL canvases render
-         continuously even when the block is offscreen */
       transform: translateZ(0);
       will-change: transform;
+    }
+    /* На мобильных (< 768px) отключаем snap и фиксированную высоту */
+    @media (max-width: 767px) {
+      html {
+        scroll-snap-type: none;
+      }
+      .snap-block {
+        height: auto !important;
+        overflow: visible !important;
+      }
     }
 
     /* ── Hero header override ───────────────────────────────────── */
@@ -54,16 +63,16 @@ import Header from '../components/Header.astro';
       <Header />
     </div>
 
-    <section class="relative z-10 pt-16 pb-8 lg:pt-20 h-full flex flex-col justify-center">
-      <div class="container relative">
-        <div class="grid items-center gap-10 lg:grid-cols-2">
+    <section class="relative z-10 pt-16 pb-0 lg:pt-20 h-full flex flex-col">
+      <div class="container relative flex-1 flex items-center">
+        <div class="grid items-center gap-10 lg:grid-cols-2 w-full py-4">
           <Hero client:load />
           <div class="max-lg:!hidden flex h-[420px] items-center justify-center overflow-hidden relative">
             <HeroLottie client:load />
           </div>
         </div>
       </div>
-      <div class="relative z-10 border-t border-white/20 mt-8 py-4">
+      <div class="relative z-10 border-t border-white/20 py-4 flex-shrink-0">
         <div class="container">
           <LogoMarquee client:load />
         </div>
@@ -72,10 +81,10 @@ import Header from '../components/Header.astro';
   </div>
 
   <!-- Block 2: Hero Split — GBP card + 20 platforms -->
-  <div class="snap-block relative w-full" style="background:#d4ffee; overflow-y:auto">
+  <div class="snap-block relative w-full" style="background:#d4ffee; overflow-y:auto; -webkit-overflow-scrolling:touch">
     <GBPBackground client:load />
-    <section class="relative z-10 pt-16 pb-8 lg:pt-20 h-full flex flex-col justify-center">
-      <div class="container relative">
+    <section class="relative z-10 pt-16 pb-8 lg:pt-20 min-h-full flex flex-col justify-center">
+      <div class="container relative py-4">
         <HeroSplitBlock client:load />
       </div>
     </section>
