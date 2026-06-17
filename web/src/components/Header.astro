@@ -2,7 +2,7 @@
 // Reproduces the legacy header.site-header markup byte-faithfully (index.html lines 85-108)
 // so the Astro homepage chrome is identical to the legacy pages. Styled by /styles.css.
 ---
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="container">
     <div class="header-content">
       <a href="/" class="logo"><img src="/assets/logo-parvaly.svg" alt="PARVALY" /></a>
@@ -20,3 +20,14 @@
     <a href="#team">Команда</a>
   </nav>
 </header>
+
+<script>
+  const header = document.getElementById('site-header');
+  if (header) {
+    const updateHeaderHeight = () => {
+      document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    };
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight, { passive: true });
+  }
+</script>

@@ -1,5 +1,17 @@
+import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { scrollToAudit } from '../../utils/scrollToAudit';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 480);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
 
 const PLATFORMS = [
   { d: 'google.com', n: 'Google', lead: true },
@@ -97,6 +109,7 @@ function SmallPhoneIcon() {
 
 export default function HeroSplitBlock() {
   const reduce = useReducedMotion();
+  const isMobile = useIsMobile();
 
   const fadeUp = (delay: number) =>
     reduce
@@ -203,9 +216,9 @@ export default function HeroSplitBlock() {
                   alignItems: 'center',
                   gap: 9,
                   fontFamily: SANS,
-                  fontSize: 16,
+                  fontSize: isMobile ? 14 : 16,
                   fontWeight: 700,
-                  padding: '15px 26px',
+                  padding: isMobile ? '12px 18px' : '15px 26px',
                   borderRadius: 14,
                   background: '#3a64e8',
                   color: '#fff',
@@ -234,9 +247,9 @@ export default function HeroSplitBlock() {
                 alignItems: 'center',
                 gap: 9,
                 fontFamily: SANS,
-                fontSize: 16,
+                fontSize: isMobile ? 14 : 16,
                 fontWeight: 700,
-                padding: '15px 26px',
+                padding: isMobile ? '12px 18px' : '15px 26px',
                 borderRadius: 14,
                 textDecoration: 'none',
                 background: 'rgba(255,255,255,.85)',
@@ -268,7 +281,7 @@ export default function HeroSplitBlock() {
                 <div style={{ fontSize: 'clamp(22px, 3.5vw, 34px)', fontWeight: 800, letterSpacing: '-0.02em', color: '#3a64e8', lineHeight: 1 }}>
                   {s.n}
                 </div>
-                <div style={{ fontSize: 'clamp(11px, 1.4vw, 13px)', color: '#5a6379', fontWeight: 600, marginTop: 5, lineHeight: 1.25, whiteSpace: 'pre-line' }}>
+                <div style={{ fontSize: 'clamp(12px, 1.4vw, 13px)', color: '#5a6379', fontWeight: 600, marginTop: 5, lineHeight: 1.25, whiteSpace: 'pre-line' }}>
                   {s.l}
                 </div>
               </div>

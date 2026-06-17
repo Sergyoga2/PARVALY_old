@@ -66,7 +66,7 @@ export default function Hero() {
             <span style={{ fontSize: 'clamp(18px, 2.6vw, 26px)', fontWeight: 900, color: '#2563eb', letterSpacing: '-0.02em', lineHeight: 1 }}>
               {s.n}
             </span>
-            <span style={{ fontSize: 'clamp(10px, 1.2vw, 11.5px)', color: '#5a6379', fontWeight: 600, lineHeight: 1.3, whiteSpace: 'pre-line' }}>
+            <span style={{ fontSize: 'clamp(12px, 1.5vw, 13px)', color: '#5a6379', fontWeight: 600, lineHeight: 1.3, whiteSpace: 'pre-line' }}>
               {s.l}
             </span>
           </div>
